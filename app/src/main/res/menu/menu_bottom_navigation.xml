@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/homeButton"
+        android:icon="@android:drawable/btn_star_big_on"
+        android:title="Home"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/food_nearyby"
+        android:icon="@drawable/ic_baseline_fastfood_24"
+        android:title="Map"
+        app:showAsAction="always"
+        tools:showAsAction="always" />
+
+    <item
+        android:id="@+id/postButton"
+        android:icon="@android:drawable/ic_menu_add"
+        android:title="Post"
+        app:showAsAction="always"
+        tools:showAsAction="always" />
+
+    <item
+        android:id="@+id/userProfile"
+        android:icon="@drawable/ic_baseline_person_pin_24"
+        android:title="Profile"
+        app:showAsAction="always"
+        tools:showAsAction="always" />
+</menu>
