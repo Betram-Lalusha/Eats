@@ -43,4 +43,6 @@ dependencies {
 
     implementation "androidx.appcompat:appcompat:${appCompatVersion}"
     implementation "com.google.android.material:material:${designSupportVersion}"
+
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
 }
