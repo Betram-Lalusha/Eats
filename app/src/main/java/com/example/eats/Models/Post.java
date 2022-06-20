@@ -5,8 +5,11 @@ import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
+import org.parceler.Parcel;
+
 import java.util.Date;
 
+@Parcel
 @ParseClassName("Post")
 public class Post extends ParseObject {
     public static final String USER = "user";
@@ -17,6 +20,8 @@ public class Post extends ParseObject {
     public static final String LOCATION = "location";
     public static final String LIKES_COUNT = "likesCount";
     public static final String COMMENTS_COUNT = "commentsCount";
+
+    public Post() {}
 
     public String getCaption() {
         return getString(CAPTION);
