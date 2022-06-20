@@ -65,7 +65,7 @@ public class TimelineFragment extends Fragment {
             @Override
             public void done(List<Post> posts, ParseException e) {
                 if(e != null) {
-                    Log.i("QUERY", "somenthing went wrong querying posts " + e);
+                    Log.i("QUERY", "something went wrong querying posts " + e);
                     return;
                 }
 

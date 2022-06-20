@@ -53,14 +53,14 @@ public class Post extends ParseObject {
         put(PRICE, price);
     }
 
-    public Object getLocation() {
-        return getParseObject(LOCATION);
-    }
-
-
-    public void setLocation(ParseObject location) {
-        put(LOCATION, location);
-    }
+//    public Object getLocation() {
+//        return getParseObject(LOCATION);
+//    }
+//
+//
+//    public void setLocation(ParseObject location) {
+//        put(LOCATION, location);
+//    }
 
     public String getDetails() {
         return getString(DETAILS);
