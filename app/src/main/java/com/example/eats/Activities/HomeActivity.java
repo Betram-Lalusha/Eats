@@ -10,6 +10,7 @@ import android.view.MenuItem;
 
 import com.example.eats.Fragments.PostFragment;
 import com.example.eats.Fragments.TimelineFragment;
+import com.example.eats.Fragments.UserProfileFragment;
 import com.example.eats.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -41,7 +42,7 @@ public class HomeActivity extends AppCompatActivity {
                         fragment = new PostFragment();
                         break;
                     case R.id.userProfile:
-                        fragment = new TimelineFragment();
+                        fragment = new UserProfileFragment();
                         break;
                     default:
                         fragment = new TimelineFragment();

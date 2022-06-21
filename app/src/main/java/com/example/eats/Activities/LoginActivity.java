@@ -16,34 +16,45 @@ import com.parse.ParseException;
 import com.parse.ParseUser;
 
 public class LoginActivity extends AppCompatActivity {
-    TextView userName;
-    Button loginButton;
-    TextView userPassword;
+    TextView mUserName;
+    Button mLoginButton;
+    TextView mUserPassword;
+    TextView mCreateAccount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        userName = findViewById(R.id.userName);
-        loginButton = findViewById(R.id.signInBtn);
-        userPassword = findViewById(R.id.password);
+        if(ParseUser.getCurrentUser() != null) goToHome();
 
-        loginButton.setOnClickListener(new View.OnClickListener() {
+        mUserName = findViewById(R.id.userName);
+        mLoginButton = findViewById(R.id.signInBtn);
+        mUserPassword = findViewById(R.id.password);
+        mCreateAccount = findViewById(R.id.createAccount);
+
+        mLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                String enteredName = userName.getText().toString();
-                String enteredPassword = userPassword.getText().toString();
+                String enteredName = mUserName.getText().toString();
+                String enteredPassword = mUserPassword.getText().toString();
 
                 authenticateUser(enteredName, enteredPassword);
+            }
+        });
+
+        mCreateAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
+                startActivity(intent);
             }
         });
     }
 
     //check if user exits and if entered password matches user password in db
     private void authenticateUser(String enteredName, String enteredPassword) {
-        System.out.println("authenticating user");
         //use parse to authenticate user
         ParseUser.logInInBackground(enteredName, enteredPassword, new LogInCallback() {
             @Override

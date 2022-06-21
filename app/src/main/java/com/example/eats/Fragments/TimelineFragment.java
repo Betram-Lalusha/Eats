@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.eats.Adapters.PostsAdapter;
+import com.example.eats.EndlessRecyclerViewScrollListener;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
 import com.parse.FindCallback;
@@ -28,7 +29,7 @@ public class TimelineFragment extends Fragment {
     List<Post> mPosts;
     RecyclerView mRecyclerView;
     PostsAdapter mPostsAdapter;
-
+    EndlessRecyclerViewScrollListener mEndlessRecyclerViewScrollListener;
     public TimelineFragment() {
         // Required empty public constructor
     }
@@ -53,6 +54,37 @@ public class TimelineFragment extends Fragment {
 
         mRecyclerView.setAdapter(mPostsAdapter);
         mRecyclerView.setLayoutManager(linearLayoutManager);
+
+        // Retain an instance so that you can call `resetState()` for fresh searches
+        mEndlessRecyclerViewScrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                loadNextPosts();
+            }
+        };
+
+        mRecyclerView.addOnScrollListener(mEndlessRecyclerViewScrollListener);
+
+    }
+
+    private void loadNextPosts() {
+        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
+        query.whereLessThan("createdAt", mPosts.get(mPosts.size() - 1).getDate());
+        query.include(Post.USER);
+        query.addDescendingOrder("createdAt");
+        query.findInBackground(new FindCallback<Post>() {
+            @Override
+            public void done(List<Post> posts, ParseException e) {
+                if(e != null) {
+                    Log.i("HOME", "something went wrong obtaining posts " + e);
+                }
+                mPosts.addAll(posts);
+                mPostsAdapter.notifyDataSetChanged();
+            }
+
+        });
     }
 
     private void queryPosts() {
