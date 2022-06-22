@@ -57,10 +57,15 @@ public class Point implements Comparable<Point> {
 
     /*
       Used by priority queue to order points
-      Points with with distance closest to user have higher priority
+      Points with with distance closest to user have higher priority. If Points have the same distance from
+      User, Post with earlier creation date have higher priority
      */
     public int compareTo(Point other) {
-        return (int)(this.mDistance - other.mDistance);
+        int diff = (int)(this.mDistance - other.mDistance);
+        int thisTimeDiff  = (int)(System.currentTimeMillis() - this.mPost.getDate().getTime());
+        int otherTimeDiff = (int)(System.currentTimeMillis() - other.mPost.getDate().getTime());
+        int timeDiff = thisTimeDiff - otherTimeDiff;
+        return diff == 0 ? timeDiff : diff;
     }
 
 }
