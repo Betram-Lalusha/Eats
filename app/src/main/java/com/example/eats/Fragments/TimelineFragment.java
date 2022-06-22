@@ -100,7 +100,6 @@ public class TimelineFragment extends Fragment {
                     Log.i("QUERY", "something went wrong querying posts " + e);
                     return;
                 }
-
                 mPosts.addAll(posts);
                 mPostsAdapter.notifyDataSetChanged();
             }
