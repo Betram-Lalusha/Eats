@@ -22,6 +22,7 @@ public class Point implements Comparable<Point> {
         this.mDistance = distance(this.mLatitude, this.mLongitude, this.mUserLatitude, this.mUserLongitude);
     }
 
+    //dummy for github
 
     /*
        Code Adopted from geeksforgeeks: https://www.geeksforgeeks.org/program-distance-two-points-earth/#:~:text=For%20this%20divide%20the%20values,is%20the%20radius%20of%20Earth
@@ -60,5 +61,9 @@ public class Point implements Comparable<Point> {
      */
     public int compareTo(Point other) {
         return 0; //hard coded
+    }
+
+    public void dummyGit() {
+        return;
     }
 }
