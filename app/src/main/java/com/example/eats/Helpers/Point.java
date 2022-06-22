@@ -1,23 +1,25 @@
 package com.example.eats.Helpers;
 
+import com.example.eats.Models.Post;
+
 import java.util.Date;
 
 //class represents a single coordinate point based on latitude and longitude
 public class Point implements Comparable<Point> {
 
+    Post mPost;
     public double mLatitude;
     public double mLongitude;
     public double mDistance;
-    public Date mCreatedAt;
     public double mUserLatitude;
     public double mUserLongitude;
 
-    public Point(double latitude, double longitude, Date createdAt, double userLatitude, double userLongitude) {
-        this.mLatitude = latitude;
-        this.mLongitude = longitude;
-        this.mCreatedAt = createdAt;
+    public Point(Post post, double userLatitude, double userLongitude) {
+        this.mPost = post;
         this.mUserLatitude = userLatitude;
         this.mUserLongitude = userLongitude;
+        this.mLatitude = post.getLatitude();
+        this.mLongitude = post.getLongiitude();
 
         this.mDistance = distance(this.mLatitude, this.mLongitude, this.mUserLatitude, this.mUserLongitude);
     }
@@ -55,11 +57,10 @@ public class Point implements Comparable<Point> {
 
     /*
       Used by priority queue to order points
-      Points with creation date closest to current date have highest priority. This is to ensure user feed always has newest posts at shown first.
-      In the event that two Points have equal creation date, those closest to user are shown first
+      Points with with distance closest to user have higher priority
      */
     public int compareTo(Point other) {
-        return 0; //hard coded
+        return (int)(this.mDistance - other.mDistance);
     }
 
 }
