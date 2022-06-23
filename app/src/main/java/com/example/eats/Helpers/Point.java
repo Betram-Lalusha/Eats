@@ -7,7 +7,7 @@ import java.util.Date;
 //class represents a single coordinate point based on latitude and longitude
 public class Point implements Comparable<Point> {
 
-    Post mPost;
+    public Post mPost;
     public double mLatitude;
     public double mLongitude;
     public double mDistance;
@@ -21,38 +21,32 @@ public class Point implements Comparable<Point> {
         this.mLatitude = post.getLatitude();
         this.mLongitude = post.getLongiitude();
 
-        this.mDistance = distance(this.mLatitude, this.mLongitude, this.mUserLatitude, this.mUserLongitude);
+        this.mDistance = distance(this.mLatitude, this.mLongitude, this.mUserLatitude, this.mUserLongitude, "K");
     }
     
 
     /*
        Code Adopted from geeksforgeeks: https://www.geeksforgeeks.org/program-distance-two-points-earth/#:~:text=For%20this%20divide%20the%20values,is%20the%20radius%20of%20Earth
        Method calculates the distance between two given coordinates
+       //bugged!!!
      */
-    public static double distance(double pointLat, double pointLon, double userLat, double userLon) {
-        // The math module contains a function
-        // named toRadians which converts from
-        // degrees to radians.
-        pointLon = Math.toRadians(pointLon);
-        userLon = Math.toRadians(userLon);
-        pointLat = Math.toRadians(pointLon);
-        userLat = Math.toRadians(userLat);
-
-        // Haversine formula
-        double dlon = userLon - pointLon;
-        double dlat = userLat - pointLon;
-        double a = Math.pow(Math.sin(dlat / 2), 2)
-                + Math.cos(pointLat) * Math.cos(userLat)
-                * Math.pow(Math.sin(dlon / 2),2);
-
-        double c = 2 * Math.asin(Math.sqrt(a));
-
-        // Radius of earth in kilometers. Use 3956
-        // for miles
-        double r = 6371;
-
-        // calculate the result
-        return(c * r);
+    public  double distance(double pointLat, double pointLon, double userLat, double userLon,String unit) {
+        if ((pointLat == userLat) && (pointLon == userLon)) {
+            return 0;
+        }
+        else {
+            double theta = pointLon - userLon;
+            double dist = Math.sin(Math.toRadians(pointLat)) * Math.sin(Math.toRadians(userLat)) + Math.cos(Math.toRadians(pointLat)) * Math.cos(Math.toRadians(userLat)) * Math.cos(Math.toRadians(theta));
+            dist = Math.acos(dist);
+            dist = Math.toDegrees(dist);
+            dist = dist * 60 * 1.1515;
+            if (unit.equals("K")) {
+                dist = dist * 1.609344;
+            } else if (unit.equals("N")) {
+                dist = dist * 0.8684;
+            }
+            return (dist);
+        }
     }
 
     /*
@@ -62,10 +56,12 @@ public class Point implements Comparable<Point> {
      */
     public int compareTo(Point other) {
         int diff = (int)(this.mDistance - other.mDistance);
-        int thisTimeDiff  = (int)(System.currentTimeMillis() - this.mPost.getDate().getTime());
-        int otherTimeDiff = (int)(System.currentTimeMillis() - other.mPost.getDate().getTime());
-        int timeDiff = thisTimeDiff - otherTimeDiff;
-        return diff == 0 ? timeDiff : diff;
+        return diff;
+    }
+
+    @Override
+    public String toString() {
+        return "[ " + this.mLatitude + ", " + this.mLongitude + " ]";
     }
 
 }

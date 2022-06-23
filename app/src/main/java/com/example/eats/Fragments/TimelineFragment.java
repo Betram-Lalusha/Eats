@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import com.example.eats.Adapters.PostsAdapter;
 import com.example.eats.EndlessRecyclerViewScrollListener;
+import com.example.eats.Helpers.Point;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
 import com.parse.FindCallback;
@@ -21,12 +22,15 @@ import com.parse.ParseException;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 
 
 public class TimelineFragment extends Fragment {
 
     List<Post> mPosts;
+    PriorityQueue<Point> mQu;
     RecyclerView mRecyclerView;
     PostsAdapter mPostsAdapter;
     EndlessRecyclerViewScrollListener mEndlessRecyclerViewScrollListener;
@@ -47,6 +51,7 @@ public class TimelineFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
 
         mPosts = new ArrayList<>();
+        mQu = new PriorityQueue<>();
         mRecyclerView = view.findViewById(R.id.recyclerView);
         mPostsAdapter = new PostsAdapter(getContext(), mPosts);
 
@@ -89,7 +94,7 @@ public class TimelineFragment extends Fragment {
 
     private void queryPosts() {
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
-        query.setLimit(4);
+        query.setLimit(6);
         query.include(Post.USER);
         query.addDescendingOrder("createdAt");
 
@@ -100,9 +105,19 @@ public class TimelineFragment extends Fragment {
                     Log.i("QUERY", "something went wrong querying posts " + e);
                     return;
                 }
-                mPosts.addAll(posts);
-                mPostsAdapter.notifyDataSetChanged();
+
+                for(Post post: posts) mQu.add(new Point(post, 37.4219862, -122.0842771));
+
+                addAllPoints();
+                //for(Post post: posts)  mPosts.add(mQu.poll().mPost);
+                //mPosts.addAll(posts);
             }
         });
+    }
+
+    private void addAllPoints() {
+        List<Point> points = new LinkedList<>(mQu);
+        for(Point point: points) mPosts.add(point.mPost);
+        mPostsAdapter.notifyDataSetChanged();
     }
 }
