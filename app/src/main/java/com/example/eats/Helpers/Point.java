@@ -27,9 +27,7 @@ public class Point implements Comparable<Point> {
     
 
     /*
-       Code Adopted from geeksforgeeks: https://www.geeksforgeeks.org/program-distance-two-points-earth/#:~:text=For%20this%20divide%20the%20values,is%20the%20radius%20of%20Earth
        Method calculates the distance between two given coordinates
-       //bugged!!!
      */
     public  double distance(double pointLat, double pointLon, double userLat, double userLon,String unit) {
         if ((pointLat == userLat) && (pointLon == userLon)) {
