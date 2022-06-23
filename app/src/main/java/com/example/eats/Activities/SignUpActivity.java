@@ -3,10 +3,13 @@ package com.example.eats.Activities;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.ImageDecoder;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -23,21 +26,24 @@ import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.parse.SignUpCallback;
 
 import java.io.File;
+import java.io.IOException;
 
 public class SignUpActivity extends AppCompatActivity {
 
+    int mDefaultId;
     TextView mSetEmail;
     Button mSignUpButton;
     TextView mSetPassword;
     TextView mSetUserName;
     ImageView mSetUserPfp;
-    TextView mConfirmPassword;
     private File mPhotoFile;
-    public final String APP_TAG = "EATS";
+    TextView mConfirmPassword;
     public String mPhotoFileName = "photo.jpg";
-    public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1044;
+    // PICK_PHOTO_CODE is a constant integer
+    public final static int PICK_PHOTO_CODE = 1046;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,10 +57,14 @@ public class SignUpActivity extends AppCompatActivity {
         mSignUpButton = findViewById(R.id.signUpButton);
         mConfirmPassword = findViewById(R.id.confirmPassword);
 
+        mSetUserPfp.setTag(R.drawable.default_image);
+        mDefaultId = (int) mSetUserPfp.getTag();
+
         mSetUserPfp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onLaunchCamera(v);
+                Toast.makeText(SignUpActivity.this, "change this later by visiting your profile", Toast.LENGTH_LONG).show();
+                //onPickPhoto(v);
             }
         });
 
@@ -76,11 +86,13 @@ public class SignUpActivity extends AppCompatActivity {
                     return;
                 }
 
-                if(mPhotoFile == null || mSetUserPfp.getDrawable() == null) {
-                    Toast.makeText(SignUpActivity.this, "no image added", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
+//                int currId =  (int) mSetUserPfp.getTag();
+//                if(mSetUserPfp.getDrawable() == null || currId == mDefaultId) {
+//                    Toast.makeText(SignUpActivity.this, "no image added", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+//
+//                Toast.makeText(SignUpActivity.this, "everything is fine!", Toast.LENGTH_SHORT).show();
                 saveUser(userEmail, userName, userPassword, mPhotoFile);
             }
         });
@@ -89,35 +101,32 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void saveUser(String userEmail, String userName, String password, File photoFile) {
         ParseUser user = new ParseUser();
-        user.put("username", userName);
-        user.put("email", userEmail);
-        user.put("password", password);
-        ParseFile photo;
-        photo = new ParseFile(photoFile, "userProfilePic");
+        user.setUsername(userName);
+        user.setPassword(password);
+        user.setEmail(userEmail);
 
-        photo.saveInBackground(new SaveCallback() {
+//        ParseFile photo = new ParseFile(mPhotoFile);
+//        photo.saveInBackground(new SaveCallback() {
+//            @Override
+//            public void done(ParseException e) {
+//                if(e == null)  System.out.println("okay");
+//            }
+//        });
+//// other fields can be set just like with ParseObject
+
+        user.signUpInBackground(new SignUpCallback() {
             public void done(ParseException e) {
-                // If successful add file to user and signUpInBackground
-                if(e != null) {
-                    e.printStackTrace();
-                    Log.i("POST-ACTIVITY", "something went wrong " + e);
-                    Toast.makeText(SignUpActivity.this, "errornsaving parse file", Toast.LENGTH_SHORT).show();
+                if (e == null) {
+                    // Hooray! Let them use the app now.
+                    goToHome();
+                } else {
+                    // Sign up didn't succeed. Look at the ParseException
+                    // to figure out what went wrong
+                    Toast.makeText(SignUpActivity.this, "ERROR", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
             }
         });
-       user.put("userProfilePic", photo);
-
-        try {
-            user.signUp();
-            goToHome();
-        } catch (ParseException e) {
-            e.printStackTrace();
-            Log.i("POST-ACTIVITY", "something went wrong " + e);
-            Toast.makeText(SignUpActivity.this, "error", Toast.LENGTH_SHORT).show();
-            return;
-        }
     }
 
     private void goToHome() {
@@ -126,57 +135,53 @@ public class SignUpActivity extends AppCompatActivity {
         finish();
     }
 
-    // Returns the File for a photo stored on disk given the fileName
-    public File getPhotoFileUri(String fileName) {
-        // Get safe storage directory for photos
-        // Use `getExternalFilesDir` on Context to access package-specific directories.
-        // This way, we don't need to request external read/write runtime permissions.
-        File mediaStorageDir = new File(SignUpActivity.this.getExternalFilesDir(Environment.DIRECTORY_PICTURES), APP_TAG);
 
-        // Create the storage directory if it does not exist
-        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
-            Log.d(APP_TAG, "failed to create directory");
-        }
-
-        // Return the file target for the photo based on filename
-        File file = new File(mediaStorageDir.getPath() + File.separator + fileName);
-
-        return file;
-    }
-
-    public void onLaunchCamera(View view) {
-        // create Intent to take a picture and return control to the calling application
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Create a File reference for future access
-        mPhotoFile = getPhotoFileUri(mPhotoFileName);
-
-        // wrap File object into a content provider
-        // required for API >= 24
-        // See https://guides.codepath.com/android/Sharing-Content-with-Intents#sharing-files-with-api-24-or-higher
-        Uri fileProvider = FileProvider.getUriForFile(SignUpActivity.this, "com.codepath.fileprovider2", mPhotoFile);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
+    // Trigger gallery selection for a photo
+    public void onPickPhoto(View view) {
+        // Create intent for picking a photo from the gallery
+        Intent intent = new Intent(Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
         // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
         // So as long as the result is not null, it's safe to use the intent.
-        if (intent.resolveActivity(SignUpActivity.this.getPackageManager()) != null) {
-            // Start the image capture intent to take photo
-            startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            // Bring up gallery to select a photo
+            startActivityForResult(intent, PICK_PHOTO_CODE);
         }
+    }
+
+    public Bitmap loadFromUri(Uri photoUri) {
+        Bitmap image = null;
+        try {
+            // check version of Android on device
+            if(Build.VERSION.SDK_INT > 27){
+                // on newer versions of Android, use the new decodeBitmap method
+                ImageDecoder.Source source = ImageDecoder.createSource(this.getContentResolver(), photoUri);
+                image = ImageDecoder.decodeBitmap(source);
+            } else {
+                // support older versions of Android by using getBitmap
+                image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoUri);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return image;
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                // by this point we have the camera photo on disk
-                Bitmap takenImage = BitmapFactory.decodeFile(mPhotoFile.getAbsolutePath());
-                // RESIZE BITMAP, see section below
-                // Load the taken image into a preview
-                mSetUserPfp.setImageBitmap(takenImage);
-            } else { // Result was a failure
-                Toast.makeText(SignUpActivity.this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
-            }
+        if ((data != null) && requestCode == PICK_PHOTO_CODE) {
+            Uri photoUri = data.getData();
+
+            mPhotoFile = new File(photoUri.getPath());
+            // Load the image located at photoUri into selectedImage
+            Bitmap selectedImage = loadFromUri(photoUri);
+
+            // Load the selected image into a preview
+            mSetUserPfp.setImageBitmap(selectedImage);
+            mSetUserPfp.setTag(selectedImage.describeContents());
         }
     }
+
 }

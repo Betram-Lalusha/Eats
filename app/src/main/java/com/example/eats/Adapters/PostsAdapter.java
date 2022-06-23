@@ -83,7 +83,9 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
             mCaption.setText(post.getCaption());
             mOwnerName.setText(post.getParseUser().getUsername());
             Glide.with(mContext).load(post.getMedia().getUrl()).into(mPostImage);
-            Glide.with(mContext).load(post.getParseUser().getParseFile("userProfilePic").getUrl()).into(mOwnerPfp);
+            if(post.getParseUser().getParseFile("userProfilePic") != null) {
+                Glide.with(mContext).load(post.getParseUser().getParseFile("userProfilePic").getUrl()).into(mOwnerPfp);
+            } else mOwnerPfp.setImageResource(R.drawable.default_image);
 
             //event listener for tap on image
             mPostImage.setOnClickListener(new View.OnClickListener() {

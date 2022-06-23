@@ -41,7 +41,7 @@ public class UserProfileFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @NonNull Bundle savedInstanceState) {
         mLogOutButton = view.findViewById(R.id.logOutButton);
-
+        mLogOutButton.setText("Logout " + ParseUser.getCurrentUser().getUsername());
         mLogOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
