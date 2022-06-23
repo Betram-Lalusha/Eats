@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.example.eats.Adapters.PostsAdapter;
 import com.example.eats.EndlessRecyclerViewScrollListener;
@@ -32,13 +33,13 @@ import java.util.PriorityQueue;
 
 public class TimelineFragment extends Fragment {
 
-    List<Integer> huh;
     List<Post> mPosts;
     Double mUserLatitude;
     Double mUserLongitude;
     PriorityQueue<Point> mQu;
     RecyclerView mRecyclerView;
     PostsAdapter mPostsAdapter;
+    ProgressBar mPb;
     HashSet<Point> mAlreadyAdded;
     EndlessRecyclerViewScrollListener mEndlessRecyclerViewScrollListener;
     public TimelineFragment() {
@@ -65,6 +66,7 @@ public class TimelineFragment extends Fragment {
         mPosts = new ArrayList<>();
         mQu = new PriorityQueue<>();
         mAlreadyAdded = new HashSet<>();
+        mPb = (ProgressBar) view.findViewById(R.id.pbLoading);
         mRecyclerView = view.findViewById(R.id.recyclerView);
         mPostsAdapter = new PostsAdapter(getContext(), mPosts);
 
@@ -88,6 +90,8 @@ public class TimelineFragment extends Fragment {
     }
 
     private void loadNextPosts() {
+        mPb.setVisibility(ProgressBar.VISIBLE);
+
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
         query.whereLessThan("createdAt", mPosts.get(mPosts.size() - 1).getDate());
         query.setLimit(4);
@@ -104,9 +108,14 @@ public class TimelineFragment extends Fragment {
             }
 
         });
+
+        //remove progress bar
+        mPb.setVisibility(ProgressBar.INVISIBLE);
     }
 
     private void queryPosts() {
+        //show progress bar
+        mPb.setVisibility(ProgressBar.VISIBLE);
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
         query.setLimit(4);
         query.include(Post.USER);
@@ -125,6 +134,9 @@ public class TimelineFragment extends Fragment {
                 addAllPoints();
             }
         });
+
+        //remove progress bar
+        mPb.setVisibility(ProgressBar.INVISIBLE);
     }
 
     private void addAllPoints() {

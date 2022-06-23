@@ -62,7 +62,7 @@ public class HomeActivity extends AppCompatActivity {
                         fragment.setArguments(bundle);
                         break;
                     case R.id.food_nearyby:
-                        fragment = new TimelineFragment();
+                        fragment = new UserProfileFragment();
                         break;
                     case R.id.postButton:
                         fragment = new PostFragment();
