@@ -17,6 +17,8 @@ import com.example.eats.EndlessRecyclerViewScrollListener;
 import com.example.eats.Helpers.Point;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -30,7 +32,10 @@ import java.util.PriorityQueue;
 
 public class TimelineFragment extends Fragment {
 
+    List<Integer> huh;
     List<Post> mPosts;
+    Double mUserLatitude;
+    Double mUserLongitude;
     PriorityQueue<Point> mQu;
     RecyclerView mRecyclerView;
     PostsAdapter mPostsAdapter;
@@ -44,6 +49,11 @@ public class TimelineFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        //get user coordinates passed from Home Activity
+        mUserLatitude = getArguments().getDouble("userLat", 37.4219862);
+        mUserLongitude = getArguments().getDouble("userLong" ,-122.0842771);
+        System.out.println("my lats " + mUserLatitude);
+        System.out.println("my longs " + mUserLongitude);
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_timeline, container, false);
     }
@@ -89,7 +99,7 @@ public class TimelineFragment extends Fragment {
                 if(e != null) {
                     Log.i("HOME", "something went wrong obtaining posts " + e);
                 }
-                for(Post post: posts) mQu.add(new Point(post, 37.4219862, -122.0842771));
+                for(Post post: posts) mQu.add(new Point(post, mUserLatitude, mUserLongitude));
                 addAllPoints();
             }
 

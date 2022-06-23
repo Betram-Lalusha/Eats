@@ -35,8 +35,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class HomeActivity extends AppCompatActivity {
 
     int PERMISSION_ID = 44;
-    FusedLocationProviderClient mFusedLocationClient;
+    Location mLastLocation;
     BottomNavigationView mBottomNavigationView;
+    FusedLocationProviderClient mFusedLocationClient;
     final FragmentManager mFragmentManager = getSupportFragmentManager();
 
     @Override
@@ -54,7 +55,11 @@ public class HomeActivity extends AppCompatActivity {
                 Fragment fragment;
                 switch (item.getItemId()) {
                     case R.id.homeButton:
+                        Bundle bundle = new Bundle();
+                        bundle.putDouble("userLat", mLastLocation == null ? 37.4219862: mLastLocation.getLatitude());
+                        bundle.putDouble("userLong",mLastLocation == null ? -122.0842771 : mLastLocation.getLongitude());
                         fragment = new TimelineFragment();
+                        fragment.setArguments(bundle);
                         break;
                     case R.id.food_nearyby:
                         fragment = new TimelineFragment();
@@ -98,6 +103,7 @@ public class HomeActivity extends AppCompatActivity {
                         if (location == null) {
                             requestNewLocationData();
                         } else {
+                            mLastLocation = location;
                             System.out.println("latitude " + location.getLatitude() + "" );
                             System.out.println("longitude " + location.getLongitude() + "" );
                         }
@@ -136,7 +142,7 @@ public class HomeActivity extends AppCompatActivity {
 
         @Override
         public void onLocationResult(LocationResult locationResult) {
-            Location mLastLocation = locationResult.getLastLocation();
+            mLastLocation = locationResult.getLastLocation();
             System.out.println("latitude " + mLastLocation .getLatitude() + "" );
             System.out.println("longitude " + mLastLocation .getLongitude() + "" );;
         }
