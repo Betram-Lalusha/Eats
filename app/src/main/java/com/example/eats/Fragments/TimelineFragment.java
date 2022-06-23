@@ -22,6 +22,7 @@ import com.parse.ParseException;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -33,6 +34,7 @@ public class TimelineFragment extends Fragment {
     PriorityQueue<Point> mQu;
     RecyclerView mRecyclerView;
     PostsAdapter mPostsAdapter;
+    HashSet<Point> mAlreadyAdded;
     EndlessRecyclerViewScrollListener mEndlessRecyclerViewScrollListener;
     public TimelineFragment() {
         // Required empty public constructor
@@ -52,6 +54,7 @@ public class TimelineFragment extends Fragment {
 
         mPosts = new ArrayList<>();
         mQu = new PriorityQueue<>();
+        mAlreadyAdded = new HashSet<>();
         mRecyclerView = view.findViewById(R.id.recyclerView);
         mPostsAdapter = new PostsAdapter(getContext(), mPosts);
 
@@ -77,6 +80,7 @@ public class TimelineFragment extends Fragment {
     private void loadNextPosts() {
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
         query.whereLessThan("createdAt", mPosts.get(mPosts.size() - 1).getDate());
+        query.setLimit(4);
         query.include(Post.USER);
         query.addDescendingOrder("createdAt");
         query.findInBackground(new FindCallback<Post>() {
@@ -85,8 +89,8 @@ public class TimelineFragment extends Fragment {
                 if(e != null) {
                     Log.i("HOME", "something went wrong obtaining posts " + e);
                 }
-                mPosts.addAll(posts);
-                mPostsAdapter.notifyDataSetChanged();
+                for(Post post: posts) mQu.add(new Point(post, 37.4219862, -122.0842771));
+                addAllPoints();
             }
 
         });
@@ -94,7 +98,7 @@ public class TimelineFragment extends Fragment {
 
     private void queryPosts() {
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
-        query.setLimit(6);
+        query.setLimit(4);
         query.include(Post.USER);
         query.addDescendingOrder("createdAt");
 
@@ -109,15 +113,15 @@ public class TimelineFragment extends Fragment {
                 for(Post post: posts) mQu.add(new Point(post, 37.4219862, -122.0842771));
 
                 addAllPoints();
-                //for(Post post: posts)  mPosts.add(mQu.poll().mPost);
-                //mPosts.addAll(posts);
             }
         });
     }
 
     private void addAllPoints() {
         List<Point> points = new LinkedList<>(mQu);
-        for(Point point: points) mPosts.add(point.mPost);
+        for(Point point: points) {
+            if(mAlreadyAdded.add(point)) mPosts.add(point.mPost);
+        }
         mPostsAdapter.notifyDataSetChanged();
     }
 }

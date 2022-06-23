@@ -3,6 +3,7 @@ package com.example.eats.Helpers;
 import com.example.eats.Models.Post;
 
 import java.util.Date;
+import java.util.Objects;
 
 //class represents a single coordinate point based on latitude and longitude
 public class Point implements Comparable<Point> {
@@ -49,11 +50,24 @@ public class Point implements Comparable<Point> {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Point point = (Point) o;
+        return Double.compare(point.mLatitude, mLatitude) == 0 && Double.compare(point.mLongitude, mLongitude) == 0 && Double.compare(point.mDistance, mDistance) == 0 && Double.compare(point.mUserLatitude, mUserLatitude) == 0 && Double.compare(point.mUserLongitude, mUserLongitude) == 0 && mPost.equals(point.mPost);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(mPost, mLatitude, mLongitude, mDistance, mUserLatitude, mUserLongitude);
+    }
+
     /*
-      Used by priority queue to order points
-      Points with with distance closest to user have higher priority. If Points have the same distance from
-      User, Post with earlier creation date have higher priority
-     */
+          Used by priority queue to order points
+          Points with with distance closest to user have higher priority. If Points have the same distance from
+          User, Post with earlier creation date have higher priority
+         */
     public int compareTo(Point other) {
         int diff = (int)(this.mDistance - other.mDistance);
         return diff;

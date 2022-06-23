@@ -94,4 +94,9 @@ public class Post extends ParseObject {
     }
 
     public Date getDate() {return  getCreatedAt();}
+
+    @Override
+    public  String toString() {
+        return this.getParseUser().getUsername() + " " + this.getCaption();
+    }
 }
