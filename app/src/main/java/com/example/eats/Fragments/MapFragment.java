@@ -30,9 +30,14 @@ import java.util.PriorityQueue;
 
 public class MapFragment extends Fragment {
 
+    Double mUserLatitude;
+    Double mUserLongitude;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        mUserLatitude = getArguments().getDouble("userLat", 37.4219862);
+        mUserLongitude = getArguments().getDouble("userLong" ,-122.0842771);
         // Initialize view
         View view=inflater.inflate(R.layout.fragment_map, container, false);
 
@@ -44,25 +49,14 @@ public class MapFragment extends Fragment {
         supportMapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
-                // When map is loaded
-                googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                    @Override
-                    public void onMapClick(LatLng latLng) {
-                        // When clicked on map
-                        // Initialize marker options
-                        MarkerOptions markerOptions=new MarkerOptions();
-                        // Set position of marker
-                        markerOptions.position(latLng);
-                        // Set title of marker
-                        markerOptions.title(latLng.latitude+" : "+latLng.longitude);
-                        // Remove all marker
-                        googleMap.clear();
-                        // Animating to zoom the marker
-                        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
-                        // Add marker on map
-                        googleMap.addMarker(markerOptions);
-                    }
-                });
+                // Add a marker at current signed in user location,
+                // and move the map's camera to the same location.
+                LatLng userLoc = new LatLng(mUserLatitude, mUserLongitude);
+                googleMap.addMarker(new MarkerOptions()
+                        .position(userLoc)
+                        .title("Marker in Sydney"));
+                googleMap.moveCamera(CameraUpdateFactory.newLatLng(userLoc));
+                googleMap.setMinZoomPreference(15);
             }
         });
         // Return view
@@ -73,5 +67,6 @@ public class MapFragment extends Fragment {
     public void onViewCreated(View view, @NonNull Bundle savedInstanceState) {
 
     }
+
 }
 

@@ -54,16 +54,17 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 Fragment fragment;
+                Bundle bundle = new Bundle();
+                bundle.putDouble("userLat", mLastLocation == null ? 37.4219862: mLastLocation.getLatitude());
+                bundle.putDouble("userLong",mLastLocation == null ? -122.0842771 : mLastLocation.getLongitude());
                 switch (item.getItemId()) {
                     case R.id.homeButton:
-                        Bundle bundle = new Bundle();
-                        bundle.putDouble("userLat", mLastLocation == null ? 37.4219862: mLastLocation.getLatitude());
-                        bundle.putDouble("userLong",mLastLocation == null ? -122.0842771 : mLastLocation.getLongitude());
                         fragment = new TimelineFragment();
                         fragment.setArguments(bundle);
                         break;
                     case R.id.food_nearyby:
                         fragment = new MapFragment();
+                        fragment.setArguments(bundle);
                         break;
                     case R.id.postButton:
                         fragment = new PostFragment();
