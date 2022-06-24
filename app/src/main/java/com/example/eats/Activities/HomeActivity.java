@@ -19,6 +19,7 @@ import android.provider.Settings;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.example.eats.Fragments.MapFragment;
 import com.example.eats.Fragments.PostFragment;
 import com.example.eats.Fragments.TimelineFragment;
 import com.example.eats.Fragments.UserProfileFragment;
@@ -62,7 +63,7 @@ public class HomeActivity extends AppCompatActivity {
                         fragment.setArguments(bundle);
                         break;
                     case R.id.food_nearyby:
-                        fragment = new UserProfileFragment();
+                        fragment = new MapFragment();
                         break;
                     case R.id.postButton:
                         fragment = new PostFragment();

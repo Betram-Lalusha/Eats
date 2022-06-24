@@ -28,6 +28,10 @@ public class Point implements Comparable<Point> {
 
     /*
        Method calculates the distance between two given coordinates
+       //more details
+       //link
+       //failing cases
+       //scaling....will have to repeat
      */
     public  double distance(double pointLat, double pointLon, double userLat, double userLon,String unit) {
         if ((pointLat == userLat) && (pointLon == userLon)) {

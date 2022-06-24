@@ -129,6 +129,8 @@ public class TimelineFragment extends Fragment {
                     return;
                 }
 
+                //scaling
+                //user location privacy
                 for(Post post: posts) mQu.add(new Point(post, 37.4219862, -122.0842771));
 
                 addAllPoints();
