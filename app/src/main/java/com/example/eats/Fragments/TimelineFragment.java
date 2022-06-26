@@ -33,13 +33,13 @@ import java.util.PriorityQueue;
 
 public class TimelineFragment extends Fragment {
 
-    ProgressBar mPb;
     List<Post> mPosts;
     Double mUserLatitude;
     Double mUserLongitude;
     PriorityQueue<Point> mQu;
     RecyclerView mRecyclerView;
     PostsAdapter mPostsAdapter;
+    ProgressBar mPb;
     HashSet<Point> mAlreadyAdded;
     EndlessRecyclerViewScrollListener mEndlessRecyclerViewScrollListener;
     public TimelineFragment() {
@@ -105,6 +105,7 @@ public class TimelineFragment extends Fragment {
                 }
                 for(Post post: posts) mQu.add(new Point(post, mUserLatitude, mUserLongitude));
                 addAllPoints();
+                Log.i("QUERY", "success querying posts23 " + mPosts.size());
             }
 
         });
@@ -125,12 +126,13 @@ public class TimelineFragment extends Fragment {
             @Override
             public void done(List<Post> posts, ParseException e) {
                 if(e != null) {
-                    Log.i("QUERY", "something went wrong querying posts " + e);
+                    Log.i("QUERY", "something went wrong querying posts " + e.toString());
+                    System.out.println("here bug");
+                    e.printStackTrace();
                     return;
                 }
 
                 //scaling
-                //user location privacy
                 for(Post post: posts) mQu.add(new Point(post, 37.4219862, -122.0842771));
 
                 addAllPoints();
