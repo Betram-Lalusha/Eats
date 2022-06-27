@@ -102,17 +102,10 @@ public class MapFragment extends Fragment {
             @Override
             public void onMapReady(GoogleMap googleMap) {
 
-                //GET POSTS and add markers
-                queryPosts(googleMap);
-
-                // Add a marker at current signed in user location,
-                // and move the map's camera to the same location.
+                //user's  location.
                 LatLng userLoc = new LatLng(mUserLatitude, mUserLongitude);
-                googleMap.addMarker(new MarkerOptions()
-                        .position(userLoc)
-                        .title("me")
-                        .zIndex(1.0f));
-
+                //GET POSTS and add markers
+                queryPosts(googleMap, userLoc);
                 //listen to click events on markers
                 googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                     @Override
@@ -126,6 +119,8 @@ public class MapFragment extends Fragment {
                         return false;
                     }
                 });
+
+                //move the map's camera to the user's  location.
                 googleMap.moveCamera(CameraUpdateFactory.newLatLng(userLoc));
                 googleMap.setMinZoomPreference(15);
 
@@ -162,7 +157,7 @@ public class MapFragment extends Fragment {
     //repeated code....will need a way to avoid this
     //currently bad for scaling because it will load all posts in db
     //method should look for posts closets to where map is centered
-    private void queryPosts(GoogleMap googleMap) {
+    private void queryPosts(GoogleMap googleMap, LatLng userLoc) {
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
         query.include(Post.USER);
         query.addDescendingOrder("createdAt");
@@ -177,7 +172,7 @@ public class MapFragment extends Fragment {
                 }
                 Log.i("QUERY", "success querying posts " + posts.size());
                 mPosts.addAll(posts);
-                addMarkers(googleMap, mPosts);
+                addMarkers(googleMap, mPosts, userLoc);
                 Log.i("QUERY", "success querying posts2 " + mPosts.size());
             }
         });
@@ -191,9 +186,17 @@ public class MapFragment extends Fragment {
      * @param googleMap: The map to add markers to
      * @param posts: the list of posts whose latitude and longitude coordinates will be used to position markers
      */
-    private void addMarkers(GoogleMap googleMap, List<Post> posts) {
+    private void addMarkers(GoogleMap googleMap, List<Post> posts, LatLng userLoc) {
+        // Add a marker at current signed in user location,
+        Bitmap markerIcon = getMarkerBitmapFromView(posts.get(0), true);
+        googleMap.addMarker(new MarkerOptions()
+                .position(userLoc)
+                .title("me")
+                .zIndex(1.0f)
+                .icon(BitmapDescriptorFactory.fromBitmap(markerIcon)));
+
         for(Post post: posts) {
-            Bitmap markerIcon = getMarkerBitmapFromView(post);
+            markerIcon = getMarkerBitmapFromView(post, false);
             LatLng position = new LatLng(post.getLatitude(), post.getLongiitude());
             Marker marker = googleMap.addMarker(new MarkerOptions()
                     .title("")
@@ -206,20 +209,31 @@ public class MapFragment extends Fragment {
     }
 
     /**
-     *
-     * @param post
-     * @return
+     * Method turns a given xml layout file into a bitmap
+     * @param post: The post whose image will be loaded into the imageview of the layout_xml file
+     * @return: A bit map representation of the given xml file
+     *  * Code adopted from: https://stackoverflow.com/questions/14811579/how-to-create-a-custom-shaped-bitmap-marker-with-android-map-api-v2
      */
-    private Bitmap getMarkerBitmapFromView(Post post) {
+    private Bitmap getMarkerBitmapFromView(Post post, Boolean isUserMarker) {
 
         View customMarkerView = ((LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.custom_marker, null);
-        ImageView markerImageView = (ImageView) customMarkerView.findViewById(R.id.markerImage);
-        //load user pfp into marker
-        Bitmap image = getBitMapFromLink(post.getParseUser().getParseFile("userProfilePic").getUrl());
-        markerImageView.setImageBitmap(image);
-        //set marker snippet
         TextView markerSnippet = (TextView)  customMarkerView.findViewById(R.id.markerSnippet);
-        markerSnippet.setText(post.getCaption());
+        ImageView markerImageView = (ImageView) customMarkerView.findViewById(R.id.markerImage);
+
+        if(isUserMarker) {
+            //load user pfp into marker
+            Bitmap image = getBitMapFromLink(ParseUser.getCurrentUser().getParseFile("userProfilePic").getUrl());
+            markerImageView.setImageBitmap(image);
+            //set marker snippet
+            markerSnippet.setVisibility(View.GONE);
+        } else {
+            //load user pfp into marker
+            Bitmap image = getBitMapFromLink(post.getParseUser().getParseFile("userProfilePic").getUrl());
+            markerImageView.setImageBitmap(image);
+            //set marker snippet
+            markerSnippet.setText(post.getCaption());
+        }
+
         customMarkerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         customMarkerView.layout(0, 0, customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight());
         customMarkerView.buildDrawingCache();
