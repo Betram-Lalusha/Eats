@@ -1,6 +1,7 @@
 package com.example.eats.Fragments;
 
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import com.example.eats.Activities.DetailActivity;
 import com.example.eats.Adapters.PostsAdapter;
 import com.example.eats.EndlessRecyclerViewScrollListener;
 import com.example.eats.Helpers.Point;
@@ -37,6 +39,8 @@ import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import org.parceler.Parcels;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -52,6 +56,7 @@ public class MapFragment extends Fragment {
     List<Post> mPosts;
     Double mUserLatitude;
     Double mUserLongitude;
+    public  List<Marker> mMarkers;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -73,6 +78,7 @@ public class MapFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @NonNull Bundle savedInstanceState) {
         mPosts = new LinkedList<Post>();
+        mMarkers = new LinkedList<Marker>();
         mUserLatitude = getArguments().getDouble("userLat", 37.4219862);
         mUserLongitude = getArguments().getDouble("userLong" ,-122.0842771);
 
@@ -99,6 +105,19 @@ public class MapFragment extends Fragment {
                         .title("me")
                         .zIndex(1.0f));
 
+                //listen to click events on markers
+                googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                    @Override
+                    public boolean onMarkerClick(@NonNull Marker marker) {
+                        //if the marker is the current signed in user, do nothing
+                        if(marker.getTitle().equals("me")) return false;
+
+                        Intent intent = new Intent(getContext(), DetailActivity.class);
+                        intent.putExtra("post", Parcels.wrap(marker.getTag()));
+                        startActivity(intent);
+                        return false;
+                    }
+                });
                 googleMap.moveCamera(CameraUpdateFactory.newLatLng(userLoc));
                 googleMap.setMinZoomPreference(15);
 
@@ -165,11 +184,16 @@ public class MapFragment extends Fragment {
     private void addMarkers(GoogleMap googleMap, List<Post> posts) {
         for(Post post: posts) {
            LatLng position = new LatLng(post.getLatitude(), post.getLongiitude());
-           googleMap.addMarker(new MarkerOptions()
+           Marker marker = googleMap.addMarker(new MarkerOptions()
                    .title(post.getParseUser().getUsername())
                    .position(position)
                    .snippet(post.getCaption()));
+
+           //include post object in marker
+           marker.setTag(post);
         }
+
+        //[post ->marker]
     }
 
 }
