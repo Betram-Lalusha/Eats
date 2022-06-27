@@ -67,7 +67,7 @@
 * Search -> text field to enter query and button to trigger search
 
 ## Wireframes
-![](https://i.imgur.com/7KRiOWJ.jpg)
+![](eatsScreen.png)
 
 ### [BONUS] Digital Wireframes & Mockups
 
