@@ -56,32 +56,25 @@ public class MapFragment extends Fragment {
     List<Post> mPosts;
     Double mUserLatitude;
     Double mUserLongitude;
-    public  List<Marker> mMarkers;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        return inflater.inflate(R.layout.fragment_map, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, @NonNull Bundle savedInstanceState) {
+        mPosts = new LinkedList<Post>();
+        mUserLatitude = getArguments().getDouble("userLat", 37.4219862);
+        mUserLongitude = getArguments().getDouble("userLong" ,-122.0842771);
 
         //handle exception thrown by getBitMapFromLink
         if (android.os.Build.VERSION.SDK_INT > 9) {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
-
-        // Initialize view
-        View view=inflater.inflate(R.layout.fragment_map, container, false);
-
-        // Return view
-        return view;
-    }
-
-    @Override
-    public void onViewCreated(View view, @NonNull Bundle savedInstanceState) {
-        mPosts = new LinkedList<Post>();
-        mMarkers = new LinkedList<Marker>();
-        mUserLatitude = getArguments().getDouble("userLat", 37.4219862);
-        mUserLongitude = getArguments().getDouble("userLong" ,-122.0842771);
-
 
 
         // Initialize map fragment
@@ -177,7 +170,9 @@ public class MapFragment extends Fragment {
     }
 
     /**
-     * Adds markers to a given map positioned at the coordinates of the post object
+     * Adds markers to a given map positioned at the coordinates of the post object. It does this
+     * by looping through the posts list, creating a new marker from each post's coordinates, and then using
+     * the marker's setTag method to include the post object in the marker.
      * @param googleMap: The map to add markers to
      * @param posts: the list of posts whose latitude and longitude coordinates will be used to position markers
      */

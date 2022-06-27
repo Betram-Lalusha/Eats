@@ -55,8 +55,8 @@ public class HomeActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 Fragment fragment;
                 Bundle bundle = new Bundle();
-                bundle.putDouble("userLat", mLastLocation == null ? 37.4219862: mLastLocation.getLatitude());
-                bundle.putDouble("userLong",mLastLocation == null ? -122.0842771 : mLastLocation.getLongitude());
+                bundle.putDouble("userLat", mLastLocation == null ?  40.730610: mLastLocation.getLatitude());
+                bundle.putDouble("userLong",mLastLocation == null ? -73.935242 : mLastLocation.getLongitude());
                 switch (item.getItemId()) {
                     case R.id.homeButton:
                         fragment = new TimelineFragment();
