@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/drawable/customer_marker.xml" value="0.925" />
         <entry key="app/src/main/res/drawable/ic_baseline_person_pin_24.xml" value="0.525" />
         <entry key="app/src/main/res/layout/activity_detail.xml" value="0.28951367781155013" />
         <entry key="app/src/main/res/layout/activity_home.xml" value="0.1" />
@@ -11,6 +12,7 @@
         <entry key="app/src/main/res/layout/activity_maps.xml" value="0.9661458333333334" />
         <entry key="app/src/main/res/layout/activity_parse_application.xml" value="0.29257246376811596" />
         <entry key="app/src/main/res/layout/activity_sign_up.xml" value="0.5796875" />
+        <entry key="app/src/main/res/layout/custom_marker.xml" value="0.9661458333333334" />
         <entry key="app/src/main/res/layout/fragment_map.xml" value="0.41420118343195267" />
         <entry key="app/src/main/res/layout/fragment_post.xml" value="0.48777173913043476" />
         <entry key="app/src/main/res/layout/fragment_timeline.xml" value="0.1" />

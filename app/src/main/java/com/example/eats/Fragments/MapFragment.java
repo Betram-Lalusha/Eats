@@ -1,11 +1,19 @@
 package com.example.eats.Fragments;
 
 
+import static androidx.core.content.ContextCompat.getSystemService;
+
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,8 +24,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.eats.Activities.DetailActivity;
 import com.example.eats.Adapters.PostsAdapter;
 import com.example.eats.EndlessRecyclerViewScrollListener;
@@ -34,12 +45,14 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.ui.IconGenerator;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import org.parceler.Parcels;
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,6 +69,7 @@ public class MapFragment extends Fragment {
     List<Post> mPosts;
     Double mUserLatitude;
     Double mUserLongitude;
+    IconGenerator mIconGenerator;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -67,6 +81,7 @@ public class MapFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @NonNull Bundle savedInstanceState) {
         mPosts = new LinkedList<Post>();
+        mIconGenerator = new IconGenerator(getContext());
         mUserLatitude = getArguments().getDouble("userLat", 37.4219862);
         mUserLongitude = getArguments().getDouble("userLong" ,-122.0842771);
 
@@ -178,17 +193,45 @@ public class MapFragment extends Fragment {
      */
     private void addMarkers(GoogleMap googleMap, List<Post> posts) {
         for(Post post: posts) {
-           LatLng position = new LatLng(post.getLatitude(), post.getLongiitude());
-           Marker marker = googleMap.addMarker(new MarkerOptions()
-                   .title(post.getParseUser().getUsername())
-                   .position(position)
-                   .snippet(post.getCaption()));
+            Bitmap markerIcon = getMarkerBitmapFromView(post);
+            LatLng position = new LatLng(post.getLatitude(), post.getLongiitude());
+            Marker marker = googleMap.addMarker(new MarkerOptions()
+                    .title("")
+                    .position(position)
+                    .icon(BitmapDescriptorFactory.fromBitmap(markerIcon)));
 
-           //include post object in marker
-           marker.setTag(post);
+            //include post object in marker
+            marker.setTag(post);
         }
+    }
 
-        //[post ->marker]
+    /**
+     *
+     * @param post
+     * @return
+     */
+    private Bitmap getMarkerBitmapFromView(Post post) {
+
+        View customMarkerView = ((LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.custom_marker, null);
+        ImageView markerImageView = (ImageView) customMarkerView.findViewById(R.id.markerImage);
+        //load user pfp into marker
+        Bitmap image = getBitMapFromLink(post.getParseUser().getParseFile("userProfilePic").getUrl());
+        markerImageView.setImageBitmap(image);
+        //set marker snippet
+        TextView markerSnippet = (TextView)  customMarkerView.findViewById(R.id.markerSnippet);
+        markerSnippet.setText(post.getCaption());
+        customMarkerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        customMarkerView.layout(0, 0, customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight());
+        customMarkerView.buildDrawingCache();
+        Bitmap returnedBitmap = Bitmap.createBitmap(customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight(),
+                Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(returnedBitmap);
+        canvas.drawColor(Color.WHITE, PorterDuff.Mode.SRC_IN);
+        Drawable drawable = customMarkerView.getBackground();
+        if (drawable != null)
+            drawable.draw(canvas);
+        customMarkerView.draw(canvas);
+        return returnedBitmap;
     }
 
 }
