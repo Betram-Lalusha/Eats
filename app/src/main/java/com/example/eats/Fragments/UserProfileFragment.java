@@ -78,22 +78,23 @@ public class UserProfileFragment extends Fragment {
         mUserProfilePic = view.findViewById(R.id.userProfilePic);
         mUserProfileAdapter = new UserProfileAdapter(getContext(),0, mUserPosts);
 
-        mLogOutButton.setOnClickListener(new View.OnClickListener() {
+        //press profile picture to set new profile picture
+        mUserProfilePic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                onPickPhoto(v);
+            }
+        });
+
+        //long press user profile picture to log out
+        mUserProfilePic.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
                 ParseUser.logOut();
                 ParseUser currentUser = ParseUser.getCurrentUser(); // this will now be null
                 Intent intent = new Intent(getContext(), LoginActivity.class);
                 startActivity(intent);
                 getActivity().finish();
-            }
-        });
-
-        //long press user profile picture to change it
-        mUserProfilePic.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                onPickPhoto(v);
                 return false;
             }
         });
