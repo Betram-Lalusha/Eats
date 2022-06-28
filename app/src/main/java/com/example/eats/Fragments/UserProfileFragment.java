@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,8 +32,10 @@ import com.example.eats.R;
 import com.parse.FindCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,6 +53,7 @@ public class UserProfileFragment extends Fragment {
     List<Post> mUserPosts;
     ParseUser mCurrentUser;
     private File mPhotoFile;
+    ProgressBar mProgressBar;
     ImageView mUserProfilePic;
     UserProfileAdapter mUserProfileAdapter;
     public String mPhotoFileName = "photo.jpg";
@@ -69,6 +73,7 @@ public class UserProfileFragment extends Fragment {
         mCurrentUser = ParseUser.getCurrentUser();
         mUserName = view.findViewById(R.id.username);
         mGridView = view.findViewById(R.id.gridView);
+        mProgressBar = view.findViewById(R.id.progressBar);
         mLogOutButton = view.findViewById(R.id.logOutButton);
         mUserProfilePic = view.findViewById(R.id.userProfilePic);
         mUserProfileAdapter = new UserProfileAdapter(getContext(),0, mUserPosts);
@@ -88,7 +93,6 @@ public class UserProfileFragment extends Fragment {
         mUserProfilePic.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                Toast.makeText(getContext(), "LONG PRESSED!",Toast.LENGTH_SHORT).show();
                 onPickPhoto(v);
                 return false;
             }
@@ -116,6 +120,7 @@ public class UserProfileFragment extends Fragment {
             public void done(List<Post> posts, ParseException e) {
                 if(e != null) {
                     Log.i("HOME", "something went wrong obtaining posts " + e);
+                    return;
                 }
 
                 // save received posts to list and notify adapter of new data
@@ -170,7 +175,28 @@ public class UserProfileFragment extends Fragment {
 
             // Load the selected image into a preview
             mUserProfilePic.setImageBitmap(selectedImage);
+            saveNewProfilePic();
         }
+    }
+
+    private void saveNewProfilePic() {
+        mProgressBar.setVisibility(View.VISIBLE);
+        mCurrentUser.put("userProfilePic", new ParseFile(mPhotoFile));
+
+        mCurrentUser.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if(e != null) {
+                    //Toast.makeText(getContext(), "Error saving picture. Try again",Toast.LENGTH_LONG).show();
+                    System.out.println("something went wrong saving picture. " + e);
+                    Log.i("HOME", "something went wrong saving picture. " + e);
+                    mProgressBar.setVisibility(View.INVISIBLE);
+                    return;
+                }
+                mProgressBar.setVisibility(View.INVISIBLE);
+
+            }
+        });
     }
 
 }

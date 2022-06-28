@@ -65,4 +65,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/userProfilePic" />
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="@+id/userProfilePic"
+        app:layout_constraintStart_toStartOf="@+id/userProfilePic"
+        app:layout_constraintTop_toTopOf="@+id/userProfilePic" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
