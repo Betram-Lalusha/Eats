@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -28,6 +29,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -35,6 +37,7 @@ public class UserProfileFragment extends Fragment {
 
     TextView mUserBio;
     TextView mUserName;
+    GridView mGridView;
     Button mLogOutButton;
     List<Post> mUserPosts;
     ParseUser mCurrentUser;
@@ -49,11 +52,14 @@ public class UserProfileFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @NonNull Bundle savedInstanceState) {
+        mUserPosts = new LinkedList<Post>();
         mUserBio = view.findViewById(R.id.bio);
         mCurrentUser = ParseUser.getCurrentUser();
         mUserName = view.findViewById(R.id.username);
+        mGridView = view.findViewById(R.id.gridView);
         mLogOutButton = view.findViewById(R.id.logOutButton);
         mUserProfilePic = view.findViewById(R.id.userProfilePic);
+        mUserProfileAdapter = new UserProfileAdapter(getContext(),0, mUserPosts);
 
         mLogOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,6 +76,31 @@ public class UserProfileFragment extends Fragment {
         mUserBio.setText(mCurrentUser.getString("bio"));
         Glide.with(getContext()).load(mCurrentUser.getParseFile("userProfilePic").getUrl()).into(mUserProfilePic);
 
+        mGridView.setAdapter(mUserProfileAdapter);
+
+        //query for user posts
+        getUserPosts();
+
+    }
+
+    private void getUserPosts() {
+        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
+        query.include(Post.USER);
+        query.whereEqualTo(Post.USER, ParseUser.getCurrentUser());
+        query.addDescendingOrder("createdAt");
+        query.findInBackground(new FindCallback<Post>() {
+            @Override
+            public void done(List<Post> posts, ParseException e) {
+                if(e != null) {
+                    Log.i("HOME", "something went wrong obtaining posts " + e);
+                }
+
+                // save received posts to list and notify adapter of new data
+                mUserPosts.addAll(posts);
+                mUserProfileAdapter.notifyDataSetChanged();
+               // mScrollListener.resetState();
+            }
+        });
     }
 
 }
