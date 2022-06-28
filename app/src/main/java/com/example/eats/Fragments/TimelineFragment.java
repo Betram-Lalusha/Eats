@@ -33,13 +33,13 @@ import java.util.PriorityQueue;
 
 public class TimelineFragment extends Fragment {
 
+    ProgressBar mPb;
     List<Post> mPosts;
     Double mUserLatitude;
     Double mUserLongitude;
     PriorityQueue<Point> mQu;
     RecyclerView mRecyclerView;
     PostsAdapter mPostsAdapter;
-    ProgressBar mPb;
     HashSet<Point> mAlreadyAdded;
     EndlessRecyclerViewScrollListener mEndlessRecyclerViewScrollListener;
     public TimelineFragment() {

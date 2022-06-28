@@ -12,9 +12,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.eats.Activities.LoginActivity;
 import com.example.eats.Adapters.PostsAdapter;
+import com.example.eats.Adapters.UserProfileAdapter;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
 import com.parse.FindCallback;
@@ -29,8 +33,13 @@ import java.util.List;
 
 public class UserProfileFragment extends Fragment {
 
-
+    TextView mUserBio;
+    TextView mUserName;
     Button mLogOutButton;
+    List<Post> mUserPosts;
+    ParseUser mCurrentUser;
+    ImageView mUserProfilePic;
+    UserProfileAdapter mUserProfileAdapter;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -40,7 +49,12 @@ public class UserProfileFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @NonNull Bundle savedInstanceState) {
+        mUserBio = view.findViewById(R.id.bio);
+        mCurrentUser = ParseUser.getCurrentUser();
+        mUserName = view.findViewById(R.id.username);
         mLogOutButton = view.findViewById(R.id.logOutButton);
+        mUserProfilePic = view.findViewById(R.id.userProfilePic);
+
         mLogOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -52,6 +66,9 @@ public class UserProfileFragment extends Fragment {
             }
         });
 
+        mUserName.setText(mCurrentUser.getUsername());
+        mUserBio.setText(mCurrentUser.getString("bio"));
+        Glide.with(getContext()).load(mCurrentUser.getParseFile("userProfilePic").getUrl()).into(mUserProfilePic);
 
     }
 
