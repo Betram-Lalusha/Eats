@@ -68,6 +68,7 @@ public class HomeActivity extends AppCompatActivity {
                         break;
                     case R.id.postButton:
                         fragment = new PostFragment();
+                        fragment.setArguments(bundle);
                         break;
                     case R.id.userProfile:
                         fragment = new UserProfileFragment();

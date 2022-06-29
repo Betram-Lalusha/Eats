@@ -55,10 +55,21 @@ public class Post extends ParseObject {
     }
 
     public Double getLatitude() {
-        return (Double) getNumber(LATITUDE);
+        Number lat = getNumber(LATITUDE);
+        System.out.println("lat " + lat);
+        return (Double) lat;
     }
+
+    public void setLatitude(Number latitude) {
+        put(LATITUDE, latitude);
+    }
+
     public Double getLongiitude() {
         return (Double) getNumber(LONGITUDE);
+    }
+
+    public void setLongitude(Number longitude) {
+        put(LONGITUDE, longitude);
     }
 //
 //

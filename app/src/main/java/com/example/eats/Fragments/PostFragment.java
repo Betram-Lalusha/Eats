@@ -42,6 +42,8 @@ public class PostFragment extends Fragment {
     Button mSubmitButton;
     ImageButton mAddImage;
     ImageView mAddedImage;
+    Double mUserLatitude;
+    Double mUserLongitude;
     private File mPhotoFile;
     TextView mSetDescription;
     public final String APP_TAG = "EATS";
@@ -68,6 +70,9 @@ public class PostFragment extends Fragment {
         mAddedImage = view.findViewById(R.id.addedImage);
         mSubmitButton = view.findViewById(R.id.submitButton);
         mSetDescription = view.findViewById(R.id.setDescription);
+        //get user coordinates passed from Home Activity
+        mUserLatitude = getArguments().getDouble("userLat", 37.4219862);
+        mUserLongitude = getArguments().getDouble("userLong" ,-122.0842771);
 
         mAddImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,8 +135,10 @@ public class PostFragment extends Fragment {
 
         post.setPrice(price);
         post.setUser(currentUser);
+        post.setLatitude(mUserLatitude);
         post.setCaption(enteredCaption);
         post.setCaption(enteredCaption);
+        post.setLongitude(mUserLongitude);
         post.setDetails(enteredDescription);
         post.setMedia(new ParseFile(photoFile));
         //post.setLocation(ParseUser.getCurrentUser().getParseObject("location"));
