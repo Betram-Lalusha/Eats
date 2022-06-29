@@ -20,6 +20,7 @@ public class LoginActivity extends AppCompatActivity {
     Button mLoginButton;
     TextView mUserPassword;
     TextView mCreateAccount;
+    TextView mErrorOccurred;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +30,7 @@ public class LoginActivity extends AppCompatActivity {
         if(ParseUser.getCurrentUser() != null) goToHome();
 
         mUserName = findViewById(R.id.userName);
+        mErrorOccurred = findViewById(R.id.error);
         mLoginButton = findViewById(R.id.signInBtn);
         mUserPassword = findViewById(R.id.password);
         mCreateAccount = findViewById(R.id.createAccount);
@@ -53,6 +55,23 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        //hide error message everytime user starts typing
+        mUserName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mErrorOccurred.setText("");
+                mErrorOccurred.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        mUserPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mErrorOccurred.setText("");
+                mErrorOccurred.setVisibility(View.INVISIBLE);
+            }
+        });
     }
 
     //check if user exits and if entered password matches user password in db
@@ -63,6 +82,8 @@ public class LoginActivity extends AppCompatActivity {
             public void done(ParseUser user, ParseException e) {
                 //TODO...show user errors tthat occured
                 if (e != null) {
+                    mErrorOccurred.setText(e.getMessage());
+                    mErrorOccurred.setVisibility(View.VISIBLE);
                     Log.i("LOGIN", "Login failed because " + e);
                     return;
                 }
