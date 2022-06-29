@@ -7,13 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".Fragments.UserProfileFragment">
 
-    <Button
-        android:id="@+id/logOutButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="logout"
-        android:visibility="gone" />
-
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/userProfilePic"
         android:layout_width="102dp"
@@ -46,24 +39,11 @@
         android:layout_marginBottom="20dp"
         android:gravity="center"
         android:text="TextView"
-        app:layout_constraintBottom_toTopOf="@+id/_dynamic"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.006"
         app:layout_constraintStart_toEndOf="@+id/userProfilePic"
         app:layout_constraintTop_toBottomOf="@+id/username"
         app:layout_constraintVertical_bias="0.625" />
-
-    <GridView
-        android:id="@+id/gridView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:horizontalSpacing="4dp"
-        android:numColumns="3"
-        android:verticalSpacing="4dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userProfilePic" />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -75,5 +55,14 @@
         app:layout_constraintEnd_toEndOf="@+id/userProfilePic"
         app:layout_constraintStart_toStartOf="@+id/userProfilePic"
         app:layout_constraintTop_toTopOf="@+id/userProfilePic" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/gridView"
+        android:layout_width="409dp"
+        android:layout_height="619dp"
+        android:layout_marginTop="36dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bio" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -53,8 +53,6 @@ public class TimelineFragment extends Fragment {
         //get user coordinates passed from Home Activity
         mUserLatitude = getArguments().getDouble("userLat", 37.4219862);
         mUserLongitude = getArguments().getDouble("userLong" ,-122.0842771);
-        System.out.println("my lats " + mUserLatitude);
-        System.out.println("my longs " + mUserLongitude);
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_timeline, container, false);
     }

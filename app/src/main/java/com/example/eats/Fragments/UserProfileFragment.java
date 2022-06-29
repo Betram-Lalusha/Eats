@@ -11,6 +11,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -30,6 +32,8 @@ import com.bumptech.glide.load.resource.file.FileDecoder;
 import com.example.eats.Activities.LoginActivity;
 import com.example.eats.Adapters.PostsAdapter;
 import com.example.eats.Adapters.UserProfileAdapter;
+import com.example.eats.EndlessRecyclerViewScrollListener;
+import com.example.eats.Helpers.Point;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
 import com.parse.FindCallback;
@@ -54,10 +58,9 @@ public class UserProfileFragment extends Fragment {
 
     TextView mUserBio;
     TextView mUserName;
-    GridView mGridView;
-    Button mLogOutButton;
     List<Post> mUserPosts;
     ParseUser mCurrentUser;
+    RecyclerView mGridView;
     private File mPhotoFile;
     ProgressBar mProgressBar;
     ImageView mUserProfilePic;
@@ -66,6 +69,8 @@ public class UserProfileFragment extends Fragment {
     // PICK_PHOTO_CODE is a constant integer
     public final static int PICK_PHOTO_CODE = 1046;
     public final String APP_TAG = "USER-FRAGMENT";
+    EndlessRecyclerViewScrollListener mEndlessRecyclerViewScrollListener;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -81,9 +86,8 @@ public class UserProfileFragment extends Fragment {
         mUserName = view.findViewById(R.id.username);
         mGridView = view.findViewById(R.id.gridView);
         mProgressBar = view.findViewById(R.id.progressBar);
-        mLogOutButton = view.findViewById(R.id.logOutButton);
         mUserProfilePic = view.findViewById(R.id.userProfilePic);
-        mUserProfileAdapter = new UserProfileAdapter(getContext(),0, mUserPosts);
+        mUserProfileAdapter = new UserProfileAdapter(getContext(), mUserPosts);
 
         //press profile picture to set new profile picture
         mUserProfilePic.setOnClickListener(new View.OnClickListener() {
@@ -106,15 +110,49 @@ public class UserProfileFragment extends Fragment {
             }
         });
 
+        //query for user posts
+        getUserPosts();
+
         mUserName.setText(mCurrentUser.getUsername());
         mUserBio.setText(mCurrentUser.getString("bio"));
         Glide.with(getContext()).load(mCurrentUser.getParseFile("userProfilePic").getUrl()).into(mUserProfilePic);
 
+        StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(3, LinearLayoutManager.VERTICAL);
+        mGridView.setLayoutManager(staggeredGridLayoutManager);
         mGridView.setAdapter(mUserProfileAdapter);
 
-        //query for user posts
-        getUserPosts();
+        mEndlessRecyclerViewScrollListener = new EndlessRecyclerViewScrollListener(staggeredGridLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                // Triggered only when new data needs to be appended to the list
+                loadNextPosts();
+            }
+        };
 
+    }
+
+    private void loadNextPosts() {
+        mProgressBar.setVisibility(View.VISIBLE);
+        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
+        query.setLimit(16);
+        query.include(Post.USER);
+        query.whereEqualTo(Post.USER, ParseUser.getCurrentUser());
+        query.whereLessThan("createdAt", mUserPosts.get(mUserPosts.size() - 1).getDate());
+        query.addDescendingOrder("createdAt");
+        query.findInBackground(new FindCallback<Post>() {
+            @Override
+            public void done(List<Post> posts, ParseException e) {
+                if(e != null) {
+                    Log.i("HOME", "something went wrong obtaining posts " + e);
+                }
+                mUserPosts.addAll(posts);
+                mUserProfileAdapter.notifyDataSetChanged();
+            }
+
+        });
+
+        //remove progress bar
+        mProgressBar.setVisibility(View.VISIBLE);
     }
 
     private void getUserPosts() {
