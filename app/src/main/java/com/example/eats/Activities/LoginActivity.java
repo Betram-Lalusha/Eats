@@ -33,6 +33,8 @@ public class LoginActivity extends AppCompatActivity {
         mUserPassword = findViewById(R.id.password);
         mCreateAccount = findViewById(R.id.createAccount);
 
+        getSupportActionBar().hide();
+
         mLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

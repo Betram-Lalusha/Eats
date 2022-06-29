@@ -15,18 +15,20 @@
         android:fontFamily="@font/alex_brush"
         android:gravity="center"
         android:text="Eats"
+        android:textColor="@color/black"
         android:textSize="34sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/userName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="241dp"
+        android:layout_height="55dp"
         android:layout_marginTop="72dp"
+        android:background="@drawable/edit_text_background"
         android:ems="10"
         android:gravity="center"
-        android:hint="userName"
+        android:hint="user name"
         android:inputType="textPersonName"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -35,9 +37,10 @@
 
     <EditText
         android:id="@+id/password"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="72dp"
+        android:layout_width="235dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/edit_text_background"
         android:ems="10"
         android:gravity="center"
         android:hint="password"
@@ -47,14 +50,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/userName" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/signInBtn"
         android:layout_width="114dp"
         android:layout_height="54dp"
         android:layout_marginTop="68dp"
-        android:text="sign In"
+        android:background="@drawable/sign_in_button"
         android:backgroundTint="#00FFFF"
-        android:background="@drawable/button_bck"
+        android:text="sign In"
+        android:textAllCaps="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/password" />
@@ -74,7 +78,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:layout_marginEnd="84dp"
+        android:layout_marginEnd="96dp"
         android:text="create account"
         android:textColor="#2196F3"
         android:textStyle="bold"
@@ -82,15 +86,83 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/signInBtn" />
 
-    <TextView
-        android:id="@+id/textView3"
+    <ImageButton
+        android:id="@+id/imageButton6"
+        android:layout_width="74dp"
+        android:layout_height="66dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="88dp"
+        android:backgroundTint="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/userName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/apples_575317" />
+
+    <ImageButton
+        android:id="@+id/imageButton7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="76dp"
+        android:layout_marginTop="36dp"
+        android:backgroundTint="@color/white"
+        app:layout_constraintEnd_toStartOf="@+id/eatsLogo"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/spare_ribs_575310" />
+
+    <ImageButton
+        android:id="@+id/imageButton9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="28dp"
+        android:backgroundTint="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/eatsLogo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.091"
+        app:layout_constraintStart_toEndOf="@+id/imageButton7"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/burgers_575655" />
+
+    <ImageButton
+        android:id="@+id/imageButton10"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
-        android:layout_marginTop="24dp"
-        android:text="|"
-        app:layout_constraintEnd_toStartOf="@+id/createAccount"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/textView"
-        app:layout_constraintTop_toBottomOf="@+id/signInBtn" />
+        android:layout_marginTop="44dp"
+        android:backgroundTint="@color/white"
+        app:layout_constraintStart_toEndOf="@+id/imageButton9"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/apples_575317" />
+
+    <ImageButton
+        android:id="@+id/imageButton11"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="52dp"
+        android:backgroundTint="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/userName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/eatsLogo"
+        app:layout_constraintTop_toTopOf="@+id/imageButton10"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/burgers_575655" />
+
+    <TextView
+        android:id="@+id/error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:text="error ocurred"
+        android:textColor="#F60B0B"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.461"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/password" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
