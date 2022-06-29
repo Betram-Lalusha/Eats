@@ -127,7 +127,6 @@ public class TimelineFragment extends Fragment {
             public void done(List<Post> posts, ParseException e) {
                 if(e != null) {
                     Log.i("QUERY", "something went wrong querying posts " + e.toString());
-                    System.out.println("here bug");
                     e.printStackTrace();
                     return;
                 }
