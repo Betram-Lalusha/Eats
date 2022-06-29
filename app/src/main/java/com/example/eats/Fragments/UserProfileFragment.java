@@ -64,6 +64,7 @@ public class UserProfileFragment extends Fragment {
     private File mPhotoFile;
     ProgressBar mProgressBar;
     ImageView mUserProfilePic;
+    ProgressBar mRvProgressBar;
     UserProfileAdapter mUserProfileAdapter;
     public String mPhotoFileName = "photo.jpg";
     // PICK_PHOTO_CODE is a constant integer
@@ -86,6 +87,7 @@ public class UserProfileFragment extends Fragment {
         mUserName = view.findViewById(R.id.username);
         mGridView = view.findViewById(R.id.gridView);
         mProgressBar = view.findViewById(R.id.progressBar);
+        mRvProgressBar = view.findViewById(R.id.rvProgressBar);
         mUserProfilePic = view.findViewById(R.id.userProfilePic);
         mUserProfileAdapter = new UserProfileAdapter(getContext(), mUserPosts);
 
@@ -132,7 +134,7 @@ public class UserProfileFragment extends Fragment {
     }
 
     private void loadNextPosts() {
-        mProgressBar.setVisibility(View.VISIBLE);
+        mRvProgressBar.setVisibility(View.VISIBLE);
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
         query.setLimit(16);
         query.include(Post.USER);
@@ -152,10 +154,11 @@ public class UserProfileFragment extends Fragment {
         });
 
         //remove progress bar
-        mProgressBar.setVisibility(View.VISIBLE);
+        mRvProgressBar.setVisibility(View.INVISIBLE);
     }
 
     private void getUserPosts() {
+        mRvProgressBar.setVisibility(View.VISIBLE);
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
         query.include(Post.USER);
         query.setLimit(16);
@@ -166,12 +169,14 @@ public class UserProfileFragment extends Fragment {
             public void done(List<Post> posts, ParseException e) {
                 if(e != null) {
                     Log.i("HOME", "something went wrong obtaining posts " + e);
+                    mRvProgressBar.setVisibility(View.INVISIBLE);
                     return;
                 }
 
                 // save received posts to list and notify adapter of new data
                 mUserPosts.addAll(posts);
                 mUserProfileAdapter.notifyDataSetChanged();
+                mRvProgressBar.setVisibility(View.INVISIBLE);
                // mScrollListener.resetState();
             }
         });

@@ -65,4 +65,6 @@ dependencies {
 
     //bubble icons
     implementation 'com.google.maps.android:android-maps-utils:0.4+'
+
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
 }

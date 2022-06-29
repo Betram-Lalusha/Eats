@@ -32,18 +32,16 @@
 
     <TextView
         android:id="@+id/bio"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="84dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="20dp"
+        android:layout_width="98dp"
+        android:layout_height="22dp"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="4dp"
         android:gravity="center"
         android:text="TextView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.006"
+        app:layout_constraintHorizontal_bias="0.066"
         app:layout_constraintStart_toEndOf="@+id/userProfilePic"
-        app:layout_constraintTop_toBottomOf="@+id/username"
-        app:layout_constraintVertical_bias="0.625" />
+        app:layout_constraintTop_toBottomOf="@+id/username" />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -64,5 +62,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/bio" />
+
+    <ProgressBar
+        android:id="@+id/rvProgressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="77dp"
+        android:layout_height="92dp"
+        android:layout_marginTop="156dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="@+id/gridView"
+        app:layout_constraintStart_toStartOf="@+id/gridView"
+        app:layout_constraintTop_toTopOf="@+id/gridView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
