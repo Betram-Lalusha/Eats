@@ -28,11 +28,12 @@
         <entry key="app/src/main/res/layout/custom_marker.xml" value="0.9661458333333334" />
         <entry key="app/src/main/res/layout/fragment_map.xml" value="0.41420118343195267" />
         <entry key="app/src/main/res/layout/fragment_post.xml" value="0.48777173913043476" />
-        <entry key="app/src/main/res/layout/fragment_search.xml" value="0.9661458333333334" />
+        <entry key="app/src/main/res/layout/fragment_search.xml" value="0.67" />
         <entry key="app/src/main/res/layout/fragment_timeline.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_user_profile.xml" value="0.7776041666666667" />
         <entry key="app/src/main/res/layout/fragment_user_profile2.xml" value="0.9661458333333334" />
         <entry key="app/src/main/res/layout/single_post.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/single_search_item.xml" value="0.7346014492753623" />
         <entry key="app/src/main/res/layout/user_profile_post.xml" value="0.605072463768116" />
         <entry key="app/src/main/res/menu/menu_bottom_navigation.xml" value="0.1" />
       </map>
