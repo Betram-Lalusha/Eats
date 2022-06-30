@@ -11,8 +11,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import com.bumptech.glide.Glide;
 import com.example.eats.Adapters.CategoriesAdapter;
 import com.example.eats.Helpers.Point;
 import com.example.eats.Models.Post;
@@ -28,6 +30,7 @@ public class SearchFragment extends Fragment {
 
 
     List<Post> mPosts;
+    ImageView mFeaturedImage;
     RecyclerView mRvCategories;
     CategoriesAdapter mCategoriesAdapter;
     public SearchFragment() {
@@ -56,6 +59,7 @@ public class SearchFragment extends Fragment {
         mPosts = new LinkedList<>();
         mRvCategories = view.findViewById(R.id.rvCategories);
         mRvCategories.setLayoutManager(linearLayoutManager);
+        mFeaturedImage = view.findViewById(R.id.featuredImage);
         mCategoriesAdapter = new CategoriesAdapter(getContext(), mPosts);
         mRvCategories.setAdapter(mCategoriesAdapter);
 
@@ -78,6 +82,7 @@ public class SearchFragment extends Fragment {
                 }
                 mPosts.addAll(posts);
                 mCategoriesAdapter.notifyDataSetChanged();
+                Glide.with(getContext()).load(posts.get(0).getMedia().getUrl()).into(mFeaturedImage);
             }
         });
     }
