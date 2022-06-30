@@ -31,16 +31,18 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
 
     Context mContext;
     List<Post> mPosts;
+    public  String mClickedCategory;
 
     public CategoriesAdapter(Context context, List<Post> posts) {
         this.mPosts = posts;
         this.mContext = context;
+        mClickedCategory = "";
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.user_profile_post, parent, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.category_item, parent, false);
         return new ViewHolder(view);
     }
 
@@ -69,9 +71,10 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
 
     public class ViewHolder  extends  RecyclerView.ViewHolder{
         TextView mCategory;
-
+        Boolean mAlreadyClicked;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            mAlreadyClicked = false;
             mCategory = itemView.findViewById(R.id.categoryItem);
 
         }
@@ -83,10 +86,29 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
             mCategory.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    //change color
+                    changeColor();
                 }
             });
 
         }
+
+        /**
+         * Changes the background of a selected category
+         * The item turns orange when first clicked and white when clicked again.
+         * These color cues help the user know what categories are currently being used to filter posts
+         */
+        private void changeColor() {
+            //che
+            if(!mAlreadyClicked) {
+                mAlreadyClicked = true;
+                mCategory.setBackgroundResource(R.drawable.clicked_category);
+            } else {
+                mAlreadyClicked = false;
+                mCategory.setBackgroundResource(R.drawable.search_bck);
+            }
+        }
     }
+
+
 }
