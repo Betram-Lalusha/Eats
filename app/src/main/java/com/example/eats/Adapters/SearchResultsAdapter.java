@@ -72,12 +72,14 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
         TextView mPostPrice;
         ImageView mSearchItem;
         TextView mPostOwnerName;
+        ImageView mPostOwnerImage;
         TextView mPostOwnerDistance;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             mPostPrice = itemView.findViewById(R.id.postPrice);
             mSearchItem = itemView.findViewById(R.id.searchItem);
             mPostOwnerName = itemView.findViewById(R.id.postOwnerName);
+            mPostOwnerImage = itemView.findViewById(R.id.postOwnerImage);
             mPostOwnerDistance = itemView.findViewById(R.id.postOwnerDistance);
 
         }
@@ -87,6 +89,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
             mPostPrice.setText("$" + String.valueOf(post.getPrice()));
             mPostOwnerName.setText(post.getParseUser().getUsername());
             Glide.with(mContext).load(post.getMedia().getUrl()).into(mSearchItem);
+            Glide.with(mContext).load(post.getParseUser().getParseFile("userProfilePic").getUrl()).into(mPostOwnerImage);
 
 
         }

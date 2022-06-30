@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 
 import com.bumptech.glide.Glide;
 import com.example.eats.Adapters.CategoriesAdapter;
+import com.example.eats.Adapters.SearchResultsAdapter;
 import com.example.eats.Helpers.Point;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
@@ -32,7 +33,9 @@ public class SearchFragment extends Fragment {
     List<Post> mPosts;
     ImageView mFeaturedImage;
     RecyclerView mRvCategories;
+    RecyclerView mRvSearchItems;
     CategoriesAdapter mCategoriesAdapter;
+    SearchResultsAdapter mSearchResultsAdapter;
     public SearchFragment() {
         // Required empty public constructor
     }
@@ -55,13 +58,21 @@ public class SearchFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @NonNull Bundle savedInstanceState) {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL, false);
 
         mPosts = new LinkedList<>();
         mRvCategories = view.findViewById(R.id.rvCategories);
+        mRvSearchItems = view.findViewById(R.id.rvSearchItems);
+
         mRvCategories.setLayoutManager(linearLayoutManager);
+        mRvSearchItems.setLayoutManager(linearLayoutManager2);
+
         mFeaturedImage = view.findViewById(R.id.featuredImage);
         mCategoriesAdapter = new CategoriesAdapter(getContext(), mPosts);
+        mSearchResultsAdapter = new SearchResultsAdapter(getContext(), mPosts);
+
         mRvCategories.setAdapter(mCategoriesAdapter);
+        mRvSearchItems.setAdapter(mSearchResultsAdapter);
 
         queryPosts();
     }
