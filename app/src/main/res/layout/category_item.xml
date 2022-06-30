@@ -8,8 +8,9 @@
         android:id="@+id/categoryItem"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
         android:background="@drawable/search_bck"
         android:gravity="center"
-        android:layout_marginLeft="10dp"
-        android:text="TextView" />
+        android:text="TextView"
+        android:textColor="@color/black" />
 </FrameLayout>
