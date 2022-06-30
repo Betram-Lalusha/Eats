@@ -17,6 +17,7 @@ public class Post extends ParseObject {
     public static final String PRICE = "price";
     public static final String DETAILS = "details";
     public static final String CAPTION = "caption";
+    public static final String CATEGORY= "category";
     public static final String LATITUDE = "latitude";
     public static final String LONGITUDE = "longitude";
     public static final String LIKES_COUNT = "likesCount";
@@ -71,11 +72,6 @@ public class Post extends ParseObject {
     public void setLongitude(Number longitude) {
         put(LONGITUDE, longitude);
     }
-//
-//
-//    public void setLocation(ParseObject location) {
-//        put(LOCATION, location);
-//    }
 
     public String getDetails() {
         return getString(DETAILS);
@@ -84,6 +80,15 @@ public class Post extends ParseObject {
 
     public void setDetails(String details) {
         put(DETAILS, details);
+    }
+
+    public String getCategory() {
+        return getString(CATEGORY);
+    }
+
+
+    public void setCategory(String category) {
+        put(CATEGORY, category);
     }
 
     public int getLikesCount() {

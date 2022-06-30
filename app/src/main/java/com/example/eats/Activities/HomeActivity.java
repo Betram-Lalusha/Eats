@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.example.eats.Fragments.MapFragment;
 import com.example.eats.Fragments.PostFragment;
+import com.example.eats.Fragments.SearchFragment;
 import com.example.eats.Fragments.TimelineFragment;
 import com.example.eats.Fragments.UserProfileFragment;
 import com.example.eats.R;
@@ -72,6 +73,9 @@ public class HomeActivity extends AppCompatActivity {
                         break;
                     case R.id.userProfile:
                         fragment = new UserProfileFragment();
+                        break;
+                    case R.id.exploreButton:
+                        fragment = new SearchFragment();
                         break;
                     default:
                         fragment = new TimelineFragment();

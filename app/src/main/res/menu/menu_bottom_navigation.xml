@@ -24,6 +24,11 @@
         tools:showAsAction="always" />
 
     <item
+        android:id="@+id/exploreButton"
+        android:icon="@drawable/ic_baseline_explore_24"
+        android:title="explore"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/userProfile"
         android:icon="@drawable/ic_baseline_person_pin_24"
         android:title="Profile"

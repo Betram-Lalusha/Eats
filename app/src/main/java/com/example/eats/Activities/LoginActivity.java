@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +22,7 @@ public class LoginActivity extends AppCompatActivity {
     TextView mUserPassword;
     TextView mCreateAccount;
     TextView mErrorOccurred;
+    ProgressBar mLoginProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +36,7 @@ public class LoginActivity extends AppCompatActivity {
         mLoginButton = findViewById(R.id.signInBtn);
         mUserPassword = findViewById(R.id.password);
         mCreateAccount = findViewById(R.id.createAccount);
+        mLoginProgressBar = findViewById(R.id.loginProgressBar);
 
         getSupportActionBar().hide();
 
@@ -76,6 +79,7 @@ public class LoginActivity extends AppCompatActivity {
 
     //check if user exits and if entered password matches user password in db
     private void authenticateUser(String enteredName, String enteredPassword) {
+        mLoginProgressBar.setVisibility(View.VISIBLE);
         //use parse to authenticate user
         ParseUser.logInInBackground(enteredName, enteredPassword, new LogInCallback() {
             @Override
@@ -85,9 +89,11 @@ public class LoginActivity extends AppCompatActivity {
                     mErrorOccurred.setText(e.getMessage());
                     mErrorOccurred.setVisibility(View.VISIBLE);
                     Log.i("LOGIN", "Login failed because " + e);
+                    mLoginProgressBar.setVisibility(View.INVISIBLE);
                     return;
                 }
 
+                mLoginProgressBar.setVisibility(View.INVISIBLE);
                 Toast.makeText(LoginActivity.this, "sucessfully logged in!", Toast.LENGTH_SHORT).show();
                 goToHome();
             }

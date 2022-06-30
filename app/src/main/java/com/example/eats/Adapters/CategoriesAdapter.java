@@ -27,12 +27,12 @@ import org.parceler.Parcels;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.ViewHolder>{
+public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.ViewHolder>{
 
     Context mContext;
     List<Post> mPosts;
 
-    public UserProfileAdapter(Context context, List<Post> posts) {
+    public CategoriesAdapter(Context context, List<Post> posts) {
         this.mPosts = posts;
         this.mContext = context;
     }
@@ -68,49 +68,25 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
     }
 
     public class ViewHolder  extends  RecyclerView.ViewHolder{
-        ImageView mPostImage;
+        TextView mCategory;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            mPostImage = itemView.findViewById(R.id.postImage);
+            mCategory = itemView.findViewById(R.id.categoryItem);
 
         }
 
         public void bind(Post post) {
-            Glide.with(mContext).load(post.getMedia().getUrl()).into(mPostImage);
+            mCategory.setText(post.getCategory());
 
             //listens for click event
-            mPostImage.setOnClickListener(new View.OnClickListener() {
+            mCategory.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(mContext, DetailActivity.class);
-                    intent.putExtra("post", Parcels.wrap(post));
-                    mContext.startActivity(intent);
+
                 }
             });
 
-
-        //user can long press item to delete it
-            mPostImage.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    post.deleteInBackground(new DeleteCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            if(e != null) {
-                                Log.i("LONG_CLICK","something went wrong deleting an item " + e);
-                                Toast.makeText(mContext, "something went wrong deleting the image. Try again", Toast.LENGTH_LONG).show();
-                            }
-
-                            mPosts.remove(post);
-                            notifyDataSetChanged();
-                        }
-                    });
-                    return false;
-                }
-            });
         }
     }
 }
-
-
