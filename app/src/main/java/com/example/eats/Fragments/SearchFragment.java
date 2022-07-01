@@ -27,6 +27,7 @@ import com.parse.ParseQuery;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 public class SearchFragment extends Fragment {
 
@@ -114,7 +115,7 @@ public class SearchFragment extends Fragment {
 
     private void queryPosts() {
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
-        query.setLimit(5);
+        query.setLimit(6);
         query.include(Post.USER);
         query.addDescendingOrder("createdAt");
 
@@ -126,10 +127,26 @@ public class SearchFragment extends Fragment {
                     e.printStackTrace();
                     return;
                 }
+
+                Post featured = randomPost(posts.size(), posts);
                 mPosts.addAll(posts);
                 mCategoriesAdapter.notifyDataSetChanged();
-                Glide.with(getContext()).load(posts.get(0).getMedia().getUrl()).into(mFeaturedImage);
+                Glide.with(getContext()).load(featured.getMedia().getUrl()).into(mFeaturedImage);
             }
         });
+    }
+
+    /**
+     * Returns a random element in the list to display as the featured item.
+     * The item is removed from the list so that it is not repeated on the screen
+     * @param size: The size of the list to consider
+     * @param posts: the list of items to be used to retrieve a random post
+     * @return a random post from the list
+     */
+    private Post randomPost(int size, List<Post> posts) {
+        int upperBound = size;
+        Random random = new Random();
+        int index = random.nextInt(upperBound);
+        return posts.remove(index);
     }
 }
