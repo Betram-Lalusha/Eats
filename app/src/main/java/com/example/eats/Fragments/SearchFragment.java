@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 import com.bumptech.glide.Glide;
 import com.example.eats.Adapters.CategoriesAdapter;
 import com.example.eats.Adapters.SearchResultsAdapter;
+import com.example.eats.EndlessRecyclerViewScrollListener;
 import com.example.eats.Helpers.Point;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
@@ -36,6 +37,8 @@ public class SearchFragment extends Fragment {
     RecyclerView mRvSearchItems;
     CategoriesAdapter mCategoriesAdapter;
     SearchResultsAdapter mSearchResultsAdapter;
+    EndlessRecyclerViewScrollListener mEndlessRecyclerViewScrollListener;
+
     public SearchFragment() {
         // Required empty public constructor
     }
@@ -75,6 +78,38 @@ public class SearchFragment extends Fragment {
         mRvSearchItems.setAdapter(mSearchResultsAdapter);
 
         queryPosts();
+
+        mEndlessRecyclerViewScrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                loadNextPosts();
+            }
+        };
+
+        mRvCategories.addOnScrollListener(mEndlessRecyclerViewScrollListener);
+        mRvSearchItems.addOnScrollListener(mEndlessRecyclerViewScrollListener);
+    }
+
+    private void loadNextPosts() {
+        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
+        query.whereLessThan("createdAt", mPosts.get(mPosts.size() - 1).getDate());
+        query.setLimit(4);
+        query.include(Post.USER);
+        query.addDescendingOrder("createdAt");
+        query.findInBackground(new FindCallback<Post>() {
+            @Override
+            public void done(List<Post> posts, ParseException e) {
+                if(e != null) {
+                    Log.i("HOME", "something went wrong obtaining posts " + e);
+                }
+
+                mPosts.addAll(posts);
+            }
+
+        });
+
     }
 
     private void queryPosts() {
