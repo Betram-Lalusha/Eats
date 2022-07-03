@@ -78,8 +78,6 @@ public class SearchFragment extends Fragment {
         mRvCategories.setAdapter(mCategoriesAdapter);
         mRvSearchItems.setAdapter(mSearchResultsAdapter);
 
-        queryPosts();
-
         mEndlessRecyclerViewScrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
@@ -91,6 +89,7 @@ public class SearchFragment extends Fragment {
 
         mRvCategories.addOnScrollListener(mEndlessRecyclerViewScrollListener);
         mRvSearchItems.addOnScrollListener(mEndlessRecyclerViewScrollListener);
+        queryPosts();
     }
 
     private void loadNextPosts() {
