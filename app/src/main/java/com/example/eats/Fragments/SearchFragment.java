@@ -204,7 +204,7 @@ public class SearchFragment extends Fragment {
     }
 
     /**
-     * Function returns a list of all candiates from a given jsonArray
+     * Function returns a list of all candidates from a given jsonArray
      * @param candidates: The json array of candidates
      * @return: a list of all candiates from the given jsonArray
      */
@@ -215,7 +215,7 @@ public class SearchFragment extends Fragment {
             try {
                 candidate = candidates.getJSONObject(i);
             } catch (JSONException e) {
-                Log.i("GETCANDIDATES", e.toString());
+                Log.i("GET-CANDIDATES", e.toString());
                 e.printStackTrace();
             }
             result.add(candidate);
@@ -223,4 +223,6 @@ public class SearchFragment extends Fragment {
 
         return result;
     }
+
+    //loop through candidates and form place from each candidate
 }

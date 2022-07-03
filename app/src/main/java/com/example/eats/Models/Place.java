@@ -19,10 +19,15 @@ public class Place {
     public static Place fromJson(JSONObject jsonObject) {
         Place place = new Place();
 
-//        try {
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            place.mName = jsonObject.getString("name");
+            JSONObject photo = jsonObject.getJSONArray("photos").getJSONObject(0);
+            place.mWidth = photo.getInt("width");
+            place.mHeight = photo.getInt("height");
+            place.mPhotoReference = photo.getString("photo_reference");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         return place;
 
     }
@@ -35,6 +40,11 @@ public class Place {
          */
     public String getPhotoUrl() {
         return "";
+    }
+
+    @Override
+    public String toString() {
+        return "[" + " place: " + this.mName + "]";
     }
 
 }
