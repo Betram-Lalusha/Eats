@@ -25,7 +25,7 @@ public class Place {
      * @return: The url of the remote image
      */
     public String getPhotoUrl() {
-
+        return "";
     }
 
 }
