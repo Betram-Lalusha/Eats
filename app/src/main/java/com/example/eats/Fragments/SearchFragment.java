@@ -20,6 +20,7 @@ import android.widget.ProgressBar;
 import com.bumptech.glide.Glide;
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.RequestParams;
+import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.codepath.asynchttpclient.callback.TextHttpResponseHandler;
 import com.example.eats.Adapters.CategoriesAdapter;
 import com.example.eats.Adapters.SearchResultsAdapter;
@@ -31,6 +32,8 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.LinkedList;
@@ -101,7 +104,7 @@ public class SearchFragment extends Fragment {
         mRvCategories.addOnScrollListener(mEndlessRecyclerViewScrollListener);
         mRvSearchItems.addOnScrollListener(mEndlessRecyclerViewScrollListener);
         queryPosts();
-        getPlace("LA");
+        getPlaces("LA");
     }
 
     private void loadNextPosts() {
@@ -161,7 +164,12 @@ public class SearchFragment extends Fragment {
         return posts.remove(index);
     }
 
-    private void getPlace(String query) {
+    /**
+     * returns a place from the google maps api from a given search query
+     * @param query: the name of the place to look for
+     *
+     */
+    private void getPlaces(String query) {
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
         RequestParams params = new RequestParams();
         params.put("key", MAPS_API_KEY);
@@ -171,18 +179,48 @@ public class SearchFragment extends Fragment {
         params.put("fields", "photos");
 
         //get data
-        asyncHttpClient.get(GOOGLE_PLACES_API_BASE_URL, params, new TextHttpResponseHandler() {
+        asyncHttpClient.get(GOOGLE_PLACES_API_BASE_URL, params, new JsonHttpResponseHandler() {
             @Override
-            public void onSuccess(int statusCode, Headers headers, String response) {
-                System.out.println("response " + response);
+            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                System.out.println("response " + json);
+                JSONObject jsonObject = json.jsonObject;
+                JSONArray possibleCandidates = null;
+                try {
+                    possibleCandidates = jsonObject.getJSONArray("candidates");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                List<JSONObject> candidates = getCandidates(possibleCandidates);
+                System.out.println("candidates " + candidates);
                 return;
             }
 
             @Override
-            public void onFailure(int statusCode, @Nullable Headers headers, String errorResponse, @Nullable Throwable throwable) {
-                System.out.println("failed because " + errorResponse);
+            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                System.out.println("failed because " + response);
                 return;
             }
         });
+    }
+
+    /**
+     * Function returns a list of all candiates from a given jsonArray
+     * @param candidates: The json array of candidates
+     * @return: a list of all candiates from the given jsonArray
+     */
+    private List<JSONObject> getCandidates(JSONArray candidates) {
+        List<JSONObject> result = new LinkedList<>();
+        for(int i = 0; i < candidates.length(); i++) {
+            JSONObject candidate = null;
+            try {
+                candidate = candidates.getJSONObject(i);
+            } catch (JSONException e) {
+                Log.i("GETCANDIDATES", e.toString());
+                e.printStackTrace();
+            }
+            result.add(candidate);
+        }
+
+        return result;
     }
 }
