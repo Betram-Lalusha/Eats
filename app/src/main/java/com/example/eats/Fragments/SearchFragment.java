@@ -26,6 +26,7 @@ import com.example.eats.Adapters.CategoriesAdapter;
 import com.example.eats.Adapters.SearchResultsAdapter;
 import com.example.eats.EndlessRecyclerViewScrollListener;
 import com.example.eats.Helpers.Point;
+import com.example.eats.Models.Place;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
 import com.parse.FindCallback;
@@ -192,6 +193,8 @@ public class SearchFragment extends Fragment {
                 }
                 List<JSONObject> candidates = getCandidates(possibleCandidates);
                 System.out.println("candidates " + candidates);
+                List<Place> places = getAllPlaces(candidates,query); //will be fixed later
+                System.out.println("places " + places);
                 return;
             }
 
@@ -224,5 +227,18 @@ public class SearchFragment extends Fragment {
         return result;
     }
 
-    //loop through candidates and form place from each candidate
+    /**
+     * Function returns a list of a places from a given list of candidates
+     * @param candidates: a list of json objects representing candidates returned from google places API
+     * @return:  a list of a places from a given list of candidates
+     */
+    private List<Place> getAllPlaces(List<JSONObject> candidates, String name) {
+        List<Place> places = new LinkedList<>();
+        for(JSONObject candidate: candidates) {
+            Place place = Place.fromJson(candidate,name);
+            places.add(place);
+        }
+
+        return places;
+    }
 }

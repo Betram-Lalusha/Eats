@@ -16,11 +16,11 @@ public class Place {
     public String mPhotoReference;
     public Place() {}
 
-    public static Place fromJson(JSONObject jsonObject) {
+    public static Place fromJson(JSONObject jsonObject, String name) {
         Place place = new Place();
 
         try {
-            place.mName = jsonObject.getString("name");
+            place.mName = name;
             JSONObject photo = jsonObject.getJSONArray("photos").getJSONObject(0);
             place.mWidth = photo.getInt("width");
             place.mHeight = photo.getInt("height");
