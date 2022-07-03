@@ -1,8 +1,11 @@
 package com.example.eats.Fragments;
 
+import static com.example.eats.BuildConfig.MAPS_API_KEY;
+
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,6 +18,9 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.bumptech.glide.Glide;
+import com.codepath.asynchttpclient.AsyncHttpClient;
+import com.codepath.asynchttpclient.RequestParams;
+import com.codepath.asynchttpclient.callback.TextHttpResponseHandler;
 import com.example.eats.Adapters.CategoriesAdapter;
 import com.example.eats.Adapters.SearchResultsAdapter;
 import com.example.eats.EndlessRecyclerViewScrollListener;
@@ -25,9 +31,13 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 
+import org.json.JSONObject;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+
+import okhttp3.Headers;
 
 public class SearchFragment extends Fragment {
 
@@ -39,6 +49,7 @@ public class SearchFragment extends Fragment {
     CategoriesAdapter mCategoriesAdapter;
     SearchResultsAdapter mSearchResultsAdapter;
     EndlessRecyclerViewScrollListener mEndlessRecyclerViewScrollListener;
+    private final String GOOGLE_PLACES_API_BASE_URL = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json";
 
     public SearchFragment() {
         // Required empty public constructor
@@ -90,6 +101,7 @@ public class SearchFragment extends Fragment {
         mRvCategories.addOnScrollListener(mEndlessRecyclerViewScrollListener);
         mRvSearchItems.addOnScrollListener(mEndlessRecyclerViewScrollListener);
         queryPosts();
+        getPlace("LA");
     }
 
     private void loadNextPosts() {
@@ -147,5 +159,30 @@ public class SearchFragment extends Fragment {
         Random random = new Random();
         int index = random.nextInt(upperBound);
         return posts.remove(index);
+    }
+
+    private void getPlace(String query) {
+        AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
+        RequestParams params = new RequestParams();
+        params.put("key", MAPS_API_KEY);
+        params.put("input", query);
+        params.put("inputtype", "textquery");
+        params.put("fields", "name");
+        params.put("fields", "photos");
+
+        //get data
+        asyncHttpClient.get(GOOGLE_PLACES_API_BASE_URL, params, new TextHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Headers headers, String response) {
+                System.out.println("response " + response);
+                return;
+            }
+
+            @Override
+            public void onFailure(int statusCode, @Nullable Headers headers, String errorResponse, @Nullable Throwable throwable) {
+                System.out.println("failed because " + errorResponse);
+                return;
+            }
+        });
     }
 }
