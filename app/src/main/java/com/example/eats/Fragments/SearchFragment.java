@@ -183,7 +183,6 @@ public class SearchFragment extends Fragment {
         asyncHttpClient.get(GOOGLE_PLACES_API_BASE_URL, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
-                System.out.println("response " + json);
                 JSONObject jsonObject = json.jsonObject;
                 JSONArray possibleCandidates = null;
                 try {
@@ -192,15 +191,13 @@ public class SearchFragment extends Fragment {
                     e.printStackTrace();
                 }
                 List<JSONObject> candidates = getCandidates(possibleCandidates);
-                System.out.println("candidates " + candidates);
-                List<Place> places = getAllPlaces(candidates,query); //will be fixed later
-                System.out.println("places " + places);
+                List<Place> places = getAllPlaces(candidates,query); //will be fixed later, name of place should be set by response from google api not user query
                 return;
             }
 
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                System.out.println("failed because " + response);
+                Log.i("GET-PLACES","failed because " + response);
                 return;
             }
         });
