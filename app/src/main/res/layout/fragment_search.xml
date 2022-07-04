@@ -94,10 +94,18 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvSearchItems"
         android:layout_width="409dp"
-        android:layout_height="231dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvCities"
+        android:layout_width="414dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rvSearchItems" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
