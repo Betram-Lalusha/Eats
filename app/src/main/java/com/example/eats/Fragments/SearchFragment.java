@@ -47,6 +47,7 @@ public class SearchFragment extends Fragment {
 
 
     List<Post> mPosts;
+    RecyclerView mRvCities;
     ImageView mFeaturedImage;
     RecyclerView mRvCategories;
     RecyclerView mRvSearchItems;
@@ -78,11 +79,14 @@ public class SearchFragment extends Fragment {
     public void onViewCreated(View view, @NonNull Bundle savedInstanceState) {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL, false);
         LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager linearLayoutManager3 = new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL, false);
 
         mPosts = new LinkedList<>();
+        mRvCities = view.findViewById(R.id.rvCities);
         mRvCategories = view.findViewById(R.id.rvCategories);
         mRvSearchItems = view.findViewById(R.id.rvSearchItems);
 
+        mRvCities.setLayoutManager(linearLayoutManager3);
         mRvCategories.setLayoutManager(linearLayoutManager);
         mRvSearchItems.setLayoutManager(linearLayoutManager2);
 
