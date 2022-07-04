@@ -33,4 +33,8 @@ public class City extends ParseObject {
         put(IMAGE_URL, cityImageUrl);
     }
 
+    @Override
+    public  String toString() {
+        return this.getName();
+    }
 }

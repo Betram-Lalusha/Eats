@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.eats.Activities.DetailActivity;
+import com.example.eats.Models.City;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
 import com.parse.ParseObject;
@@ -25,10 +26,10 @@ import java.util.List;
 public class CitiesAdapter extends RecyclerView.Adapter<CitiesAdapter.ViewHolder>{
 
     Context mContext;
-    List<Post> mPosts;
+    List<City> mCities;
 
-    public CitiesAdapter(Context context, List<Post> posts) {
-        this.mPosts = posts;
+    public CitiesAdapter(Context context, List<City> cities) {
+        this.mCities = cities;
         this.mContext = context;
     }
 
@@ -41,24 +42,24 @@ public class CitiesAdapter extends RecyclerView.Adapter<CitiesAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Post post = mPosts.get(position);
-        holder.bind(post);
+        City city = mCities.get(position);
+        holder.bind(city);
     }
 
     @Override
     public int getItemCount() {
-        return mPosts.size();
+        return mCities.size();
     }
 
     // Clean all elements of the recycler
     public void clear() {
-        mPosts.clear();
+        mCities.clear();
         notifyDataSetChanged();
     }
 
     // Add a list of items -- change to type used
-    public void addAll(List<Post> list) {
-        mPosts.addAll(list);
+    public void addAll(List<City> list) {
+        mCities.addAll(list);
         notifyDataSetChanged();
     }
 
@@ -72,8 +73,8 @@ public class CitiesAdapter extends RecyclerView.Adapter<CitiesAdapter.ViewHolder
 
         }
 
-        public void bind(Post post) {
-            Glide.with(mContext).load(post.getMedia().getUrl()).into(mCityImage);
+        public void bind(City city) {
+            Glide.with(mContext).load(city.getImageUrl()).into(mCityImage);
         }
     }
 }

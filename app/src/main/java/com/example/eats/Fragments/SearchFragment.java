@@ -27,6 +27,7 @@ import com.example.eats.Adapters.CitiesAdapter;
 import com.example.eats.Adapters.SearchResultsAdapter;
 import com.example.eats.EndlessRecyclerViewScrollListener;
 import com.example.eats.Helpers.Point;
+import com.example.eats.Models.City;
 import com.example.eats.Models.Place;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
@@ -48,6 +49,7 @@ public class SearchFragment extends Fragment {
 
 
     List<Post> mPosts;
+    List<City> mCities;
     RecyclerView mRvCities;
     ImageView mFeaturedImage;
     RecyclerView mRvCategories;
@@ -84,6 +86,7 @@ public class SearchFragment extends Fragment {
         LinearLayoutManager linearLayoutManager3 = new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL, false);
 
         mPosts = new LinkedList<>();
+        mCities = new LinkedList<>();
         mRvCities = view.findViewById(R.id.rvCities);
         mRvCategories = view.findViewById(R.id.rvCategories);
         mRvSearchItems = view.findViewById(R.id.rvSearchItems);
@@ -93,7 +96,7 @@ public class SearchFragment extends Fragment {
         mRvSearchItems.setLayoutManager(linearLayoutManager2);
 
         mFeaturedImage = view.findViewById(R.id.featuredImage);
-        mCitiesAdapter = new CitiesAdapter(getContext(), mPosts);
+        mCitiesAdapter = new CitiesAdapter(getContext(), mCities);
         mCategoriesAdapter = new CategoriesAdapter(getContext(), mPosts);
         mSearchResultsAdapter = new SearchResultsAdapter(getContext(), mPosts);
 
@@ -113,7 +116,10 @@ public class SearchFragment extends Fragment {
         mRvCities.addOnScrollListener(mEndlessRecyclerViewScrollListener);
         mRvCategories.addOnScrollListener(mEndlessRecyclerViewScrollListener);
         mRvSearchItems.addOnScrollListener(mEndlessRecyclerViewScrollListener);
+
+        //get data
         queryPosts();
+        queryCities();
         getPlaces("LA");
     }
 
@@ -151,11 +157,32 @@ public class SearchFragment extends Fragment {
                     e.printStackTrace();
                     return;
                 }
-
+                System.out.println("posts " + posts);
                 Post featured = randomPost(posts.size(), posts);
                 mPosts.addAll(posts);
                 mCategoriesAdapter.notifyDataSetChanged();
                 Glide.with(getContext()).load(featured.getMedia().getUrl()).into(mFeaturedImage);
+            }
+        });
+    }
+
+    private void queryCities() {
+        ParseQuery<City> query = ParseQuery.getQuery(City.class);
+        query.setLimit(6);
+        query.addDescendingOrder("createdAt");
+
+        query.findInBackground(new FindCallback<City>() {
+            @Override
+            public void done(List<City> cities, ParseException e) {
+                if(e != null) {
+                    Log.i("QUERY", "something went wrong querying  in search fragment " + e.toString());
+                    e.printStackTrace();
+                    return;
+                }
+                System.out.println("cities " + cities);
+                mCities.addAll(cities);
+                System.out.println("cities " + cities);
+                mCategoriesAdapter.notifyDataSetChanged();
             }
         });
     }

@@ -57,7 +57,6 @@ public class Post extends ParseObject {
 
     public Double getLatitude() {
         Number lat = getNumber(LATITUDE);
-        System.out.println("lat " + lat);
         return (Double) lat;
     }
 
@@ -112,7 +111,7 @@ public class Post extends ParseObject {
     public Date getDate() {return  getCreatedAt();}
 
     @Override
-    public  String toString() {
+    public String toString() {
         return this.getParseUser().getUsername() + " " + this.getCaption();
     }
 }

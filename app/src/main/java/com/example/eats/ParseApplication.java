@@ -2,6 +2,7 @@ package com.example.eats;
 
 import android.app.Application;
 
+import com.example.eats.Models.City;
 import com.example.eats.Models.Post;
 import com.example.eats.Models.User;
 import com.parse.Parse;
@@ -14,6 +15,7 @@ public class ParseApplication extends Application {
 
         ParseObject.registerSubclass(Post.class);
         ParseObject.registerSubclass(User.class);
+        ParseObject.registerSubclass(City.class);
         Parse.initialize(new Parse.Configuration.Builder(this)
                 .applicationId(getString(R.string.back4app_app_id))
                 .clientKey(getString(R.string.back4app_client_key))
