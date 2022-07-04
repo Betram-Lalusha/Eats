@@ -120,7 +120,7 @@ public class SearchFragment extends Fragment {
         //get data
         queryPosts();
         queryCities();
-        getPlaces("LA");
+        getPlaces("Manchester");
     }
 
     private void loadNextPosts() {
@@ -157,7 +157,6 @@ public class SearchFragment extends Fragment {
                     e.printStackTrace();
                     return;
                 }
-                System.out.println("posts " + posts);
                 Post featured = randomPost(posts.size(), posts);
                 mPosts.addAll(posts);
                 mCategoriesAdapter.notifyDataSetChanged();
@@ -179,9 +178,7 @@ public class SearchFragment extends Fragment {
                     e.printStackTrace();
                     return;
                 }
-                System.out.println("cities " + cities);
                 mCities.addAll(cities);
-                System.out.println("cities " + cities);
                 mCategoriesAdapter.notifyDataSetChanged();
             }
         });

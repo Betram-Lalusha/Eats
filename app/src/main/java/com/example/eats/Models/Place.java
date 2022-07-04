@@ -101,6 +101,7 @@ public class Place {
             }
             if(inCorrectUrl.charAt(i) == '}') break;
         }
+        //System.out.println("url " + correctUrl);
         return correctUrl;
     }
 

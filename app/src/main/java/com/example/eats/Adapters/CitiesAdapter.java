@@ -64,16 +64,19 @@ public class CitiesAdapter extends RecyclerView.Adapter<CitiesAdapter.ViewHolder
     }
 
     public class ViewHolder  extends  RecyclerView.ViewHolder{
-        ImageView mCityImage;
 
+        TextView mCityName;
+        ImageView mCityImage;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
+            mCityName = itemView.findViewById(R.id.cityName);
             mCityImage = itemView.findViewById(R.id.cityImage);
 
         }
 
         public void bind(City city) {
+            mCityName.setText(city.getName());
             Glide.with(mContext).load(city.getImageUrl()).into(mCityImage);
         }
     }
