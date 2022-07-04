@@ -68,7 +68,7 @@ public class CitiesAdapter extends RecyclerView.Adapter<CitiesAdapter.ViewHolder
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            mCityImage = itemView.findViewById(R.id.postImage);
+            mCityImage = itemView.findViewById(R.id.cityImage);
 
         }
 

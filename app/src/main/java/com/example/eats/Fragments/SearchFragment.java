@@ -23,6 +23,7 @@ import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.codepath.asynchttpclient.callback.TextHttpResponseHandler;
 import com.example.eats.Adapters.CategoriesAdapter;
+import com.example.eats.Adapters.CitiesAdapter;
 import com.example.eats.Adapters.SearchResultsAdapter;
 import com.example.eats.EndlessRecyclerViewScrollListener;
 import com.example.eats.Helpers.Point;
@@ -51,6 +52,7 @@ public class SearchFragment extends Fragment {
     ImageView mFeaturedImage;
     RecyclerView mRvCategories;
     RecyclerView mRvSearchItems;
+    CitiesAdapter mCitiesAdapter;
     CategoriesAdapter mCategoriesAdapter;
     SearchResultsAdapter mSearchResultsAdapter;
     EndlessRecyclerViewScrollListener mEndlessRecyclerViewScrollListener;
@@ -94,6 +96,7 @@ public class SearchFragment extends Fragment {
         mCategoriesAdapter = new CategoriesAdapter(getContext(), mPosts);
         mSearchResultsAdapter = new SearchResultsAdapter(getContext(), mPosts);
 
+        mRvCities.setAdapter(mCitiesAdapter);
         mRvCategories.setAdapter(mCategoriesAdapter);
         mRvSearchItems.setAdapter(mSearchResultsAdapter);
 
@@ -106,6 +109,7 @@ public class SearchFragment extends Fragment {
             }
         };
 
+        mRvCities.addOnScrollListener(mEndlessRecyclerViewScrollListener);
         mRvCategories.addOnScrollListener(mEndlessRecyclerViewScrollListener);
         mRvSearchItems.addOnScrollListener(mEndlessRecyclerViewScrollListener);
         queryPosts();
