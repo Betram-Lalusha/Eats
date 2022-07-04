@@ -93,6 +93,7 @@ public class SearchFragment extends Fragment {
         mRvSearchItems.setLayoutManager(linearLayoutManager2);
 
         mFeaturedImage = view.findViewById(R.id.featuredImage);
+        mCitiesAdapter = new CitiesAdapter(getContext(), mPosts);
         mCategoriesAdapter = new CategoriesAdapter(getContext(), mPosts);
         mSearchResultsAdapter = new SearchResultsAdapter(getContext(), mPosts);
 

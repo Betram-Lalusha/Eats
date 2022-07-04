@@ -90,9 +90,16 @@ public class Place {
         String[] arr = responseStr.split(",");
         String inCorrectUrl =  arr[3];
         String correctUrl = "";
-        for(int i = 4; i < inCorrectUrl.length(); i++) {
+        for(int i = 0; i < inCorrectUrl.length(); i++) {
+            if(inCorrectUrl.charAt(i) == 'h') {
+                int k = i;
+                while(k < inCorrectUrl.length() - 1) {
+                    correctUrl += inCorrectUrl.charAt(k);
+                    k++;
+                }
+                i = k;
+            }
             if(inCorrectUrl.charAt(i) == '}') break;
-            correctUrl += inCorrectUrl.charAt(i);
         }
         return correctUrl;
     }
