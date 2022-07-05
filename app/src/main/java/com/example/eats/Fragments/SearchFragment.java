@@ -18,6 +18,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.codepath.asynchttpclient.AsyncHttpClient;
@@ -120,16 +121,6 @@ public class SearchFragment extends Fragment {
             }
         };
 
-        //listener to search for items
-        mSearchBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //do nothing if there is no entered text
-                if(mSearchBox.getText().toString().isEmpty()) return;
-
-                searchDb(mSearchBox.getText().toString());
-            }
-        });
 
         mSearchButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -302,18 +293,18 @@ public class SearchFragment extends Fragment {
     }
 
 
-    //search
-    //look for caption, user name, and description that contains search key
-
+    /**
+     * Searches parse db for given user query. It does this by finding captions that contain
+     * the input query
+     * @param userQuery: the string to look for in the db
+     */
     private void searchDb(String userQuery) {
         ParseQuery<Post> query = new ParseQuery<Post>(Post.class);
         query.setLimit(6);
         query.include(Post.USER);
         query.addDescendingOrder("createdAt");
-        //slow for large data sets
-       // query.whereContains(Post.CAPTION, userQuery);
-        query.whereStartsWith(Post.CAPTION, userQuery);
-        //icequery.whereContains(Post.DETAILS, userQuery);
+        //slow for large data sets according to parse docs
+        query.whereContains(Post.CAPTION, userQuery);
 
         query.findInBackground(new FindCallback<Post>() {
             @Override
@@ -324,13 +315,15 @@ public class SearchFragment extends Fragment {
                     return;
                 }
 
-                System.out.println("success " + posts);
+                if(posts.isEmpty()) {
+                    Toast.makeText(getContext(), "no results for " + userQuery, Toast.LENGTH_LONG).show();
+                    return;
+                }
                 //remove current posts
-                mPosts.clear();
-                mCategoriesAdapter.notifyDataSetChanged();
+                mSearchResultsAdapter.clear();
+
                 //add new ones
-                mPosts.addAll(posts);
-                mCategoriesAdapter.notifyDataSetChanged();
+                mSearchResultsAdapter.addAll(posts);
             }
         });
     }
