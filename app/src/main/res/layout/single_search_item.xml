@@ -23,7 +23,7 @@
             android:orientation="vertical">
 
             <ImageView
-                android:id="@+id/searchItem"
+                android:id="@+id/imageOfPost"
                 android:layout_width="255dp"
                 android:layout_height="136dp"
                 android:scaleType="centerCrop"
@@ -40,7 +40,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/searchItem"
+                app:layout_constraintTop_toBottomOf="@+id/imageOfPost"
                 app:layout_constraintVertical_bias="0.0">
 
                 <de.hdodenhof.circleimageview.CircleImageView
@@ -91,7 +91,7 @@
                 android:layout_marginTop="8dp"
                 android:text="TextView"
                 app:layout_constraintStart_toEndOf="@+id/constraintLayout"
-                app:layout_constraintTop_toBottomOf="@+id/searchItem" />
+                app:layout_constraintTop_toBottomOf="@+id/imageOfPost" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

@@ -35,7 +35,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-       View view = LayoutInflater.from(mContext).inflate(R.layout.single_post, parent, false);
+       View view = LayoutInflater.from(mContext).inflate(R.layout.single_post_layout, parent, false);
        return new ViewHolder(view);
     }
 
@@ -64,7 +64,10 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
 
     public class ViewHolder  extends  RecyclerView.ViewHolder{
 
+        TextView mPrice;
         TextView mCaption;
+        TextView mDistance;
+        TextView mCategory;
         TextView mOwnerName;
         ImageView mOwnerPfp;
         ImageView mPostImage;
@@ -72,15 +75,23 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            mCaption = itemView.findViewById(R.id.caption);
-            mOwnerName = itemView.findViewById(R.id.ownerName);
-            mOwnerPfp = itemView.findViewById(R.id.ownerPfp);
-            mPostImage = itemView.findViewById(R.id.postImage);
+            mPrice = itemView.findViewById(R.id.priceOfPost);
+            mCaption = itemView.findViewById(R.id.captionOfPost);
+            mOwnerName = itemView.findViewById(R.id.nameOfOwner);
+            mOwnerPfp = itemView.findViewById(R.id.imageOfOwner);
+            mPostImage = itemView.findViewById(R.id.imageOfPost);
+            mDistance = itemView.findViewById(R.id.distanceOfPost);
+            mCategory = itemView.findViewById(R.id.categoryOfPost);
+
 
         }
 
         public void bind(Post post) {
+
+            mDistance.setText("1km"); //hard coded...will be changed after scaling of distance
             mCaption.setText(post.getCaption());
+            mCategory.setText(post.getCategory());
+            mPrice.setText(String.valueOf(post.getPrice()));
             mOwnerName.setText(post.getParseUser().getUsername());
             Glide.with(mContext).load(post.getMedia().getUrl()).into(mPostImage);
             if(post.getParseUser().getParseFile("userProfilePic") != null) {

@@ -2,32 +2,23 @@ package com.example.eats.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.eats.Activities.DetailActivity;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
-import com.parse.DeleteCallback;
-import com.parse.ParseException;
 
-import org.parceler.Parcel;
 import org.parceler.Parcels;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdapter.ViewHolder>{
@@ -82,7 +73,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             mPostPrice = itemView.findViewById(R.id.postPrice);
-            mSearchItem = itemView.findViewById(R.id.searchItem);
+            mSearchItem = itemView.findViewById(R.id.imageOfPost);
             mSearchCover = itemView.findViewById(R.id.searchCover);
             mPostOwnerName = itemView.findViewById(R.id.postOwnerName);
             mPostOwnerImage = itemView.findViewById(R.id.postOwnerImage);
