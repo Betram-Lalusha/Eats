@@ -23,13 +23,13 @@
         android:id="@+id/setPrice"
         android:layout_width="210dp"
         android:layout_height="42dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="12dp"
         android:background="@drawable/post_item_bck"
         android:ems="10"
-        android:maxLength="50"
         android:hint="price (optional)"
         android:inputType="number"
+        android:maxLength="50"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/addedImage" />
 
@@ -112,9 +112,9 @@
         android:layout_marginTop="12dp"
         android:background="@drawable/post_item_bck"
         android:ems="10"
-        android:maxLength="50"
-        android:hint="category(e.g Zambian food)"
+        android:hint="category(e.g Zambian)"
         android:inputType="textPersonName"
+        android:maxLength="50"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cityOfPost" />
 
