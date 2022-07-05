@@ -10,7 +10,7 @@
         android:id="@+id/addedImage"
         android:layout_width="0dp"
         android:layout_height="290dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="4dp"
         android:scaleType="centerCrop"
         android:src="@drawable/eats_logo"
         app:layout_constraintEnd_toEndOf="parent"
@@ -21,60 +21,84 @@
 
     <EditText
         android:id="@+id/setPrice"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
+        android:layout_width="210dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="12dp"
+        android:background="@drawable/post_item_bck"
         android:ems="10"
+        android:maxLength="50"
         android:hint="price (optional)"
-        android:inputType="textPersonName"
+        android:inputType="number"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/addedImage" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        app:counterEnabled="true"
+        app:counterMaxLength="200"
+        app:counterTextAppearance="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/enterCategory">
+
+        <EditText
+            android:id="@+id/setDescription"
+            android:layout_width="376dp"
+            android:layout_height="83dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/post_item_bck"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="description"
+            android:inputType="textPersonName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.457"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/enterCategory" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <EditText
         android:id="@+id/setCaption"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="12dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/post_item_bck"
         android:ems="10"
         android:hint="caption"
+        android:maxLength="50"
         android:inputType="textPersonName"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/setPrice" />
 
-    <EditText
-        android:id="@+id/setDescription"
-        android:layout_width="0dp"
-        android:layout_height="86dp"
-        android:layout_marginTop="20dp"
-        android:ems="10"
-        android:gravity="center"
-        android:hint="description"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.054"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/enterCategory" />
 
     <Button
         android:id="@+id/submitButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="144dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginStart="160dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/sign_in_button"
+        android:backgroundTint="#00FFFF"
         android:text="Post"
         android:textAllCaps="false"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/setDescription" />
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
 
     <EditText
         android:id="@+id/cityOfPost"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="12dp"
+        android:background="@drawable/post_item_bck"
         android:ems="10"
+        android:maxLength="50"
         android:hint="city (e.g LA)"
         android:inputType="textPersonName"
         app:layout_constraintStart_toStartOf="parent"
@@ -83,11 +107,13 @@
     <EditText
         android:id="@+id/enterCategory"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="16dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/post_item_bck"
         android:ems="10"
-        android:hint="category (e.g Zambian food)"
+        android:maxLength="50"
+        android:hint="category(e.g Zambian food)"
         android:inputType="textPersonName"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cityOfPost" />
@@ -114,5 +140,7 @@
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/captureImage" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
