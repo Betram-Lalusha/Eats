@@ -5,7 +5,9 @@ import static android.app.Activity.RESULT_OK;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.ImageDecoder;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -34,9 +36,11 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.io.File;
+import java.io.IOException;
 
 public class PostFragment extends Fragment {
 
+    Boolean mNewImage;
     TextView mSetPrice;
     Button mSelectImage;
     TextView mSetCaption;
@@ -49,6 +53,7 @@ public class PostFragment extends Fragment {
     TextView mSetDescription;
     public final String APP_TAG = "EATS";
     public String mPhotoFileName = "photo.jpg";
+    public final static int PICK_PHOTO_CODE = 1046;
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
 
     public PostFragment() {
@@ -65,6 +70,7 @@ public class PostFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @NonNull Bundle savedInstanceState) {
 
+        mNewImage = true;
         mSetPrice = view.findViewById(R.id.setPrice);
         mSetCaption = view.findViewById(R.id.setCaption);
         mAddedImage = view.findViewById(R.id.addedImage);
@@ -98,7 +104,7 @@ public class PostFragment extends Fragment {
                 String enteredDescription = mSetDescription.getText().toString();
                 Number enteredPrice = mSetPrice.getText().toString().isEmpty() ? 0 : (Number) Integer.parseInt(mSetPrice.getText().toString());
                 //feedback if no photo is taken
-                if(mPhotoFile == null || mAddedImage.getDrawable() == null) {
+                if(mPhotoFile == null || mAddedImage.getDrawable() == null ||!mNewImage) {
                     Toast.makeText(getContext(), "no image added", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -202,7 +208,9 @@ public class PostFragment extends Fragment {
                 // RESIZE BITMAP, see section below
                 // Load the taken image into a preview
                 mAddedImage.setImageBitmap(takenImage);
+                mNewImage = true;
             } else { // Result was a failure
+                mNewImage = false;
                 Toast.makeText(getContext(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
             }
         }
