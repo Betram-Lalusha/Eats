@@ -38,11 +38,12 @@ import java.io.File;
 public class PostFragment extends Fragment {
 
     TextView mSetPrice;
+    Button mSelectImage;
     TextView mSetCaption;
     Button mSubmitButton;
-    ImageButton mAddImage;
-    ImageView mAddedImage;
+    Button mCaptureImage;
     Double mUserLatitude;
+    ImageView mAddedImage;
     Double mUserLongitude;
     private File mPhotoFile;
     TextView mSetDescription;
@@ -65,9 +66,10 @@ public class PostFragment extends Fragment {
     public void onViewCreated(View view, @NonNull Bundle savedInstanceState) {
 
         mSetPrice = view.findViewById(R.id.setPrice);
-        //mAddImage = view.findViewById(R.id.addImage);
         mSetCaption = view.findViewById(R.id.setCaption);
         mAddedImage = view.findViewById(R.id.addedImage);
+        mSelectImage = view.findViewById(R.id.selectImage);
+        mCaptureImage = view.findViewById(R.id.captureImage);
         mSubmitButton = view.findViewById(R.id.submitButton);
         mSetDescription = view.findViewById(R.id.setDescription);
         //get user coordinates passed from Home Activity
@@ -77,10 +79,18 @@ public class PostFragment extends Fragment {
         mAddedImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onLaunchCamera(v);
+                mSelectImage.setVisibility(View.VISIBLE);
+                mCaptureImage.setVisibility(View.VISIBLE);
+
             }
         });
 
+        mCaptureImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onLaunchCamera(v);
+            }
+        });
         mSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -196,6 +206,10 @@ public class PostFragment extends Fragment {
                 Toast.makeText(getContext(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
             }
         }
+
+        //hide buttons
+        mSelectImage.setVisibility(View.GONE);
+        mCaptureImage.setVisibility(View.GONE);
     }
 
 }
