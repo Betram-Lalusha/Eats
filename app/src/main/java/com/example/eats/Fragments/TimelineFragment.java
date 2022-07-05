@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -72,6 +73,7 @@ public class TimelineFragment extends Fragment {
 
         mRecyclerView.setAdapter(mPostsAdapter);
         mRecyclerView.setLayoutManager(linearLayoutManager);
+        //to add space between elements in recycler view
 
         // Retain an instance so that you can call `resetState()` for fresh searches
         mEndlessRecyclerViewScrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
