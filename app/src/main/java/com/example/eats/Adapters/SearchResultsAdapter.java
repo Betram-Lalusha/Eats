@@ -7,12 +7,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -22,6 +24,7 @@ import com.example.eats.R;
 import com.parse.DeleteCallback;
 import com.parse.ParseException;
 
+import org.parceler.Parcel;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
@@ -72,12 +75,15 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
         TextView mPostPrice;
         ImageView mSearchItem;
         TextView mPostOwnerName;
+        FrameLayout mSearchCover;
         ImageView mPostOwnerImage;
         TextView mPostOwnerDistance;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             mPostPrice = itemView.findViewById(R.id.postPrice);
             mSearchItem = itemView.findViewById(R.id.searchItem);
+            mSearchCover = itemView.findViewById(R.id.searchCover);
             mPostOwnerName = itemView.findViewById(R.id.postOwnerName);
             mPostOwnerImage = itemView.findViewById(R.id.postOwnerImage);
             mPostOwnerDistance = itemView.findViewById(R.id.postOwnerDistance);
@@ -91,6 +97,14 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
             Glide.with(mContext).load(post.getMedia().getUrl()).into(mSearchItem);
             Glide.with(mContext).load(post.getParseUser().getParseFile("userProfilePic").getUrl()).into(mPostOwnerImage);
 
+            mSearchItem.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(mContext, DetailActivity.class);
+                    intent.putExtra("post", Parcels.wrap(post));
+                    mContext.startActivity(intent);
+                }
+            });
 
         }
     }

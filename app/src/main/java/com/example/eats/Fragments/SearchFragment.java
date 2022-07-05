@@ -311,8 +311,9 @@ public class SearchFragment extends Fragment {
         query.include(Post.USER);
         query.addDescendingOrder("createdAt");
         //slow for large data sets
-        query.whereContains(Post.CAPTION, userQuery);
-        query.whereContains(Post.DETAILS, userQuery);
+       // query.whereContains(Post.CAPTION, userQuery);
+        query.whereStartsWith(Post.CAPTION, userQuery);
+        //icequery.whereContains(Post.DETAILS, userQuery);
 
         query.findInBackground(new FindCallback<Post>() {
             @Override
@@ -325,11 +326,11 @@ public class SearchFragment extends Fragment {
 
                 System.out.println("success " + posts);
                 //remove current posts
-               // mPosts.clear();
-
+                mPosts.clear();
+                mCategoriesAdapter.notifyDataSetChanged();
                 //add new ones
-               // mPosts.addAll(posts);
-                //mCategoriesAdapter.notifyDataSetChanged();
+                mPosts.addAll(posts);
+                mCategoriesAdapter.notifyDataSetChanged();
             }
         });
     }
