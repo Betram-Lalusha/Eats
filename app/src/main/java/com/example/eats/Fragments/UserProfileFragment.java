@@ -229,10 +229,15 @@ public class UserProfileFragment extends Fragment {
         }
     }
 
+    /**
+     * Method saves image to parse and changes the profile picture of the user to the selected image.
+     * It saves the image to parse by first converting it to a byteArray as advised by the parse documentation
+     * @param selectedImage: The bitmap to set as the new user profile picture
+     */
     private void saveNewProfilePic(@NonNull Bitmap selectedImage) {
         mProgressBar.setVisibility(View.VISIBLE);
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        selectedImage.compress(Bitmap.CompressFormat.PNG, 100, stream); //takes a lot of time
+        selectedImage.compress(Bitmap.CompressFormat.PNG, 100, stream); //takes a lot of time but best solution so far
         byte[] byteArray = stream.toByteArray();
         selectedImage.recycle();
         //mPhotoFile = bitmapToFile(getContext(), selectedImage, "newPicture.png");
@@ -245,7 +250,6 @@ public class UserProfileFragment extends Fragment {
                 if(e != null) {
                     //Toast.makeText(getContext(), "Error saving picture. Try again",Toast.LENGTH_LONG).show();
                     e.printStackTrace();
-                    System.out.println("something went wrong saving picture. " + e);
                     Log.i("HOME", "something went wrong saving picture. " + e);
                     Toast.makeText(getContext(), "Error ocurred saving image :( . Try again", Toast.LENGTH_SHORT).show();
                     mProgressBar.setVisibility(View.INVISIBLE);
@@ -257,7 +261,6 @@ public class UserProfileFragment extends Fragment {
                     public void done(ParseException e) {
                         if(e != null) {
                             //Toast.makeText(getContext(), "Error saving picture. Try again",Toast.LENGTH_LONG).show();
-                            System.out.println("something went wrong saving picture. " + e);
                             Log.i("HOME", "something went wrong saving picture. " + e);
                             Toast.makeText(getContext(), "Error ocurred saving image :( . Try again", Toast.LENGTH_SHORT).show();
                             mProgressBar.setVisibility(View.INVISIBLE);
