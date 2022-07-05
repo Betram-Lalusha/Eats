@@ -240,10 +240,7 @@ public class UserProfileFragment extends Fragment {
         selectedImage.compress(Bitmap.CompressFormat.PNG, 100, stream); //takes a lot of time but best solution so far
         byte[] byteArray = stream.toByteArray();
         selectedImage.recycle();
-        //mPhotoFile = bitmapToFile(getContext(), selectedImage, "newPicture.png");
-        ///mCurrentUser.put("userProfilePic", new ParseFile(mPhotoFile));
         ParseFile newPic =  new ParseFile("userPic.png", byteArray);
-       // mProgressBar.setVisibility(View.INVISIBLE);
         newPic.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {

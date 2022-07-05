@@ -57,7 +57,6 @@ public class Place {
          * @return: The url of the remote image
          */
     public void getPhotoUrl() {
-        System.out.println("ref " + this.mPhotoReference);
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
         RequestParams requestParams = new RequestParams();
         requestParams.put("key", MAPS_API_KEY);

@@ -27,6 +27,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.eats.Models.City;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
 import com.parse.ParseException;
@@ -35,12 +36,14 @@ import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
 public class PostFragment extends Fragment {
 
     Boolean mNewImage;
+    TextView mSetCity;
     TextView mSetPrice;
     Button mSelectImage;
     TextView mSetCaption;
@@ -49,6 +52,8 @@ public class PostFragment extends Fragment {
     Double mUserLatitude;
     ImageView mAddedImage;
     Double mUserLongitude;
+    Bitmap mSelectedImage;
+    TextView mSetCategory;
     private File mPhotoFile;
     TextView mSetDescription;
     public final String APP_TAG = "EATS";
@@ -72,11 +77,13 @@ public class PostFragment extends Fragment {
 
         mNewImage = true;
         mSetPrice = view.findViewById(R.id.setPrice);
+        mSetCity = view.findViewById(R.id.cityOfPost);
         mSetCaption = view.findViewById(R.id.setCaption);
         mAddedImage = view.findViewById(R.id.addedImage);
         mSelectImage = view.findViewById(R.id.selectImage);
         mCaptureImage = view.findViewById(R.id.captureImage);
         mSubmitButton = view.findViewById(R.id.submitButton);
+        mSetCategory = view.findViewById(R.id.enterCategory);
         mSetDescription = view.findViewById(R.id.setDescription);
         //get user coordinates passed from Home Activity
         mUserLatitude = getArguments().getDouble("userLat", 37.4219862);
@@ -109,7 +116,9 @@ public class PostFragment extends Fragment {
         mSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String enteredCity = mSetCity.getText().toString();
                 String enteredCaption = mSetCaption.getText().toString();
+                String enteredCategory = mSetCategory.getText().toString();
                 String enteredDescription = mSetDescription.getText().toString();
                 Number enteredPrice = mSetPrice.getText().toString().isEmpty() ? 0 : (Number) Integer.parseInt(mSetPrice.getText().toString());
                 //feedback if no photo is taken
@@ -122,13 +131,18 @@ public class PostFragment extends Fragment {
                     return;
                 }
 
+                if(enteredCategory.isEmpty()){
+                    Toast.makeText(getContext(), "category cannot be empty", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 if(enteredDescription.isEmpty()) {
                     Toast.makeText(getContext(), "description cannot be empty", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 ParseUser currentUser = ParseUser.getCurrentUser();
-                savePost(enteredCaption, currentUser, mPhotoFile, enteredPrice, enteredDescription);
+                savePost(enteredCity, enteredCaption, enteredCategory,  currentUser,enteredPrice, enteredDescription, mSelectedImage);
             }
         });
 
@@ -155,7 +169,7 @@ public class PostFragment extends Fragment {
         }
     }
 
-    private void savePost(String enteredCaption, ParseUser currentUser, File photoFile, Number price, String enteredDescription) {
+    private void savePost(String enteredCity, String enteredCaption, String enteredCategory, ParseUser currentUser, Number price, String enteredDescription, @NonNull Bitmap selectedImage) {
         Post post = new Post();
 
         post.setPrice(price);
@@ -164,28 +178,52 @@ public class PostFragment extends Fragment {
         post.setCaption(enteredCaption);
         post.setCaption(enteredCaption);
         post.setLongitude(mUserLongitude);
+        post.setCategory(enteredCategory);
         post.setDetails(enteredDescription);
-        post.setMedia(new ParseFile(photoFile));
-        //post.setLocation(ParseUser.getCurrentUser().getParseObject("location"));
 
-        post.saveInBackground(new SaveCallback() {
+        //save photo first
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        selectedImage.compress(Bitmap.CompressFormat.PNG, 100, stream); //takes a lot of time but best solution so far
+        byte[] byteArray = stream.toByteArray();
+        selectedImage.recycle();
+        ParseFile newPic =  new ParseFile("postImage.png", byteArray);
+
+        newPic.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
                 if(e != null) {
-                    Log.i("POSTACTIVITY", "error ocurred trying to post " + e);
-                    Toast.makeText(getContext(), "error ocurred. Try again.", Toast.LENGTH_SHORT).show();
+                    Log.i("POST-FRAGMENT", "error occurred trying to post image" + e);
+                    e.printStackTrace();
                     return;
                 }
 
-                mSetPrice.setText("");
-                mSetCaption.setText("");
-                mSetDescription.setText("");
-                //clear image
-                mAddedImage.setImageResource(R.drawable.eats_logo);
-                Toast.makeText(getContext(), "saved successfully!.", Toast.LENGTH_SHORT).show();
+                post.setMedia(newPic);
+                //SAVE POST
+                post.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if(e != null) {
+                            Log.i("POST-FRAGMENT", "error occurred trying to post " + e);
+                            Toast.makeText(getContext(), "error occurred. Try again.", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
 
+                        mSetPrice.setText("");
+                        mSetCaption.setText("");
+                        mSetDescription.setText("");
+                        //clear image
+                        mAddedImage.setImageResource(R.drawable.eats_logo);
+                        Toast.makeText(getContext(), "saved successfully!.", Toast.LENGTH_SHORT).show();
+
+                    }
+                });
             }
         });
+
+        //save city if provided by user
+//        City city = new City();
+//
+//        city.put("name")
 
     }
 
@@ -216,6 +254,7 @@ public class PostFragment extends Fragment {
                 Bitmap takenImage = BitmapFactory.decodeFile(mPhotoFile.getAbsolutePath());
                 // RESIZE BITMAP, see section below
                 // Load the taken image into a preview
+                mSelectedImage = BitmapFactory.decodeFile(mPhotoFile.getAbsolutePath());
                 mAddedImage.setImageBitmap(takenImage);
                 mNewImage = true;
             } else { // Result was a failure
@@ -228,9 +267,9 @@ public class PostFragment extends Fragment {
 
             mPhotoFile = new File(photoUri.getPath());
             // Load the image located at photoUri into selectedImage
+            mSelectedImage = loadFromUri(photoUri);
             Bitmap selectedImage = loadFromUri(photoUri);
-
-            //saveNewProfilePic(selectedImage);
+            mAddedImage.setImageBitmap(selectedImage);
             mNewImage = true;
         } else mNewImage = false;
 
@@ -270,6 +309,8 @@ public class PostFragment extends Fragment {
         }
         return image;
     }
+
+
 
 
 
