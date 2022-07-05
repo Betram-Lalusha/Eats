@@ -14,8 +14,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.codepath.asynchttpclient.AsyncHttpClient;
@@ -50,8 +52,10 @@ public class SearchFragment extends Fragment {
 
     List<Post> mPosts;
     List<City> mCities;
+    TextView mSearchBox;
     RecyclerView mRvCities;
     ImageView mFeaturedImage;
+    ImageButton mSearchButton;
     RecyclerView mRvCategories;
     RecyclerView mRvSearchItems;
     CitiesAdapter mCitiesAdapter;
@@ -87,7 +91,10 @@ public class SearchFragment extends Fragment {
 
         mPosts = new LinkedList<>();
         mCities = new LinkedList<>();
+
         mRvCities = view.findViewById(R.id.rvCities);
+        mSearchBox = view.findViewById(R.id.searchBox);
+        mSearchButton = view.findViewById(R.id.searchButton);
         mRvCategories = view.findViewById(R.id.rvCategories);
         mRvSearchItems = view.findViewById(R.id.rvSearchItems);
 
@@ -112,6 +119,28 @@ public class SearchFragment extends Fragment {
                 loadNextPosts();
             }
         };
+
+        //listener to search for items
+        mSearchBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //do nothing if there is no entered text
+                if(mSearchBox.getText().toString().isEmpty()) return;
+
+                searchDb(mSearchBox.getText().toString());
+            }
+        });
+
+        mSearchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //do nothing if there is no entered text
+                if(mSearchBox.getText().toString().isEmpty()) return;
+
+                searchDb(mSearchBox.getText().toString());
+                mSearchBox.setText("");
+            }
+        });
 
         mRvCities.addOnScrollListener(mEndlessRecyclerViewScrollListener);
         mRvCategories.addOnScrollListener(mEndlessRecyclerViewScrollListener);
@@ -270,5 +299,38 @@ public class SearchFragment extends Fragment {
         }
 
         return places;
+    }
+
+
+    //search
+    //look for caption, user name, and description that contains search key
+
+    private void searchDb(String userQuery) {
+        ParseQuery<Post> query = new ParseQuery<Post>(Post.class);
+        query.setLimit(6);
+        query.include(Post.USER);
+        query.addDescendingOrder("createdAt");
+        //slow for large data sets
+        query.whereContains(Post.CAPTION, userQuery);
+        query.whereContains(Post.DETAILS, userQuery);
+
+        query.findInBackground(new FindCallback<Post>() {
+            @Override
+            public void done(List<Post> posts, ParseException e) {
+                if(e != null) {
+                    Log.i("SEARCH-DB", e.toString());
+                    e.printStackTrace();
+                    return;
+                }
+
+                System.out.println("success " + posts);
+                //remove current posts
+               // mPosts.clear();
+
+                //add new ones
+               // mPosts.addAll(posts);
+                //mCategoriesAdapter.notifyDataSetChanged();
+            }
+        });
     }
 }
