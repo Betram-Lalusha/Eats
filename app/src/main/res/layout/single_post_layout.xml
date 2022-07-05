@@ -44,11 +44,13 @@
 
                 <ImageButton
                     android:id="@+id/distanceIcon"
-                    android:layout_width="24dp"
-                    android:layout_height="20dp"
+                    android:layout_width="23dp"
+                    android:layout_height="24dp"
                     android:layout_marginStart="8dp"
-                    android:layout_marginTop="16dp"
-                    android:src="@drawable/ic_baseline_explore_24"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/search_item_bck"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/icons8_place_marker_48"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:srcCompat="@tools:sample/avatars" />
@@ -71,7 +73,7 @@
                     android:layout_height="20dp"
                     android:layout_marginStart="84dp"
                     android:layout_marginTop="16dp"
-                    android:src="@drawable/ic_baseline_explore_24"
+                    android:src="@drawable/icons8_dollar_coin_48"
                     app:layout_constraintStart_toEndOf="@+id/distanceOfPost"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:srcCompat="@tools:sample/avatars" />
@@ -90,11 +92,11 @@
 
                 <ImageButton
                     android:id="@+id/categoryIcon"
-                    android:layout_width="24dp"
-                    android:layout_height="20dp"
-                    android:layout_marginStart="56dp"
+                    android:layout_width="39dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="44dp"
                     android:layout_marginTop="16dp"
-                    android:src="@drawable/ic_baseline_explore_24"
+                    android:src="@drawable/icons8_pot_of_food_48"
                     app:layout_constraintStart_toEndOf="@+id/priceOfPost"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:srcCompat="@tools:sample/avatars" />
@@ -118,7 +120,7 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="12dp"
                     android:text="TextView"
-                    android:textColor="#919090"
+                    android:textColor="@color/material_dynamic_neutral_variant40"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/distanceOfPost" />
