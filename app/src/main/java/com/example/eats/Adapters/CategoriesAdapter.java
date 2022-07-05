@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.eats.Activities.DetailActivity;
+import com.example.eats.Fragments.SearchFragment;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
 import com.parse.DeleteCallback;
