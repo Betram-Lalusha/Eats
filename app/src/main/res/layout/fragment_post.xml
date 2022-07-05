@@ -6,12 +6,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/addedImage"
-        android:layout_width="413dp"
+        android:layout_width="0dp"
         android:layout_height="290dp"
+        android:layout_marginTop="16dp"
         android:scaleType="centerCrop"
+        android:src="@drawable/eats_logo"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@tools:sample/avatars" />
@@ -21,9 +24,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="12dp"
         android:ems="10"
-        android:hint="price (numbers only)"
+        android:hint="price (optional)"
         android:inputType="textPersonName"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/addedImage" />
@@ -42,27 +45,17 @@
 
     <EditText
         android:id="@+id/setDescription"
-        android:layout_width="350dp"
-        android:layout_height="226dp"
-        android:layout_marginTop="32dp"
+        android:layout_width="0dp"
+        android:layout_height="86dp"
+        android:layout_marginTop="20dp"
         android:ems="10"
         android:gravity="center"
         android:hint="description"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintHorizontal_bias="0.054"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/setCaption" />
-
-    <ImageButton
-        android:id="@+id/addImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="124dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintStart_toEndOf="@+id/setPrice"
-        app:layout_constraintTop_toBottomOf="@+id/addedImage"
-        app:srcCompat="@drawable/ic_baseline_library_add_24" />
+        app:layout_constraintTop_toBottomOf="@+id/enterCategory" />
 
     <Button
         android:id="@+id/submitButton"
@@ -74,5 +67,52 @@
         android:textAllCaps="false"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/setDescription" />
+
+    <EditText
+        android:id="@+id/cityOfPost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="12dp"
+        android:ems="10"
+        android:hint="city (e.g LA)"
+        android:inputType="textPersonName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/setCaption" />
+
+    <EditText
+        android:id="@+id/enterCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:hint="category (e.g Zambian food)"
+        android:inputType="textPersonName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cityOfPost" />
+
+    <Button
+        android:id="@+id/captureImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="300dp"
+        android:layout_marginTop="158dp"
+        android:text="capture"
+        android:textAllCaps="false"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/addedImage" />
+
+    <Button
+        android:id="@+id/selectImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="300dp"
+        android:text="select"
+        android:textAllCaps="false"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/captureImage" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

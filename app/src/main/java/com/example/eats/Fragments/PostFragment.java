@@ -65,7 +65,7 @@ public class PostFragment extends Fragment {
     public void onViewCreated(View view, @NonNull Bundle savedInstanceState) {
 
         mSetPrice = view.findViewById(R.id.setPrice);
-        mAddImage = view.findViewById(R.id.addImage);
+        //mAddImage = view.findViewById(R.id.addImage);
         mSetCaption = view.findViewById(R.id.setCaption);
         mAddedImage = view.findViewById(R.id.addedImage);
         mSubmitButton = view.findViewById(R.id.submitButton);
@@ -74,7 +74,7 @@ public class PostFragment extends Fragment {
         mUserLatitude = getArguments().getDouble("userLat", 37.4219862);
         mUserLongitude = getArguments().getDouble("userLong" ,-122.0842771);
 
-        mAddImage.setOnClickListener(new View.OnClickListener() {
+        mAddedImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onLaunchCamera(v);
@@ -86,7 +86,7 @@ public class PostFragment extends Fragment {
             public void onClick(View v) {
                 String enteredCaption = mSetCaption.getText().toString();
                 String enteredDescription = mSetDescription.getText().toString();
-                Number enteredPrice = (Number) Integer.parseInt(mSetPrice.getText().toString());
+                Number enteredPrice = mSetPrice.getText().toString().isEmpty() ? 0 : (Number) Integer.parseInt(mSetPrice.getText().toString());
                 //feedback if no photo is taken
                 if(mPhotoFile == null || mAddedImage.getDrawable() == null) {
                     Toast.makeText(getContext(), "no image added", Toast.LENGTH_SHORT).show();
@@ -156,7 +156,7 @@ public class PostFragment extends Fragment {
                 mSetCaption.setText("");
                 mSetDescription.setText("");
                 //clear image
-                mAddedImage.setImageResource(0);
+                mAddedImage.setImageResource(R.drawable.eats_logo);
                 Toast.makeText(getContext(), "saved successfully!.", Toast.LENGTH_SHORT).show();
 
             }
