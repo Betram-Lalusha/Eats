@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 import com.example.eats.Adapters.PostsAdapter;
 import com.example.eats.EndlessRecyclerViewScrollListener;
 import com.example.eats.Helpers.Point;
+import com.example.eats.Helpers.VerticalSpaceItemDecoration;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -68,13 +69,14 @@ public class TimelineFragment extends Fragment {
         mPb = (ProgressBar) view.findViewById(R.id.pbLoading);
         mRecyclerView = view.findViewById(R.id.recyclerView);
         mPostsAdapter = new PostsAdapter(getContext(), mPosts);
+        VerticalSpaceItemDecoration verticalSpaceItemDecoration = new VerticalSpaceItemDecoration(30);
 
         queryPosts();
 
         mRecyclerView.setAdapter(mPostsAdapter);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         //to add space between elements in recycler view
-
+        mRecyclerView.addItemDecoration(verticalSpaceItemDecoration);
         // Retain an instance so that you can call `resetState()` for fresh searches
         mEndlessRecyclerViewScrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
