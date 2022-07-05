@@ -59,6 +59,7 @@ public class SearchFragment extends Fragment {
     ImageButton mSearchButton;
     RecyclerView mRvCategories;
     RecyclerView mRvSearchItems;
+    List<Post> mPostsCategories;
     CitiesAdapter mCitiesAdapter;
     CategoriesAdapter mCategoriesAdapter;
     SearchResultsAdapter mSearchResultsAdapter;
@@ -92,6 +93,7 @@ public class SearchFragment extends Fragment {
 
         mPosts = new LinkedList<>();
         mCities = new LinkedList<>();
+        mPostsCategories = new LinkedList<>();
 
         mRvCities = view.findViewById(R.id.rvCities);
         mSearchBox = view.findViewById(R.id.searchBox);
@@ -105,8 +107,8 @@ public class SearchFragment extends Fragment {
 
         mFeaturedImage = view.findViewById(R.id.featuredImage);
         mCitiesAdapter = new CitiesAdapter(getContext(), mCities);
-        mCategoriesAdapter = new CategoriesAdapter(getContext(), mPosts);
         mSearchResultsAdapter = new SearchResultsAdapter(getContext(), mPosts);
+        mCategoriesAdapter = new CategoriesAdapter(getContext(), mPostsCategories);
 
         mRvCities.setAdapter(mCitiesAdapter);
         mRvCategories.setAdapter(mCategoriesAdapter);
@@ -156,7 +158,8 @@ public class SearchFragment extends Fragment {
                     Log.i("HOME", "something went wrong obtaining posts " + e);
                 }
 
-                mPosts.addAll(posts);
+                mCategoriesAdapter.addAll(posts);
+                mSearchResultsAdapter.addAll(posts);
             }
 
         });
@@ -178,8 +181,10 @@ public class SearchFragment extends Fragment {
                     return;
                 }
                 Post featured = randomPost(posts.size(), posts);
-                mPosts.addAll(posts);
-                mCategoriesAdapter.notifyDataSetChanged();
+
+                mCategoriesAdapter.addAll(posts);
+                mSearchResultsAdapter.addAll(posts);
+
                 Glide.with(getContext()).load(featured.getMedia().getUrl()).into(mFeaturedImage);
             }
         });
