@@ -91,9 +91,9 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
             mDistance.setText("1km"); //hard coded...will be changed after scaling of distance
             mCaption.setText(post.getCaption());
             mCategory.setText(post.getCategory());
-            mPrice.setText(String.valueOf(post.getPrice()));
             mOwnerName.setText(post.getParseUser().getUsername());
             Glide.with(mContext).load(post.getMedia().getUrl()).into(mPostImage);
+            mPrice.setText(post.getPrice() > 0 ? "$" + String.valueOf(post.getPrice()) : "free");
             if(post.getParseUser().getParseFile("userProfilePic") != null) {
                 Glide.with(mContext).load(post.getParseUser().getParseFile("userProfilePic").getUrl()).into(mOwnerPfp);
             } else mOwnerPfp.setImageResource(R.drawable.default_image);
