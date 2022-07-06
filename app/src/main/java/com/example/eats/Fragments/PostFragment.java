@@ -206,7 +206,6 @@ public class PostFragment extends Fragment {
         post.setCaption(enteredCaption);
         post.setCaption(enteredCaption);
         post.setLongitude(mUserLongitude);
-        post.setCategory(enteredCategory);
         post.setDetails(enteredDescription);
 
         //save photo first
@@ -225,28 +224,53 @@ public class PostFragment extends Fragment {
                     return;
                 }
 
-                post.setMedia(newPic);
-                //SAVE POST
-                post.saveInBackground(new SaveCallback() {
+                //check if category does not already exist
+                ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
+                query.setLimit(1);
+                query.include(Post.USER);
+                query.addDescendingOrder("createdAt");
+                query.whereFullText(Post.CATEGORY, enteredCategory.toLowerCase());
+                query.findInBackground(new FindCallback<Post>() {
                     @Override
-                    public void done(ParseException e) {
+                    public void done(List<Post> objects, ParseException e) {
                         if(e != null) {
-                            Log.i("POST-FRAGMENT", "error occurred trying to post " + e);
-                            Toast.makeText(getContext(), "error occurred. Try again.", Toast.LENGTH_SHORT).show();
+                            Log.i("POST-FRAGMENT", "error occurred trying to find category equal to entered string" + e);
+                            e.printStackTrace();
                             return;
                         }
 
-                        mSetPrice.setText("");
-                        mSetCaption.setText("");
-                        mSetCategory.setText("");
-                        mSetDescription.setText("");
-                        //clear image
-                        mAddedImage.setImageResource(R.drawable.eats_logo);
-                        mSavingPost.setVisibility(View.GONE);
-                        Toast.makeText(getContext(), "saved successfully!.", Toast.LENGTH_SHORT).show();
+                        if(objects.isEmpty()) {
+                            post.setCategory(enteredCategory.toLowerCase());
+                        } else {
+                            post.setCategory(objects.get(0).getCategory());
+                        }
 
+                        post.setMedia(newPic);
+                        //SAVE POST
+                        post.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                if(e != null) {
+                                    Log.i("POST-FRAGMENT", "error occurred trying to post " + e.getMessage());
+                                    Toast.makeText(getContext(), "error occurred. Try again.", Toast.LENGTH_SHORT).show();
+                                    mSavingPost.setVisibility(View.GONE);
+                                    return;
+                                }
+
+                                mSetPrice.setText("");
+                                mSetCaption.setText("");
+                                mSetCategory.setText("");
+                                mSetDescription.setText("");
+                                //clear image
+                                mAddedImage.setImageResource(R.drawable.eats_logo);
+                                mSavingPost.setVisibility(View.GONE);
+                                Toast.makeText(getContext(), "saved successfully!.", Toast.LENGTH_SHORT).show();
+
+                            }
+                        });
                     }
                 });
+
             }
         });
 
