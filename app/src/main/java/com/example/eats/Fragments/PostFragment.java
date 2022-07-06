@@ -40,9 +40,11 @@ import com.example.eats.Models.City;
 import com.example.eats.Models.Place;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
+import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -250,8 +252,25 @@ public class PostFragment extends Fragment {
         if(city.equals("No city")) {
             return;
         } else {
-            //downside is that
-            getPlace(city);
+            ParseQuery<City> parseQuery = new ParseQuery<City>(City.class);
+            parseQuery.whereFullText("name", city);
+            parseQuery.setLimit(1);
+            parseQuery.findInBackground(new FindCallback<City>() {
+                @Override
+                public void done(List<City> cities, ParseException e) {
+                    if(e != null) {
+                        Log.i(APP_TAG, "error fetching city with given name " + e);
+                        e.printStackTrace();
+                        return;
+                    }
+
+                    //only add city only if it does not exist in db
+                   if(cities.isEmpty()){
+                       getPlace(city);
+                   }
+                }
+            });
+
         }
     }
 
