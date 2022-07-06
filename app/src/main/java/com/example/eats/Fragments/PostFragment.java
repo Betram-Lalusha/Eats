@@ -64,7 +64,6 @@ import okhttp3.Response;
 public class PostFragment extends Fragment {
 
     Boolean mNewImage;
-    TextView mSetCity;
     TextView mSetPrice;
     Geocoder mGeocoder;
     Button mSelectImage;
@@ -77,6 +76,7 @@ public class PostFragment extends Fragment {
     Bitmap mSelectedImage;
     TextView mSetCategory;
     private File mPhotoFile;
+    ProgressBar mSavingPost;
     TextView mSetDescription;
     public final String APP_TAG = "EATS";
     public String mPhotoFileName = "photo.jpg";
@@ -104,7 +104,7 @@ public class PostFragment extends Fragment {
         mNewImage = true;
         mGeocoder = new Geocoder(getContext());
         mSetPrice = view.findViewById(R.id.setPrice);
-        mSetCity = view.findViewById(R.id.cityOfPost);
+        mSavingPost = view.findViewById(R.id.savingPost);
         mSetCaption = view.findViewById(R.id.setCaption);
         mAddedImage = view.findViewById(R.id.addedImage);
         mSelectImage = view.findViewById(R.id.selectImage);
@@ -143,7 +143,6 @@ public class PostFragment extends Fragment {
         mSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String enteredCity = mSetCity.getText().toString();
                 String enteredCaption = mSetCaption.getText().toString();
                 String enteredCategory = mSetCategory.getText().toString();
                 String enteredDescription = mSetDescription.getText().toString();
@@ -170,7 +169,7 @@ public class PostFragment extends Fragment {
 
                 mSubmitButton.setEnabled(false);
                 ParseUser currentUser = ParseUser.getCurrentUser();
-                savePost(enteredCity, enteredCaption, enteredCategory,  currentUser,enteredPrice, enteredDescription, mSelectedImage);
+                savePost(enteredCaption, enteredCategory,  currentUser,enteredPrice, enteredDescription, mSelectedImage);
             }
         });
 
@@ -197,7 +196,8 @@ public class PostFragment extends Fragment {
         }
     }
 
-    private void savePost(String enteredCity, String enteredCaption, String enteredCategory, ParseUser currentUser, Number price, String enteredDescription, @NonNull Bitmap selectedImage) {
+    private void savePost(String enteredCaption, String enteredCategory, ParseUser currentUser, Number price, String enteredDescription, @NonNull Bitmap selectedImage) {
+        mSavingPost.setVisibility(View.VISIBLE);
         Post post = new Post();
 
         post.setPrice(price);
@@ -238,9 +238,11 @@ public class PostFragment extends Fragment {
 
                         mSetPrice.setText("");
                         mSetCaption.setText("");
+                        mSetCategory.setText("");
                         mSetDescription.setText("");
                         //clear image
                         mAddedImage.setImageResource(R.drawable.eats_logo);
+                        mSavingPost.setVisibility(View.GONE);
                         Toast.makeText(getContext(), "saved successfully!.", Toast.LENGTH_SHORT).show();
 
                     }
