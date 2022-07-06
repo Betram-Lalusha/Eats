@@ -40,6 +40,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -58,8 +59,8 @@ public class SearchFragment extends Fragment {
     RecyclerView mRvCategories;
     RecyclerView mRvSearchItems;
     List<Post> mPostsCategories;
-    List<String> mCategoriesClicked;
     CitiesAdapter mCitiesAdapter;
+    HashSet<String> mCategoriesClicked;
     CategoriesAdapter mCategoriesAdapter;
     SearchResultsAdapter mSearchResultsAdapter;
     private OnClickInterface mOnClickInterface;
@@ -74,11 +75,17 @@ public class SearchFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mCategoriesClicked = new HashSet<>();
+
         //set on click interface
         mOnClickInterface = new OnClickInterface() {
             @Override
             public void setClick(String category) {
                 Toast.makeText(getContext(), "Category clicked is " + category, Toast.LENGTH_LONG).show();
+                if(!mCategoriesClicked.add(category)) {
+                    mCategoriesClicked.remove(category);
+                }
             }
         };
     }
