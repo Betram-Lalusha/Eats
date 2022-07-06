@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageDecoder;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -39,12 +41,14 @@ import com.parse.SaveCallback;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public class PostFragment extends Fragment {
 
     Boolean mNewImage;
     TextView mSetCity;
     TextView mSetPrice;
+    Geocoder mGeocoder;
     Button mSelectImage;
     TextView mSetCaption;
     Button mSubmitButton;
@@ -68,6 +72,8 @@ public class PostFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        mUserLatitude = getArguments().getDouble("userLat", 37.4219862);
+        mUserLongitude = getArguments().getDouble("userLong" ,-122.0842771);
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_post, container, false);
     }
@@ -76,6 +82,7 @@ public class PostFragment extends Fragment {
     public void onViewCreated(View view, @NonNull Bundle savedInstanceState) {
 
         mNewImage = true;
+        mGeocoder = new Geocoder(getContext());
         mSetPrice = view.findViewById(R.id.setPrice);
         mSetCity = view.findViewById(R.id.cityOfPost);
         mSetCaption = view.findViewById(R.id.setCaption);
@@ -141,6 +148,7 @@ public class PostFragment extends Fragment {
                     return;
                 }
 
+                mSubmitButton.setEnabled(false);
                 ParseUser currentUser = ParseUser.getCurrentUser();
                 savePost(enteredCity, enteredCaption, enteredCategory,  currentUser,enteredPrice, enteredDescription, mSelectedImage);
             }
@@ -311,7 +319,20 @@ public class PostFragment extends Fragment {
     }
 
 
-
+    /**
+     * Finds the city the user is in using their current coordinates.
+     * Cities are needed to enable filtering by cities in search fragment
+     * @return
+     */
+    private String getCityFromUserLats() {
+        List<Address> fromLocation = null;
+        try {
+            fromLocation = mGeocoder.getFromLocation(mUserLatitude, mUserLongitude, 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return fromLocation ==  null ? "No city" : fromLocation.get(0).getLocality();
+    }
 
 
 }
