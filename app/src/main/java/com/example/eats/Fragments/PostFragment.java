@@ -2,6 +2,8 @@ package com.example.eats.Fragments;
 
 import static android.app.Activity.RESULT_OK;
 
+import static com.example.eats.BuildConfig.MAPS_API_KEY;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,6 +15,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
@@ -29,7 +32,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.codepath.asynchttpclient.AsyncHttpClient;
+import com.codepath.asynchttpclient.RequestParams;
+import com.codepath.asynchttpclient.callback.BinaryHttpResponseHandler;
+import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.example.eats.Models.City;
+import com.example.eats.Models.Place;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
 import com.parse.ParseException;
@@ -38,10 +46,18 @@ import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
+
+import okhttp3.Headers;
+import okhttp3.Response;
 
 public class PostFragment extends Fragment {
 
@@ -64,6 +80,8 @@ public class PostFragment extends Fragment {
     public String mPhotoFileName = "photo.jpg";
     public final static int PICK_PHOTO_CODE = 1046;
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
+    public final String  GOOGLE_PLACES_GET_PHOTO_BASE_URL = "https://maps.googleapis.com/maps/api/place/photo";
+    private final String GOOGLE_PLACES_API_BASE_URL = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json";
 
     public PostFragment() {
         // Required empty public constructor
@@ -228,6 +246,12 @@ public class PostFragment extends Fragment {
             }
         });
 
+        String city = getCityFromUserLats();
+        if(city.equals("No city")) {
+            return;
+        } else {
+            getPlace(city);
+        }
         //save city if provided by user
 //        City city = new City();
 //
@@ -333,6 +357,152 @@ public class PostFragment extends Fragment {
         }
         return fromLocation ==  null ? "No city" : fromLocation.get(0).getLocality();
     }
+
+    /**
+     * returns a place from the google maps api from a given search query
+     * @param query: the name of the place to look for
+     *
+     */
+    private void getPlace(String query) {
+        AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
+        RequestParams params = new RequestParams();
+        params.put("key", MAPS_API_KEY);
+        params.put("input", query);
+        params.put("inputtype", "textquery");
+        params.put("fields", "name");
+        params.put("fields", "photos");
+
+        //get data
+        asyncHttpClient.get(GOOGLE_PLACES_API_BASE_URL, params, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                JSONObject jsonObject = json.jsonObject;
+                JSONArray possibleCandidates = null;
+                try {
+                    possibleCandidates = jsonObject.getJSONArray("candidates");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                List<JSONObject> candidates = getCandidates(possibleCandidates);
+                List<Place> places = getFirstPlace(candidates,query);
+                getPhotoUrl(places.get(0));
+                return;
+            }
+
+            @Override
+            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                Log.i("GET-PLACES","failed because " + response);
+                return;
+            }
+        });
+    }
+
+    /**
+     * Function returns a list of all candidates from a given jsonArray
+     * @param candidates: The json array of candidates
+     * @return: a list of all candiates from the given jsonArray
+     */
+    private List<JSONObject> getCandidates(JSONArray candidates) {
+        List<JSONObject> result = new LinkedList<>();
+        for(int i = 0; i < 1; i++) {
+            JSONObject candidate = null;
+            try {
+                candidate = candidates.getJSONObject(i);
+            } catch (JSONException e) {
+                Log.i("GET-CANDIDATES", e.toString());
+                e.printStackTrace();
+            }
+            result.add(candidate);
+        }
+
+        return result;
+    }
+
+    /**
+     * Function returns a list of a places from a given list of candidates
+     * @param candidates: a list of json objects representing candidates returned from google places API
+     * @return:  a list of a places from a given list of candidates
+     */
+    private List<Place> getFirstPlace(List<JSONObject> candidates, String name) {
+        List<Place> places = new LinkedList<>();
+        for(JSONObject candidate: candidates) {
+            Place place = Place.fromJson(candidate,name);
+            places.add(place);
+        }
+
+        return places;
+    }
+
+    /**
+     * Retrives the url of the photo using this object's photo reference.
+     * API calls are made using AsyncHTTP class and are made to the google maps api
+     * @return: The url of the remote image
+     */
+    public void getPhotoUrl(Place place) {
+        AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
+        RequestParams requestParams = new RequestParams();
+        requestParams.put("key", MAPS_API_KEY);
+        requestParams.put("photo_reference",place.mPhotoReference);
+        requestParams.put("maxwidth", 400);
+        requestParams.put("maxheight",400);
+        asyncHttpClient.get(GOOGLE_PLACES_GET_PHOTO_BASE_URL, requestParams, new BinaryHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Headers headers, Response response) {
+                String url = getUrl(response);
+
+                //save city
+                City city = new City();
+                city.put(City.NAME, place.mName);
+                city.put(city.IMAGE_URL, url);
+
+                city.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if(e!= null) {
+                            Log.i("POST-FRAGMENT", "error occurred trying to save city " + e);
+                            e.printStackTrace();
+                            return;
+                        }
+
+                        //finished operation
+                    }
+                });
+                return;
+            }
+
+            @Override
+            public void onFailure(int statusCode, @Nullable Headers headers, String errorResponse, @Nullable Throwable throwable) {
+                Log.i("GET-PLACE-URL","error occured no json " + errorResponse);
+                return;
+            }
+        });
+    }
+
+    /**
+     * returns the url of an image from a given response object
+     * @param response: the response object to decode
+     * @return: the url contained in the response
+     */
+    private String getUrl(Response response) {
+        String responseStr = response.toString();
+        String[] arr = responseStr.split(",");
+        String inCorrectUrl =  arr[3];
+        String correctUrl = "";
+        for(int i = 0; i < inCorrectUrl.length(); i++) {
+            if(inCorrectUrl.charAt(i) == 'h') {
+                int k = i;
+                while(k < inCorrectUrl.length() - 1) {
+                    correctUrl += inCorrectUrl.charAt(k);
+                    k++;
+                }
+                i = k;
+            }
+            if(inCorrectUrl.charAt(i) == '}') break;
+        }
+        //System.out.println("url " + correctUrl);
+        return correctUrl;
+    }
+
 
 
 }
