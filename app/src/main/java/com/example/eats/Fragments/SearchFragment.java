@@ -26,6 +26,7 @@ import com.example.eats.Adapters.CategoriesAdapter;
 import com.example.eats.Adapters.CitiesAdapter;
 import com.example.eats.Adapters.SearchResultsAdapter;
 import com.example.eats.EndlessRecyclerViewScrollListener;
+import com.example.eats.Interface.OnClickInterface;
 import com.example.eats.Models.City;
 import com.example.eats.Models.Place;
 import com.example.eats.Models.Post;
@@ -57,9 +58,11 @@ public class SearchFragment extends Fragment {
     RecyclerView mRvCategories;
     RecyclerView mRvSearchItems;
     List<Post> mPostsCategories;
+    List<String> mCategoriesClicked;
     CitiesAdapter mCitiesAdapter;
     CategoriesAdapter mCategoriesAdapter;
     SearchResultsAdapter mSearchResultsAdapter;
+    private OnClickInterface mOnClickInterface;
     EndlessRecyclerViewScrollListener mEndlessRecyclerViewScrollListener;
     private final String GOOGLE_PLACES_API_BASE_URL = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json";
 
@@ -71,6 +74,13 @@ public class SearchFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //set on click interface
+        mOnClickInterface = new OnClickInterface() {
+            @Override
+            public void setClick(String category) {
+                Toast.makeText(getContext(), "Category clicked is " + category, Toast.LENGTH_LONG).show();
+            }
+        };
     }
 
     @Override
@@ -105,7 +115,7 @@ public class SearchFragment extends Fragment {
         mFeaturedImage = view.findViewById(R.id.featuredImage);
         mCitiesAdapter = new CitiesAdapter(getContext(), mCities);
         mSearchResultsAdapter = new SearchResultsAdapter(getContext(), mPosts);
-        mCategoriesAdapter = new CategoriesAdapter(getContext(), mPostsCategories);
+        mCategoriesAdapter = new CategoriesAdapter(getContext(), mPostsCategories, mOnClickInterface);
 
         mRvCities.setAdapter(mCitiesAdapter);
         mRvCategories.setAdapter(mCategoriesAdapter);

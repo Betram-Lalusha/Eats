@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.eats.Interface.OnClickInterface;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
 
@@ -19,11 +20,13 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
     Context mContext;
     List<Post> mPosts;
     public  String mClickedCategory;
+    OnClickInterface mOnClickInterface;
 
-    public CategoriesAdapter(Context context, List<Post> posts) {
+    public CategoriesAdapter(Context context, List<Post> posts, OnClickInterface onClickInterface) {
         this.mPosts = posts;
         this.mContext = context;
         mClickedCategory = "";
+        this.mOnClickInterface = onClickInterface;
     }
 
     @NonNull
@@ -75,6 +78,9 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
                 public void onClick(View v) {
                     //change color
                     changeColor();
+
+                    //set custom on click interface
+                    mOnClickInterface.setClick(post.getCategory());
                 }
             });
 
