@@ -1,5 +1,7 @@
 package com.example.eats.Models;
 
+import androidx.annotation.Nullable;
+
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -37,4 +39,5 @@ public class City extends ParseObject {
     public  String toString() {
         return this.getName();
     }
+
 }

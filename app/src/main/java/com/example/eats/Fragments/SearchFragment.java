@@ -33,6 +33,7 @@ import com.example.eats.Models.Post;
 import com.example.eats.R;
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import org.json.JSONArray;
@@ -61,10 +62,12 @@ public class SearchFragment extends Fragment {
     RecyclerView mRvSearchItems;
     List<Post> mPostsCategories;
     CitiesAdapter mCitiesAdapter;
+    HashSet<String> mCitiesClicked;
     HashSet<String> mCategoriesClicked;
     CategoriesAdapter mCategoriesAdapter;
     SearchResultsAdapter mSearchResultsAdapter;
     private OnClickInterface mOnClickInterface;
+    private OnClickInterface mCityClickInterface;
     EndlessRecyclerViewScrollListener mEndlessRecyclerViewScrollListener;
     private final String GOOGLE_PLACES_API_BASE_URL = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json";
 
@@ -90,6 +93,17 @@ public class SearchFragment extends Fragment {
                 filterByCategory();
             }
         };
+
+        mCityClickInterface = new OnClickInterface() {
+            @Override
+            public void setClick(String item) {
+                if(!mCitiesClicked.add(item)) {
+                    mCitiesClicked.remove(item);
+                }
+
+                filterByCity();
+            }
+        };
     }
 
     @Override
@@ -109,6 +123,7 @@ public class SearchFragment extends Fragment {
 
         mPosts = new LinkedList<>();
         mCities = new LinkedList<>();
+        mCitiesClicked = new HashSet<>();
         mPostsCategories = new LinkedList<>();
 
         mRvCities = view.findViewById(R.id.rvCities);
@@ -122,7 +137,7 @@ public class SearchFragment extends Fragment {
         mRvSearchItems.setLayoutManager(linearLayoutManager2);
 
         mFeaturedImage = view.findViewById(R.id.featuredImage);
-        mCitiesAdapter = new CitiesAdapter(getContext(), mCities);
+        mCitiesAdapter = new CitiesAdapter(getContext(), mCities, mCityClickInterface);
         mSearchResultsAdapter = new SearchResultsAdapter(getContext(), mPosts);
         mCategoriesAdapter = new CategoriesAdapter(getContext(), mPostsCategories, mOnClickInterface);
 
@@ -158,7 +173,6 @@ public class SearchFragment extends Fragment {
         //get data
         queryPosts();
         queryCities();
-        getPlaces("Manchester");
     }
 
     private void loadNextPosts() {
@@ -219,8 +233,8 @@ public class SearchFragment extends Fragment {
                     e.printStackTrace();
                     return;
                 }
-                mCities.addAll(cities);
-                mCategoriesAdapter.notifyDataSetChanged();
+
+                mCitiesAdapter.addAll(cities);
             }
         });
     }
@@ -372,6 +386,7 @@ public class SearchFragment extends Fragment {
      */
     private void filterByCategory() {
         if(mCategoriesClicked.isEmpty()) {
+            mSearchResultsAdapter.clear();
             queryPosts();
             return;
         }
@@ -395,6 +410,54 @@ public class SearchFragment extends Fragment {
                 mSearchResultsAdapter.clear();
                 mSearchResultsAdapter.addAll(posts);
 
+            }
+        });
+    }
+
+    private void filterByCity() {
+        if(mCitiesClicked.isEmpty()) {
+            mCitiesAdapter.clear();
+            queryCities();
+            queryPosts();
+            return;
+        }
+
+        ParseQuery<City> query = ParseQuery.getQuery(City.class);
+        query.setLimit(6);
+        query.addDescendingOrder("createdAt");
+        query.whereContainedIn("name", mCitiesClicked);
+
+        query.findInBackground(new FindCallback<City>() {
+            @Override
+            public void done(List<City> cities, ParseException e) {
+                if(e != null) {
+                    Log.i("QUERY", "something went wrong querying  in search fragment " + e.toString());
+                    e.printStackTrace();
+                    return;
+                }
+
+                mCitiesAdapter.clear();
+                mCitiesAdapter.addAll(cities);
+
+                ParseQuery<Post> postQuery = ParseQuery.getQuery(Post.class);
+                postQuery.setLimit(6);
+                postQuery.include(Post.USER);
+                postQuery.addDescendingOrder("createdAt");
+                postQuery.whereContainedIn("city", cities);
+
+                postQuery.findInBackground(new FindCallback<Post>() {
+                    @Override
+                    public void done(List<Post> posts, ParseException e) {
+                        if(e != null) {
+                            Log.i("QUERY", "something went wrong querying  in search fragment " + e.toString());
+                            e.printStackTrace();
+                            return;
+                        }
+
+                        mSearchResultsAdapter.clear();
+                        mSearchResultsAdapter.addAll(posts);
+                    }
+                });
             }
         });
     }

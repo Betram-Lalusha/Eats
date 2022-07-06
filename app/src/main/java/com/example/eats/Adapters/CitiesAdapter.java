@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.eats.Activities.DetailActivity;
+import com.example.eats.Interface.OnClickInterface;
 import com.example.eats.Models.City;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
@@ -27,10 +28,12 @@ public class CitiesAdapter extends RecyclerView.Adapter<CitiesAdapter.ViewHolder
 
     Context mContext;
     List<City> mCities;
+    OnClickInterface mOnClickInterface;
 
-    public CitiesAdapter(Context context, List<City> cities) {
+    public CitiesAdapter(Context context, List<City> cities, OnClickInterface onClickInterface) {
         this.mCities = cities;
         this.mContext = context;
+        this.mOnClickInterface = onClickInterface;
     }
 
     @NonNull
@@ -78,6 +81,13 @@ public class CitiesAdapter extends RecyclerView.Adapter<CitiesAdapter.ViewHolder
         public void bind(City city) {
             mCityName.setText(city.getName());
             Glide.with(mContext).load(city.getImageUrl()).into(mCityImage);
+
+            mCityImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mOnClickInterface.setClick(city.getName());
+                }
+            });
         }
     }
 }
