@@ -44,6 +44,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import okhttp3.Headers;
 
@@ -82,10 +83,11 @@ public class SearchFragment extends Fragment {
         mOnClickInterface = new OnClickInterface() {
             @Override
             public void setClick(String category) {
-                Toast.makeText(getContext(), "Category clicked is " + category, Toast.LENGTH_LONG).show();
                 if(!mCategoriesClicked.add(category)) {
                     mCategoriesClicked.remove(category);
                 }
+
+                filterByCategory();
             }
         };
     }
@@ -330,6 +332,7 @@ public class SearchFragment extends Fragment {
         ParseQuery<Post> categoryQuery = new ParseQuery<Post>(Post.class);
         categoryQuery.whereStartsWith(Post.CATEGORY, userQuery);
 
+
         List<ParseQuery<Post>> queries = new ArrayList<ParseQuery<Post>>();
         queries.add(captionQuery);
         queries.add(detailsQuery);
@@ -361,5 +364,38 @@ public class SearchFragment extends Fragment {
             }
         });
 
+    }
+
+    /**
+     * Function queries db for posts that have categories equal to that selected by user.
+     * If user has not selected any categories, queryPosts is called instead to populate the screen with featured items
+     */
+    private void filterByCategory() {
+        if(mCategoriesClicked.isEmpty()) {
+            queryPosts();
+            return;
+        }
+
+        //query for posts that have categories selected
+        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
+        query.setLimit(16);
+        query.include(Post.USER);
+        query.addDescendingOrder("createdAt");
+        query.whereContainedIn(Post.CATEGORY, mCategoriesClicked);
+
+        query.findInBackground(new FindCallback<Post>() {
+            @Override
+            public void done(List<Post> posts, ParseException e) {
+                if(e != null) {
+                    Log.i("QUERY", "something went wrong querying  in search fragment " + e.toString());
+                    e.printStackTrace();
+                    return;
+                }
+
+                mSearchResultsAdapter.clear();
+                mSearchResultsAdapter.addAll(posts);
+
+            }
+        });
     }
 }
