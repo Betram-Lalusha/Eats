@@ -44,6 +44,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -306,14 +307,29 @@ public class SearchFragment extends Fragment {
      * @param userQuery: the string to look for in the db
      */
     private void searchDb(String userQuery) {
-        ParseQuery<Post> query = new ParseQuery<Post>(Post.class);
-        query.setLimit(6);
-        query.include(Post.USER);
-        query.addDescendingOrder("createdAt");
-        //slow for large data sets according to parse docs
-        query.whereContains(Post.CAPTION, userQuery);
+        //Query for captions that starts with user query
+        ParseQuery<Post> captionQuery = new ParseQuery<Post>(Post.class);
+        captionQuery.whereStartsWith(Post.CAPTION, userQuery);
 
-        query.findInBackground(new FindCallback<Post>() {
+        //Query for descriptions that starts with user query
+        ParseQuery<Post> detailsQuery = new ParseQuery<Post>(Post.class);;
+        detailsQuery.whereStartsWith(Post.DETAILS, userQuery);
+
+        //Query for category whose name that starts with user query
+        ParseQuery<Post> categoryQuery = new ParseQuery<Post>(Post.class);
+        categoryQuery.whereStartsWith(Post.CATEGORY, userQuery);
+
+        List<ParseQuery<Post>> queries = new ArrayList<ParseQuery<Post>>();
+        queries.add(captionQuery);
+        queries.add(detailsQuery);
+        queries.add(categoryQuery);
+
+        ParseQuery<Post> mainQuery = ParseQuery.or(queries);
+        mainQuery.setLimit(12);
+        mainQuery.include(Post.USER);
+        mainQuery.addDescendingOrder("createdAt");
+
+        mainQuery.findInBackground(new FindCallback<Post>() {
             @Override
             public void done(List<Post> posts, ParseException e) {
                 if(e != null) {
@@ -333,5 +349,6 @@ public class SearchFragment extends Fragment {
                 mSearchResultsAdapter.addAll(posts);
             }
         });
+
     }
 }
