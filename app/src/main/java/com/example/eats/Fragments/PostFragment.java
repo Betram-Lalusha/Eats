@@ -250,13 +250,9 @@ public class PostFragment extends Fragment {
         if(city.equals("No city")) {
             return;
         } else {
+            //downside is that
             getPlace(city);
         }
-        //save city if provided by user
-//        City city = new City();
-//
-//        city.put("name")
-
     }
 
     // Returns the File for a photo stored on disk given the fileName
@@ -499,7 +495,6 @@ public class PostFragment extends Fragment {
             }
             if(inCorrectUrl.charAt(i) == '}') break;
         }
-        //System.out.println("url " + correctUrl);
         return correctUrl;
     }
 
