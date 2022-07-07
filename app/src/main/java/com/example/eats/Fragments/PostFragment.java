@@ -198,106 +198,30 @@ public class PostFragment extends Fragment {
 
     private void savePost(String enteredCaption, String enteredCategory, ParseUser currentUser, Number price, String enteredDescription, @NonNull Bitmap selectedImage) {
         mSavingPost.setVisibility(View.VISIBLE);
-        Post post = new Post();
 
-        post.setPrice(price);
-        post.setUser(currentUser);
-        post.setLatitude(mUserLatitude);
-        post.setCaption(enteredCaption);
-        post.setCaption(enteredCaption);
-        post.setLongitude(mUserLongitude);
-        post.setDetails(enteredDescription);
-
-        //save photo first
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        selectedImage.compress(Bitmap.CompressFormat.PNG, 100, stream); //takes a lot of time but best solution so far
-        byte[] byteArray = stream.toByteArray();
-        selectedImage.recycle();
-        ParseFile newPic =  new ParseFile("postImage.png", byteArray);
-
-        newPic.saveInBackground(new SaveCallback() {
+        String city = getCityFromUserLats();
+        ParseQuery<City> parseQuery = new ParseQuery<City>(City.class);
+        parseQuery.whereFullText("name", city);
+        parseQuery.setLimit(1);
+        parseQuery.findInBackground(new FindCallback<City>() {
             @Override
-            public void done(ParseException e) {
+            public void done(List<City> cities, ParseException e) {
                 if(e != null) {
-                    Log.i("POST-FRAGMENT", "error occurred trying to post image" + e);
+                    Log.i(APP_TAG, "error fetching city with given name " + e);
                     e.printStackTrace();
                     return;
                 }
 
-                //check if category does not already exist
-                ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
-                query.setLimit(1);
-                query.include(Post.USER);
-                query.addDescendingOrder("createdAt");
-                query.whereFullText(Post.CATEGORY, enteredCategory.toLowerCase());
-                query.findInBackground(new FindCallback<Post>() {
-                    @Override
-                    public void done(List<Post> objects, ParseException e) {
-                        if(e != null) {
-                            Log.i("POST-FRAGMENT", "error occurred trying to find category equal to entered string" + e);
-                            e.printStackTrace();
-                            return;
-                        }
-
-                        if(objects.isEmpty()) {
-                            post.setCategory(enteredCategory.toLowerCase());
-                        } else {
-                            post.setCategory(objects.get(0).getCategory());
-                        }
-
-                        post.setMedia(newPic);
-                        //SAVE POST
-                        post.saveInBackground(new SaveCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                if(e != null) {
-                                    Log.i("POST-FRAGMENT", "error occurred trying to post " + e.getMessage());
-                                    Toast.makeText(getContext(), "error occurred. Try again.", Toast.LENGTH_SHORT).show();
-                                    mSavingPost.setVisibility(View.GONE);
-                                    return;
-                                }
-
-                                mSetPrice.setText("");
-                                mSetCaption.setText("");
-                                mSetCategory.setText("");
-                                mSetDescription.setText("");
-                                //clear image
-                                mAddedImage.setImageResource(R.drawable.eats_logo);
-                                mSavingPost.setVisibility(View.GONE);
-                                Toast.makeText(getContext(), "saved successfully!.", Toast.LENGTH_SHORT).show();
-
-                            }
-                        });
-                    }
-                });
-
+                //only add city only if it does not exist in db
+                if(cities.isEmpty()){
+                    getPlace(city, enteredCaption, enteredCategory, currentUser, price, enteredDescription, selectedImage);
+                } else {
+                    getPlace(cities.get(0).getName(), enteredCaption, enteredCategory, currentUser, price, enteredDescription, selectedImage);
+                }
             }
         });
+        mSavingPost.setVisibility(View.GONE);
 
-        String city = getCityFromUserLats();
-        if(city.equals("No city")) {
-            return;
-        } else {
-            ParseQuery<City> parseQuery = new ParseQuery<City>(City.class);
-            parseQuery.whereFullText("name", city);
-            parseQuery.setLimit(1);
-            parseQuery.findInBackground(new FindCallback<City>() {
-                @Override
-                public void done(List<City> cities, ParseException e) {
-                    if(e != null) {
-                        Log.i(APP_TAG, "error fetching city with given name " + e);
-                        e.printStackTrace();
-                        return;
-                    }
-
-                    //only add city only if it does not exist in db
-                   if(cities.isEmpty()){
-                       getPlace(city);
-                   }
-                }
-            });
-
-        }
     }
 
     // Returns the File for a photo stored on disk given the fileName
@@ -396,6 +320,7 @@ public class PostFragment extends Fragment {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println("geo " + fromLocation);
         return fromLocation ==  null ? "No city" : fromLocation.get(0).getLocality();
     }
 
@@ -404,7 +329,7 @@ public class PostFragment extends Fragment {
      * @param query: the name of the place to look for
      *
      */
-    private void getPlace(String query) {
+    private void getPlace(String query, String enteredCaption, String enteredCategory, ParseUser currentUser, Number price, String enteredDescription, @NonNull Bitmap selectedImage) {
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
         RequestParams params = new RequestParams();
         params.put("key", MAPS_API_KEY);
@@ -426,7 +351,7 @@ public class PostFragment extends Fragment {
                 }
                 List<JSONObject> candidates = getCandidates(possibleCandidates);
                 List<Place> places = getFirstPlace(candidates,query);
-                getPhotoUrl(places.get(0));
+                getPhotoUrl(places.get(0), enteredCaption, enteredCategory, currentUser, price, enteredDescription, selectedImage);
                 return;
             }
 
@@ -479,7 +404,7 @@ public class PostFragment extends Fragment {
      * API calls are made using AsyncHTTP class and are made to the google maps api
      * @return: The url of the remote image
      */
-    public void getPhotoUrl(Place place) {
+    public void getPhotoUrl(Place place, String enteredCaption, String enteredCategory, ParseUser currentUser, Number price, String enteredDescription, @NonNull Bitmap selectedImage) {
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
         RequestParams requestParams = new RequestParams();
         requestParams.put("key", MAPS_API_KEY);
@@ -505,7 +430,82 @@ public class PostFragment extends Fragment {
                             return;
                         }
 
-                        //finished operation
+                        //finished operation...save post with city
+                        Post post = new Post();
+
+                        post.setPrice(price);
+                        post.put("city", city);
+                        post.setUser(currentUser);
+                        post.setLatitude(mUserLatitude);
+                        post.setCaption(enteredCaption);
+                        post.setCaption(enteredCaption);
+                        post.setLongitude(mUserLongitude);
+                        post.setDetails(enteredDescription);
+
+                        //save photo first
+                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        selectedImage.compress(Bitmap.CompressFormat.PNG, 100, stream); //takes a lot of time but best solution so far
+                        byte[] byteArray = stream.toByteArray();
+                        selectedImage.recycle();
+                        ParseFile newPic =  new ParseFile("postImage.png", byteArray);
+
+                        newPic.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                if(e != null) {
+                                    Log.i("POST-FRAGMENT", "error occurred trying to post image" + e);
+                                    e.printStackTrace();
+                                    return;
+                                }
+
+                                //check if category does not already exist
+                                ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
+                                query.setLimit(1);
+                                query.include(Post.USER);
+                                query.addDescendingOrder("createdAt");
+                                query.whereFullText(Post.CATEGORY, enteredCategory.toLowerCase());
+                                query.findInBackground(new FindCallback<Post>() {
+                                    @Override
+                                    public void done(List<Post> objects, ParseException e) {
+                                        if(e != null) {
+                                            Log.i("POST-FRAGMENT", "error occurred trying to find category equal to entered string" + e);
+                                            e.printStackTrace();
+                                            return;
+                                        }
+
+                                        if(objects.isEmpty()) {
+                                            post.setCategory(enteredCategory.toLowerCase());
+                                        } else {
+                                            post.setCategory(objects.get(0).getCategory());
+                                        }
+
+                                        post.setMedia(newPic);
+                                        //SAVE POST
+                                        post.saveInBackground(new SaveCallback() {
+                                            @Override
+                                            public void done(ParseException e) {
+                                                if(e != null) {
+                                                    Log.i("POST-FRAGMENT", "error occurred trying to post " + e.getMessage());
+                                                    Toast.makeText(getContext(), "error occurred. Try again.", Toast.LENGTH_SHORT).show();
+                                                    mSavingPost.setVisibility(View.GONE);
+                                                    return;
+                                                }
+
+                                                mSetPrice.setText("");
+                                                mSetCaption.setText("");
+                                                mSetCategory.setText("");
+                                                mSetDescription.setText("");
+                                                //clear image
+                                                mAddedImage.setImageResource(R.drawable.eats_logo);
+                                                Toast.makeText(getContext(), "saved successfully!.", Toast.LENGTH_SHORT).show();
+
+                                            }
+                                        });
+                                    }
+                                });
+
+                            }
+                        });
                     }
                 });
                 return;
