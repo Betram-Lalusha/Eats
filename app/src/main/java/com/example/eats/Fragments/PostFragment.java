@@ -169,7 +169,7 @@ public class PostFragment extends Fragment {
 
                 mSubmitButton.setEnabled(false);
                 ParseUser currentUser = ParseUser.getCurrentUser();
-                savePost(enteredCaption, enteredCategory,  currentUser,enteredPrice, enteredDescription, mSelectedImage);
+                checkIfCityExists(enteredCaption, enteredCategory,  currentUser,enteredPrice, enteredDescription, mSelectedImage);
             }
         });
 
@@ -196,7 +196,17 @@ public class PostFragment extends Fragment {
         }
     }
 
-    private void savePost(String enteredCaption, String enteredCategory, ParseUser currentUser, Number price, String enteredDescription, @NonNull Bitmap selectedImage) {
+    /**
+     * Checks if the city the user made the post in is already stored in the database. If the city is already stored, a pointer to that city is attached to the user post
+     * If the city is not stored, a new city is created
+     * @param enteredCaption: the caption of the post
+     * @param enteredCategory: the category of food to associate this post with
+     * @param currentUser: the user that made the post
+     * @param price: the cost of purchasing this post
+     * @param enteredDescription: the details about the food in the post
+     * @param selectedImage: the post image to associate with the post
+     */
+    private void checkIfCityExists(String enteredCaption, String enteredCategory, ParseUser currentUser, Number price, String enteredDescription, @NonNull Bitmap selectedImage) {
         mSavingPost.setVisibility(View.VISIBLE);
 
         String city = getCityFromUserLats();
@@ -413,7 +423,7 @@ public class PostFragment extends Fragment {
      */
     public void getPhotoUrl(Place place, City foundCity, String enteredCaption, String enteredCategory, ParseUser currentUser, Number price, String enteredDescription, @NonNull Bitmap selectedImage) {
         if(place == null) {
-            savePost2(foundCity, enteredCaption, enteredCategory, currentUser, price,  enteredDescription, selectedImage);
+            savePost(foundCity, enteredCaption, enteredCategory, currentUser, price,  enteredDescription, selectedImage);
             return;
         }
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
@@ -442,82 +452,7 @@ public class PostFragment extends Fragment {
                         }
 
                         //finished operation...save post with city
-                        savePost2(city, enteredCaption, enteredCategory, currentUser, price,  enteredDescription, selectedImage);
-//                        Post post = new Post();
-//
-//                        post.setPrice(price);
-//                        post.put("city", city);
-//                        post.setUser(currentUser);
-//                        post.setLatitude(mUserLatitude);
-//                        post.setCaption(enteredCaption);
-//                        post.setCaption(enteredCaption);
-//                        post.setLongitude(mUserLongitude);
-//                        post.setDetails(enteredDescription);
-//
-//                        //save photo first
-//                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//                        selectedImage.compress(Bitmap.CompressFormat.PNG, 100, stream); //takes a lot of time but best solution so far
-//                        byte[] byteArray = stream.toByteArray();
-//                        selectedImage.recycle();
-//                        ParseFile newPic =  new ParseFile("postImage.png", byteArray);
-//
-//                        newPic.saveInBackground(new SaveCallback() {
-//                            @Override
-//                            public void done(ParseException e) {
-//                                if(e != null) {
-//                                    Log.i("POST-FRAGMENT", "error occurred trying to post image" + e);
-//                                    e.printStackTrace();
-//                                    return;
-//                                }
-//
-//                                //check if category does not already exist
-//                                ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
-//                                query.setLimit(1);
-//                                query.include(Post.USER);
-//                                query.addDescendingOrder("createdAt");
-//                                query.whereFullText(Post.CATEGORY, enteredCategory.toLowerCase());
-//                                query.findInBackground(new FindCallback<Post>() {
-//                                    @Override
-//                                    public void done(List<Post> objects, ParseException e) {
-//                                        if(e != null) {
-//                                            Log.i("POST-FRAGMENT", "error occurred trying to find category equal to entered string" + e);
-//                                            e.printStackTrace();
-//                                            return;
-//                                        }
-//
-//                                        if(objects.isEmpty()) {
-//                                            post.setCategory(enteredCategory.toLowerCase());
-//                                        } else {
-//                                            post.setCategory(objects.get(0).getCategory());
-//                                        }
-//
-//                                        post.setMedia(newPic);
-//                                        //SAVE POST
-//                                        post.saveInBackground(new SaveCallback() {
-//                                            @Override
-//                                            public void done(ParseException e) {
-//                                                if(e != null) {
-//                                                    Log.i("POST-FRAGMENT", "error occurred trying to post " + e.getMessage());
-//                                                    Toast.makeText(getContext(), "error occurred. Try again.", Toast.LENGTH_SHORT).show();
-//                                                    mSavingPost.setVisibility(View.GONE);
-//                                                    return;
-//                                                }
-//
-//                                                mSetPrice.setText("");
-//                                                mSetCaption.setText("");
-//                                                mSetCategory.setText("");
-//                                                mSetDescription.setText("");
-//                                                //clear image
-//                                                mAddedImage.setImageResource(R.drawable.eats_logo);
-//                                                Toast.makeText(getContext(), "saved successfully!.", Toast.LENGTH_SHORT).show();
-//
-//                                            }
-//                                        });
-//                                    }
-//                                });
-//
-//                            }
-//                        });
+                        savePost(city, enteredCaption, enteredCategory, currentUser, price,  enteredDescription, selectedImage);
                     }
                 });
                 return;
@@ -531,7 +466,17 @@ public class PostFragment extends Fragment {
         });
     }
 
-    private void savePost2(City city, String enteredCaption, String enteredCategory, ParseUser currentUser, Number price, String enteredDescription, Bitmap selectedImage) {
+    /**
+     * Saves a new post to thr database
+     * @param city: the city the post was made in
+     * @param enteredCaption: the caption of the post
+     * @param enteredCategory: the category of food to associate this post with
+     * @param currentUser: the user that made the post
+     * @param price: the cost of purchasing this post
+     * @param enteredDescription: the details about the food in the post
+     * @param selectedImage: the post image to associate with the post
+     */
+    private void savePost(City city, String enteredCaption, String enteredCategory, ParseUser currentUser, Number price, String enteredDescription, Bitmap selectedImage) {
         //finished operation...save post with city
         Post post = new Post();
 
