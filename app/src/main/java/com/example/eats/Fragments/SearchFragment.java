@@ -357,6 +357,7 @@ public class SearchFragment extends Fragment {
         mainQuery.include(Post.USER);
         mainQuery.addDescendingOrder("createdAt");
 
+        //caching searched queries
         mainQuery.findInBackground(new FindCallback<Post>() {
             @Override
             public void done(List<Post> posts, ParseException e) {
