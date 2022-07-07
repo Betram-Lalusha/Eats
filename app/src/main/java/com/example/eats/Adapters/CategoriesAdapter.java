@@ -10,15 +10,18 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.eats.Interface.OnClickInterface;
+import com.example.eats.Models.City;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
 
+import java.util.HashSet;
 import java.util.List;
 
 public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.ViewHolder>{
 
     Context mContext;
     List<Post> mPosts;
+    HashSet<String> mAlreadyAdded;
     public  String mClickedCategory;
     OnClickInterface mOnClickInterface;
 
@@ -26,6 +29,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
         this.mPosts = posts;
         this.mContext = context;
         mClickedCategory = "";
+        this.mAlreadyAdded = new HashSet<>();
         this.mOnClickInterface = onClickInterface;
     }
 
@@ -50,12 +54,15 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
     // Clean all elements of the recycler
     public void clear() {
         mPosts.clear();
+        mAlreadyAdded.clear();
         notifyDataSetChanged();
     }
 
     // Add a list of items -- change to type used
     public void addAll(List<Post> list) {
-        mPosts.addAll(list);
+        for(Post post: list) {
+            if(mAlreadyAdded.add(post.getCategory())) mPosts.add(post);
+        }
         notifyDataSetChanged();
     }
 
