@@ -15,6 +15,7 @@ public class Post extends ParseObject {
     public static final String USER = "user";
     public static final String IMAGE = "image";
     public static final String PRICE = "price";
+    public static final String GEOHASH= "geohash";
     public static final String DETAILS = "details";
     public static final String CAPTION = "caption";
     public static final String CATEGORY= "category";
@@ -109,6 +110,14 @@ public class Post extends ParseObject {
     }
 
     public Date getDate() {return  getCreatedAt();}
+
+    public void setGeohash(String geohash) {
+        put(GEOHASH, geohash);
+    }
+
+    public String getGeohash() {
+        return getString(GEOHASH);
+    }
 
     @Override
     public String toString() {

@@ -36,6 +36,7 @@ import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.BinaryHttpResponseHandler;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
+import com.example.eats.Geohashing.Geohasher;
 import com.example.eats.Models.City;
 import com.example.eats.Models.Place;
 import com.example.eats.Models.Post;
@@ -71,6 +72,7 @@ public class PostFragment extends Fragment {
     Button mSubmitButton;
     Button mCaptureImage;
     Double mUserLatitude;
+    Geohasher mGeohasher;
     ImageView mAddedImage;
     Double mUserLongitude;
     Bitmap mSelectedImage;
@@ -112,9 +114,7 @@ public class PostFragment extends Fragment {
         mSubmitButton = view.findViewById(R.id.submitButton);
         mSetCategory = view.findViewById(R.id.enterCategory);
         mSetDescription = view.findViewById(R.id.setDescription);
-        //get user coordinates passed from Home Activity
-        mUserLatitude = getArguments().getDouble("userLat", 37.4219862);
-        mUserLongitude = getArguments().getDouble("userLong" ,-122.0842771);
+        mGeohasher = new Geohasher(mUserLatitude, mUserLongitude);
 
         mAddedImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -488,6 +488,7 @@ public class PostFragment extends Fragment {
         post.setCaption(enteredCaption);
         post.setLongitude(mUserLongitude);
         post.setDetails(enteredDescription);
+        post.setGeohash(mGeohasher.geoHash(12));
 
         //save photo first
         ByteArrayOutputStream stream = new ByteArrayOutputStream();

@@ -36,7 +36,6 @@ public class Geohasher {
         Double longitude = this.mLongitude;
 
         while (geohash.length() < precision) {
-            System.out.println(evenBit);
             if(evenBit) {
                 //test every line
                 //half longitude
