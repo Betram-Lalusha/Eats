@@ -4,7 +4,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,12 +16,9 @@ import android.widget.ProgressBar;
 import com.example.eats.Adapters.PostsAdapter;
 import com.example.eats.EndlessRecyclerViewScrollListener;
 import com.example.eats.Geohashing.Geohasher;
-import com.example.eats.Helpers.Point;
 import com.example.eats.Helpers.VerticalSpaceItemDecoration;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -31,7 +27,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.PriorityQueue;
 
 
 public class TimelineFragment extends Fragment {
@@ -41,10 +36,10 @@ public class TimelineFragment extends Fragment {
     Geohasher mGeohasher;
     Double mUserLatitude;
     Double mUserLongitude;
-    PriorityQueue<Point> mQu;
     RecyclerView mRecyclerView;
     PostsAdapter mPostsAdapter;
-    HashSet<Point> mAlreadyAdded;
+    StringBuilder mUserGeoHash;
+    HashSet<String> mAlreadyAdded;
     EndlessRecyclerViewScrollListener mEndlessRecyclerViewScrollListener;
     public TimelineFragment() {
         // Required empty public constructor
@@ -66,12 +61,12 @@ public class TimelineFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
 
         mPosts = new ArrayList<>();
-        mQu = new PriorityQueue<>();
         mAlreadyAdded = new HashSet<>();
         mPb = (ProgressBar) view.findViewById(R.id.pbLoading);
         mRecyclerView = view.findViewById(R.id.recyclerView);
         mPostsAdapter = new PostsAdapter(getContext(), mPosts);
         mGeohasher = new Geohasher(mUserLatitude, mUserLongitude);
+        mUserGeoHash = new StringBuilder(mGeohasher.geoHash(12));
         VerticalSpaceItemDecoration verticalSpaceItemDecoration = new VerticalSpaceItemDecoration(40);
 
         queryPosts();
@@ -98,18 +93,19 @@ public class TimelineFragment extends Fragment {
         mPb.setVisibility(ProgressBar.VISIBLE);
 
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
-        query.whereLessThan("createdAt", mPosts.get(mPosts.size() - 1).getDate());
         query.setLimit(4);
         query.include(Post.USER);
         query.addDescendingOrder("createdAt");
+
+
         query.findInBackground(new FindCallback<Post>() {
             @Override
             public void done(List<Post> posts, ParseException e) {
                 if(e != null) {
                     Log.i("HOME", "something went wrong obtaining posts " + e);
                 }
-                for(Post post: posts) mQu.add(new Point(post, mUserLatitude, mUserLongitude));
-                addAllPoints();
+                for(Post post: posts) post.distanceFromUser = distance(post.getLatitude(), post.getLongiitude(), mUserLatitude, mUserLongitude, "K");
+                mPostsAdapter.addAll(posts);
                 Log.i("QUERY", "success querying posts23 " + mPosts.size());
             }
 
@@ -121,7 +117,6 @@ public class TimelineFragment extends Fragment {
 
     private void queryPosts() {
         //get user hash
-        StringBuilder userGeoHash = new StringBuilder(mGeohasher.geoHash(12));
         //show progress bar
         mPb.setVisibility(ProgressBar.VISIBLE);
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
@@ -130,15 +125,15 @@ public class TimelineFragment extends Fragment {
         System.out.println("long " + mUserLongitude);
         System.out.println("lat " + mUserLatitude);
         System.out.println("long " + mUserLongitude);
-        System.out.println(userGeoHash);
+        System.out.println(mUserGeoHash);
         query.addDescendingOrder("createdAt");
 
         //check for posts with user geo hash
         //if none found, keep removing last character until matching  geohash is found
-        while(userGeoHash.length() > 0) {
+        while(mUserGeoHash.length() > 0) {
             List<Post> posts = new LinkedList<>();
             try {
-                query.whereStartsWith("geohash",userGeoHash.toString());
+                query.whereStartsWith("geohash",mUserGeoHash.toString());
                 posts = query.find();
                 System.out.println("posts " + posts);
             } catch(ParseException e) {
@@ -147,10 +142,10 @@ public class TimelineFragment extends Fragment {
                 return;
            }
             if(posts.isEmpty()) {
-                userGeoHash.deleteCharAt(userGeoHash.length() - 1);
+                mUserGeoHash.deleteCharAt(mUserGeoHash.length() - 1);
             } else {
-                for(Post post: posts) mQu.add(new Point(post,  mUserLatitude, mUserLongitude));
-                addAllPoints();
+                for(Post post: posts) post.distanceFromUser = distance(post.getLatitude(), post.getLongiitude(), mUserLatitude, mUserLongitude, "K");
+                mPostsAdapter.addAll(posts);
                 break;
             }
         }
@@ -159,10 +154,24 @@ public class TimelineFragment extends Fragment {
         mPb.setVisibility(ProgressBar.INVISIBLE);
     }
 
-    private void addAllPoints() {
-        List<Point> points = new LinkedList<>(mQu);
-        while(!mQu.isEmpty()) mPosts.add(mQu.poll().mPost);
-        mPostsAdapter.notifyDataSetChanged();
+
+    public  double distance(double pointLat, double pointLon, double userLat, double userLon,String unit) {
+        if ((pointLat == userLat) && (pointLon == userLon)) {
+            return 0;
+        }
+        else {
+            double theta = pointLon - userLon;
+            double dist = Math.sin(Math.toRadians(pointLat)) * Math.sin(Math.toRadians(userLat)) + Math.cos(Math.toRadians(pointLat)) * Math.cos(Math.toRadians(userLat)) * Math.cos(Math.toRadians(theta));
+            dist = Math.acos(dist);
+            dist = Math.toDegrees(dist);
+            dist = dist * 60 * 1.1515;
+            if (unit.equals("K")) {
+                dist = dist * 1.609344;
+            } else if (unit.equals("N")) {
+                dist = dist * 0.8684;
+            }
+            return (dist);
+        }
     }
 
 }

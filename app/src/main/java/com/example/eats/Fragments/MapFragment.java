@@ -32,7 +32,6 @@ import com.bumptech.glide.Glide;
 import com.example.eats.Activities.DetailActivity;
 import com.example.eats.Adapters.PostsAdapter;
 import com.example.eats.EndlessRecyclerViewScrollListener;
-import com.example.eats.Helpers.Point;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
 import com.google.android.gms.maps.CameraUpdate;

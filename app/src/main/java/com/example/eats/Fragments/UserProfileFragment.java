@@ -33,7 +33,6 @@ import com.example.eats.Activities.LoginActivity;
 import com.example.eats.Adapters.PostsAdapter;
 import com.example.eats.Adapters.UserProfileAdapter;
 import com.example.eats.EndlessRecyclerViewScrollListener;
-import com.example.eats.Helpers.Point;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
 import com.parse.FindCallback;

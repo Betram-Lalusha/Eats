@@ -20,16 +20,19 @@ import com.parse.ParseObject;
 
 import org.parceler.Parcels;
 
+import java.util.HashSet;
 import java.util.List;
 
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
 
     Context mContext;
     List<Post> mPosts;
+    HashSet<String> mAlreadyAdded;
 
     public PostsAdapter(Context context, List<Post> posts) {
         this.mPosts = posts;
         this.mContext = context;
+        this.mAlreadyAdded = new HashSet<>();
     }
 
     @NonNull
@@ -58,7 +61,10 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
 
     // Add a list of items -- change to type used
     public void addAll(List<Post> list) {
-        mPosts.addAll(list);
+        for(Post post: list)  {
+            if(mAlreadyAdded.add(post.getObjectId())) mPosts.add(post);
+        }
+
         notifyDataSetChanged();
     }
 
