@@ -161,9 +161,8 @@ public class TimelineFragment extends Fragment {
 
     private void addAllPoints() {
         List<Point> points = new LinkedList<>(mQu);
-        for(Point point: points) {
-            if(mAlreadyAdded.add(point)) mPosts.add(point.mPost);
-        }
+        while(!mQu.isEmpty()) mPosts.add(mQu.poll().mPost);
         mPostsAdapter.notifyDataSetChanged();
     }
+
 }
