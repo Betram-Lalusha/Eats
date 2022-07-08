@@ -12,6 +12,8 @@ import java.util.Date;
 @Parcel
 @ParseClassName("Post")
 public class Post extends ParseObject {
+    public double distanceFromUser;
+
     public static final String USER = "user";
     public static final String IMAGE = "image";
     public static final String PRICE = "price";

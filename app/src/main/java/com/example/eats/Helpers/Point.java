@@ -1,5 +1,7 @@
 package com.example.eats.Helpers;
 
+import android.content.Intent;
+
 import com.example.eats.Models.Post;
 
 import java.util.Date;
@@ -23,6 +25,7 @@ public class Point implements Comparable<Point> {
         this.mLongitude = post.getLongiitude();
 
         this.mDistance = distance(this.mLatitude, this.mLongitude, this.mUserLatitude, this.mUserLongitude, "K");
+        this.mPost.distanceFromUser= this.mDistance;
     }
     
 

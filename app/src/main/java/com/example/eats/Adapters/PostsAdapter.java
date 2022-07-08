@@ -88,10 +88,11 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
 
         public void bind(Post post) {
 
-            mDistance.setText("1km"); //hard coded...will be changed after scaling of distance
+
             mCaption.setText(post.getCaption());
             mCategory.setText(post.getCategory());
             mOwnerName.setText(post.getParseUser().getUsername());
+            mDistance.setText(formatDistance(post.distanceFromUser) + "km");
             Glide.with(mContext).load(post.getMedia().getUrl()).into(mPostImage);
             mPrice.setText(post.getPrice() > 0 ? "$" + String.valueOf(post.getPrice()) : "free");
             if(post.getParseUser().getParseFile("userProfilePic") != null) {
@@ -110,6 +111,11 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
                     mContext.startActivity(intent);
                 }
             });
+        }
+
+        private String formatDistance(Double distanceFromUser) {
+            String distStr = String.valueOf(distanceFromUser);
+            return String.valueOf(distStr.charAt(0));
         }
     }
 }
