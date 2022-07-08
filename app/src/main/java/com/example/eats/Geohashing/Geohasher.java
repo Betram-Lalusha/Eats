@@ -19,15 +19,13 @@ public class Geohasher {
      * Method converts latitudes and longitude coordinates into a geohash using Gustavo Niemeyer's
      * geocoding system and unique base32. The method takes the given coordinates and repeatedly halves them
      * until the required accuracy is met.
-     * @param precision: number indicates how long, precise, the resulting string should nbe
+     * @param precision: number indicates how long, precise, the resulting string should be
      * @return: the geohash of the given coordinates
      */
     public String geoHash(int precision) {
 
         int index = 0;
         String geohash = "";
-        //Double midLat = 0.0;
-        ///Double midLong = 0.0;
         int numberOfBits = 0;
         Double maxLat = 90.0;
         Double minLat = -90.0;
