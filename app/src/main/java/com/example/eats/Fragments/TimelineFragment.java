@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 
 import com.example.eats.Adapters.PostsAdapter;
 import com.example.eats.EndlessRecyclerViewScrollListener;
+import com.example.eats.Geohashing.Geohasher;
 import com.example.eats.Helpers.Point;
 import com.example.eats.Helpers.VerticalSpaceItemDecoration;
 import com.example.eats.Models.Post;
@@ -37,6 +38,7 @@ public class TimelineFragment extends Fragment {
 
     ProgressBar mPb;
     List<Post> mPosts;
+    Geohasher mGeohasher;
     Double mUserLatitude;
     Double mUserLongitude;
     PriorityQueue<Point> mQu;
@@ -69,6 +71,7 @@ public class TimelineFragment extends Fragment {
         mPb = (ProgressBar) view.findViewById(R.id.pbLoading);
         mRecyclerView = view.findViewById(R.id.recyclerView);
         mPostsAdapter = new PostsAdapter(getContext(), mPosts);
+        mGeohasher = new Geohasher(mUserLatitude, mUserLongitude);
         VerticalSpaceItemDecoration verticalSpaceItemDecoration = new VerticalSpaceItemDecoration(40);
 
         queryPosts();
@@ -117,28 +120,40 @@ public class TimelineFragment extends Fragment {
     }
 
     private void queryPosts() {
+        //get user hash
+        StringBuilder userGeoHash = new StringBuilder(mGeohasher.geoHash(12));
         //show progress bar
         mPb.setVisibility(ProgressBar.VISIBLE);
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
         query.setLimit(4);
         query.include(Post.USER);
+        System.out.println("long " + mUserLongitude);
+        System.out.println("lat " + mUserLatitude);
+        System.out.println("long " + mUserLongitude);
+        System.out.println(userGeoHash);
         query.addDescendingOrder("createdAt");
 
-        query.findInBackground(new FindCallback<Post>() {
-            @Override
-            public void done(List<Post> posts, ParseException e) {
-                if(e != null) {
-                    Log.i("QUERY", "something went wrong querying posts " + e.toString());
-                    e.printStackTrace();
-                    return;
-                }
-
-                //scaling
-                for(Post post: posts) mQu.add(new Point(post, 37.4219862, -122.0842771));
-
+        //check for posts with user geo hash
+        //if none found, keep removing last character until matching  geohash is found
+        while(userGeoHash.length() > 0) {
+            List<Post> posts = new LinkedList<>();
+            try {
+                query.whereStartsWith("geohash",userGeoHash.toString());
+                posts = query.find();
+                System.out.println("posts " + posts);
+            } catch(ParseException e) {
+                Log.i("QUERY", "something went wrong querying posts " + e.toString());
+                e.printStackTrace();
+                return;
+           }
+            if(posts.isEmpty()) {
+                userGeoHash.deleteCharAt(userGeoHash.length() - 1);
+            } else {
+                for(Post post: posts) mQu.add(new Point(post,  mUserLatitude, mUserLongitude));
                 addAllPoints();
+                break;
             }
-        });
+        }
 
         //remove progress bar
         mPb.setVisibility(ProgressBar.INVISIBLE);
