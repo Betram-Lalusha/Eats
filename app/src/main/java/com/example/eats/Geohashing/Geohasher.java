@@ -26,8 +26,8 @@ public class Geohasher {
 
         int index = 0;
         String geohash = "";
-        Double midLat = 0.0;
-        Double midLong = 0.0;
+        //Double midLat = 0.0;
+        ///Double midLong = 0.0;
         int numberOfBits = 0;
         Double maxLat = 90.0;
         Double minLat = -90.0;
@@ -38,30 +38,33 @@ public class Geohasher {
         Double longitude = this.mLongitude;
 
         while (geohash.length() < precision) {
+            System.out.println(evenBit);
             if(evenBit) {
+                //test every line
                 //half longitude
-                midLong = (minLong + maxLong) / 2;
+                Double midLong = (minLong + maxLong) / 2;
                 if(longitude >= midLong) {
-                    index = index * index + 1;
+                    index = index * 2  + 1;
                     minLong = midLong;
                 } else {
-                    index = index * index;
+                    index = index * 2;
                     maxLong = midLong;
                 }
             } else {
                 //half latitude
-                midLat = (minLat + maxLat) / 2;
-                if(latitude >= minLat) {
-                    index = index * index + 1;
+                Double midLat = (minLat + maxLat) / 2;
+                if(latitude >= midLat) {
+                    index = index * 2 + 1;
                     minLat = midLat;
                 } else {
-                    index = index * index;
+                    index = index * 2;
                     maxLat = midLat;
                 }
             }
 
             evenBit = !evenBit;
 
+            //vysor
             numberOfBits++;
             if(numberOfBits == 5) {
                 geohash += base32.charAt(index);
