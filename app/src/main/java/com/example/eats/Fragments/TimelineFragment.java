@@ -109,35 +109,6 @@ public class TimelineFragment extends Fragment {
         }
     }
 
-    /**
-     * Checks if a given geohash has any posts in the database
-     * @param query: ParseQuery to look for posts in db
-     * @return: treu if the gohash has posts in the db that match it, false otherwise.
-     */
-    private boolean hasPosts(ParseQuery<Post> query) {
-        while (mUserGeoHash.length() > 0) {
-            List<Post> posts = new LinkedList<>();
-            try {
-                query.whereStartsWith("geohash", mUserGeoHash.toString());
-                posts = query.find();
-                System.out.println("posts " + posts);
-            } catch (ParseException e) {
-                Log.i("QUERY", "something went wrong querying posts " + e.toString());
-                e.printStackTrace();
-                return false;
-            }
-            if (posts.isEmpty()) {
-                mUserGeoHash.deleteCharAt(mUserGeoHash.length() - 1);
-            } else {
-                for(int i = 0; i < posts.size(); i++) {
-                    if(!mAlreadyAdded.add(posts.get(i).getObjectId())) posts.remove(i);
-                }
-                return true;
-            }
-        }
-
-        return false;
-    }
 
     /**
      * Gets posts from the database that start with the current hash valu of the user's geo hash until either the number of required posts are found
