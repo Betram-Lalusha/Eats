@@ -82,7 +82,7 @@ public class TimelineFragment extends Fragment {
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 // Triggered only when new data needs to be appended to the list
                 // Add whatever code is needed to append new items to the bottom of the list
-                getPosts(mPosts.size() + 4);
+                getPosts(4);
             }
         };
 
@@ -149,11 +149,10 @@ public class TimelineFragment extends Fragment {
         query.include(Post.USER);
         query.setLimit(minNumber);
         query.addDescendingOrder("createdAt");
-        query.whereStartsWith("geohash", mUserGeoHash.toString());
         query.whereNotContainedIn("objectId", mAlreadyAdded);
 
         List<Post> posts = new LinkedList<>();
-        while (mUserGeoHash.length() > 0 && mPosts.size() < minNumber) {
+        while (mUserGeoHash.length() > 0 && posts.size() < minNumber) {
             try {
                 query.whereStartsWith("geohash", mUserGeoHash.toString());
                 posts = query.find();
