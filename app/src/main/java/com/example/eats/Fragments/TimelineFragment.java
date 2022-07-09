@@ -69,7 +69,8 @@ public class TimelineFragment extends Fragment {
         mUserGeoHash = new StringBuilder(mGeohasher.geoHash(12));
         VerticalSpaceItemDecoration verticalSpaceItemDecoration = new VerticalSpaceItemDecoration(40);
 
-        queryPosts();
+
+        //queryPosts();
 
         mRecyclerView.setAdapter(mPostsAdapter);
         mRecyclerView.setLayoutManager(linearLayoutManager);
@@ -81,79 +82,13 @@ public class TimelineFragment extends Fragment {
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 // Triggered only when new data needs to be appended to the list
                 // Add whatever code is needed to append new items to the bottom of the list
-                loadNextPosts();
+                getPosts(mPosts.size() + 4);
             }
         };
 
         mRecyclerView.addOnScrollListener(mEndlessRecyclerViewScrollListener);
-
+        getPosts(4);
     }
-
-    private void loadNextPosts() {
-        mPb.setVisibility(ProgressBar.VISIBLE);
-
-        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
-        query.setLimit(4);
-        query.include(Post.USER);
-        query.addDescendingOrder("createdAt");
-
-
-        query.findInBackground(new FindCallback<Post>() {
-            @Override
-            public void done(List<Post> posts, ParseException e) {
-                if(e != null) {
-                    Log.i("HOME", "something went wrong obtaining posts " + e);
-                }
-                for(Post post: posts) post.distanceFromUser = distance(post.getLatitude(), post.getLongiitude(), mUserLatitude, mUserLongitude, "K");
-                mPostsAdapter.addAll(posts);
-                Log.i("QUERY", "success querying posts23 " + mPosts.size());
-            }
-
-        });
-
-        //remove progress bar
-        mPb.setVisibility(ProgressBar.INVISIBLE);
-    }
-
-    private void queryPosts() {
-        //get user hash
-        //show progress bar
-        mPb.setVisibility(ProgressBar.VISIBLE);
-        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
-        query.setLimit(4);
-        query.include(Post.USER);
-        System.out.println("long " + mUserLongitude);
-        System.out.println("lat " + mUserLatitude);
-        System.out.println("long " + mUserLongitude);
-        System.out.println(mUserGeoHash);
-        query.addDescendingOrder("createdAt");
-
-        //check for posts with user geo hash
-        //if none found, keep removing last character until matching  geohash is found
-        while(mUserGeoHash.length() > 0) {
-            List<Post> posts = new LinkedList<>();
-            try {
-                query.whereStartsWith("geohash",mUserGeoHash.toString());
-                posts = query.find();
-                System.out.println("posts " + posts);
-            } catch(ParseException e) {
-                Log.i("QUERY", "something went wrong querying posts " + e.toString());
-                e.printStackTrace();
-                return;
-           }
-            if(posts.isEmpty()) {
-                mUserGeoHash.deleteCharAt(mUserGeoHash.length() - 1);
-            } else {
-                for(Post post: posts) post.distanceFromUser = distance(post.getLatitude(), post.getLongiitude(), mUserLatitude, mUserLongitude, "K");
-                mPostsAdapter.addAll(posts);
-                break;
-            }
-        }
-
-        //remove progress bar
-        mPb.setVisibility(ProgressBar.INVISIBLE);
-    }
-
 
     public  double distance(double pointLat, double pointLon, double userLat, double userLon,String unit) {
         if ((pointLat == userLat) && (pointLon == userLon)) {
@@ -172,6 +107,73 @@ public class TimelineFragment extends Fragment {
             }
             return (dist);
         }
+    }
+
+    /**
+     * Checks if a given geohash has any posts in the database
+     * @param query: ParseQuery to look for posts in db
+     * @return: treu if the gohash has posts in the db that match it, false otherwise.
+     */
+    private boolean hasPosts(ParseQuery<Post> query) {
+        while (mUserGeoHash.length() > 0) {
+            List<Post> posts = new LinkedList<>();
+            try {
+                query.whereStartsWith("geohash", mUserGeoHash.toString());
+                posts = query.find();
+                System.out.println("posts " + posts);
+            } catch (ParseException e) {
+                Log.i("QUERY", "something went wrong querying posts " + e.toString());
+                e.printStackTrace();
+                return false;
+            }
+            if (posts.isEmpty()) {
+                mUserGeoHash.deleteCharAt(mUserGeoHash.length() - 1);
+            } else {
+                for(int i = 0; i < posts.size(); i++) {
+                    if(!mAlreadyAdded.add(posts.get(i).getObjectId())) posts.remove(i);
+                }
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets posts from the database that start with the current hash valu of the user's geo hash until either the number of required posts are found
+     * or the user's has becomes empty
+     * @param minNumber: the minimum number of posts to return from the databse
+     */
+    private void getPosts(int minNumber) {
+        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
+        query.include(Post.USER);
+        query.setLimit(minNumber);
+        query.addDescendingOrder("createdAt");
+        query.whereStartsWith("geohash", mUserGeoHash.toString());
+        query.whereNotContainedIn("objectId", mAlreadyAdded);
+
+        List<Post> posts = new LinkedList<>();
+        while (mUserGeoHash.length() > 0 && mPosts.size() < minNumber) {
+            try {
+                query.whereStartsWith("geohash", mUserGeoHash.toString());
+                posts = query.find();
+            } catch (ParseException e) {
+                Log.i("QUERY", "something went wrong querying posts " + e.toString());
+                e.printStackTrace();
+                return;
+            }
+            if (posts.isEmpty()) {
+                mUserGeoHash.deleteCharAt(mUserGeoHash.length() - 1);
+            } else {
+                for(int i = 0; i < posts.size(); i++) {
+                    Post post = posts.get(i);
+                    if(!mAlreadyAdded.add(post.getObjectId())) posts.remove(post);
+                }
+                mPostsAdapter.addAll(posts);
+
+            }
+        }
+
     }
 
 }

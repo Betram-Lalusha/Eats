@@ -130,7 +130,7 @@ public class MapFragment extends Fragment {
     /***
      * Method converts a resource at a given url path into a bitmap
      * @param remotePath: the url path to the remote image
-     * @return the bitmap representing the image\
+     * @return the bitmap representing the image
      * Code Aopted from StackOverflow: https://stackoverflow.com/questions/22139515/set-marker-icon-on-google-maps-v2-android-from-url
      *
      */

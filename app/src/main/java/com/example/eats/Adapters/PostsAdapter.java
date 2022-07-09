@@ -26,7 +26,7 @@ import java.util.List;
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
 
     Context mContext;
-    List<Post> mPosts;
+    public List<Post> mPosts;
     HashSet<String> mAlreadyAdded;
 
     public PostsAdapter(Context context, List<Post> posts) {
