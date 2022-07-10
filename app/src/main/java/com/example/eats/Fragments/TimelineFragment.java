@@ -137,7 +137,11 @@ public class TimelineFragment extends Fragment {
             } else {
                 for(int i = 0; i < posts.size(); i++) {
                     Post post = posts.get(i);
-                    if(!mAlreadyAdded.add(post.getObjectId())) posts.remove(post);
+                    if(!mAlreadyAdded.add(post.getObjectId())) {
+                        posts.remove(post);
+                        continue;
+                    }
+                    post.distanceFromUser = distance(post.getLatitude(), post.getLongiitude(), mUserLatitude, mUserLongitude,"K");
                 }
                 mPostsAdapter.addAll(posts);
 
