@@ -33,6 +33,7 @@ import com.example.eats.R;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
@@ -40,6 +41,7 @@ import com.parse.SaveCallback;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -51,10 +53,13 @@ public class UserProfileFragment extends Fragment {
     List<Post> mUserPosts;
     ParseUser mCurrentUser;
     private File mPhotoFile;
+    List<Post> mCachedPosts;
     ProgressBar mProgressBar;
     ImageView mUserProfilePic;
     ProgressBar mRvProgressBar;
     RecyclerView mRecyclerView;
+    List<String> mAlreadyAdded;
+    List<Post> mRetrievedCachedPosts;
     UserProfileAdapter mUserProfileAdapter;
     public String mPhotoFileName = "photo.jpg";
     // PICK_PHOTO_CODE is a constant integer
@@ -71,9 +76,12 @@ public class UserProfileFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @NonNull Bundle savedInstanceState) {
+        mCachedPosts = new ArrayList<>();
+        mAlreadyAdded = new ArrayList<>();
         mUserPosts = new LinkedList<Post>();
         mUserBio = view.findViewById(R.id.bio);
         mCurrentUser = ParseUser.getCurrentUser();
+        mRetrievedCachedPosts = new ArrayList<>();
         mUserName = view.findViewById(R.id.username);
         mRecyclerView = view.findViewById(R.id.rvUserPosts);
         mProgressBar = view.findViewById(R.id.progressBar);
@@ -105,9 +113,13 @@ public class UserProfileFragment extends Fragment {
         });
 
         //query for user posts
-        getUserPosts();
+        mRetrievedCachedPosts = getCachedPosts();
+        if(mRetrievedCachedPosts.isEmpty()) {
+            getUserPosts();
+        } else {
+            mUserProfileAdapter.addAll(mRetrievedCachedPosts);
+        }
 
-        System.out.println("bio " + mCurrentUser.getString("name"));
         mUserName.setText(mCurrentUser.getUsername());
         mUserBio.setText(mCurrentUser.getString("bio"));
         Glide.with(getContext()).load(mCurrentUser.getParseFile("userProfilePic").getUrl()).into(mUserProfilePic);
@@ -154,10 +166,11 @@ public class UserProfileFragment extends Fragment {
     private void getUserPosts() {
         mRvProgressBar.setVisibility(View.VISIBLE);
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
-        query.include(Post.USER);
         query.setLimit(16);
-        query.whereEqualTo(Post.USER, ParseUser.getCurrentUser());
+        query.include(Post.USER);
         query.addDescendingOrder("createdAt");
+        query.whereNotContainedIn("objectId", mAlreadyAdded);
+        query.whereEqualTo(Post.USER, ParseUser.getCurrentUser());
         query.findInBackground(new FindCallback<Post>() {
             @Override
             public void done(List<Post> posts, ParseException e) {
@@ -169,9 +182,14 @@ public class UserProfileFragment extends Fragment {
 
                 // save received posts to list and notify adapter of new data
                 mUserPosts.addAll(posts);
+                mCachedPosts.addAll(posts);
                 mUserProfileAdapter.notifyDataSetChanged();
                 mRvProgressBar.setVisibility(View.INVISIBLE);
-               // mScrollListener.resetState();
+
+                for(Post post: posts) mAlreadyAdded.add(post.getObjectId());
+
+                //cache first 10 results
+                if(mRetrievedCachedPosts.size() <= 10) ParseObject.pinAllInBackground("cachedUserPosts", mCachedPosts);
             }
         });
     }
@@ -266,6 +284,31 @@ public class UserProfileFragment extends Fragment {
             }
         });
 
+    }
+
+    /**
+     * Checks local database for cached posts
+     * @return: all cached objects in the user local storage
+     */
+    public List<Post> getCachedPosts() {
+        List<Post> retrievedPosts = new ArrayList<>();
+
+        ParseQuery<Post> parseQuery = new ParseQuery<Post>(Post.class);
+        parseQuery.include(Post.USER);
+        parseQuery.addDescendingOrder("createdAt");
+
+        try {
+            retrievedPosts = parseQuery.fromPin("cachedUserPosts").find();
+            for(Post post: retrievedPosts) {
+                mAlreadyAdded.add(post.getObjectId());
+            }
+        } catch (ParseException e) {
+            Log.i("QUERY", "something went wrong querying cached posts " + e.toString());
+            e.printStackTrace();
+            return retrievedPosts;
+        }
+
+        return  retrievedPosts;
     }
 
 
