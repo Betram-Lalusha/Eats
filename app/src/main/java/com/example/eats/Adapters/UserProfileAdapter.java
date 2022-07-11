@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -69,18 +70,26 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
 
     public class ViewHolder  extends  RecyclerView.ViewHolder{
         ImageView mPostImage;
+        TextView mUserPostCaption;
+        ConstraintLayout mUserPost;
+        TextView mUserPostDescription;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            mUserPost = itemView.findViewById(R.id.userPost);
             mPostImage = itemView.findViewById(R.id.postImage);
+            mUserPostCaption = itemView.findViewById(R.id.userPostCaption);
+            mUserPostDescription = itemView.findViewById(R.id.userPostDescription);
 
         }
 
         public void bind(Post post) {
+            mUserPostCaption.setText(post.getCaption());
+            mUserPostDescription.setText(post.getDetails());
             Glide.with(mContext).load(post.getMedia().getUrl()).into(mPostImage);
 
             //listens for click event
-            mPostImage.setOnClickListener(new View.OnClickListener() {
+            mUserPost.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(mContext, DetailActivity.class);
@@ -91,7 +100,7 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
 
 
         //user can long press item to delete it
-            mPostImage.setOnLongClickListener(new View.OnLongClickListener() {
+            mUserPost.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
                     post.deleteInBackground(new DeleteCallback() {
