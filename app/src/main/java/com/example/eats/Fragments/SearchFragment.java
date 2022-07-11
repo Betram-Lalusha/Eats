@@ -550,7 +550,7 @@ public class SearchFragment extends Fragment {
         parseQuery.addDescendingOrder("createdAt");
 
         try {
-            retrievedCities = parseQuery.fromPin("searchedPosts").find();
+            retrievedCities = parseQuery.fromPin("cachedCities").find();
             for(City city: retrievedCities) {
                 mCitiesAlreadyQueried.add(city.getName());
             }
