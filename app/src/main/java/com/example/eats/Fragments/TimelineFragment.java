@@ -49,6 +49,7 @@ public class TimelineFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d("lifecycle","onCreateView invoked");
         //get user coordinates passed from Home Activity
         mUserLatitude = getArguments().getDouble("userLat", 37.4219862);
         mUserLongitude = getArguments().getDouble("userLong" ,-122.0842771);
@@ -59,6 +60,7 @@ public class TimelineFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @NonNull Bundle savedInstanceState) {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        Log.d("lifecycle","onViewCreated invoked");
 
         mPosts = new ArrayList<>();
         mAlreadyAdded = new HashSet<>();
