@@ -38,6 +38,8 @@
         android:layout_marginTop="4dp"
         android:gravity="center"
         android:text="TextView"
+        android:textColor="@color/black"
+        android:textStyle="italic"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.066"
         app:layout_constraintStart_toEndOf="@+id/userProfilePic"

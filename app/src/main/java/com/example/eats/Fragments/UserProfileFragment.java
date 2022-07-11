@@ -107,6 +107,7 @@ public class UserProfileFragment extends Fragment {
         //query for user posts
         getUserPosts();
 
+        System.out.println("bio " + mCurrentUser.getString("name"));
         mUserName.setText(mCurrentUser.getUsername());
         mUserBio.setText(mCurrentUser.getString("bio"));
         Glide.with(getContext()).load(mCurrentUser.getParseFile("userProfilePic").getUrl()).into(mUserProfilePic);
