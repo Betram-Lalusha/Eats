@@ -57,6 +57,7 @@ public class SearchFragment extends Fragment {
     TextView mSearchBox;
     RecyclerView mRvCities;
     List<Post> mCachedPosts;
+    List<City> mCachedCities;
     ImageView mFeaturedImage;
     ImageButton mSearchButton;
     RecyclerView mRvCategories;
@@ -66,6 +67,7 @@ public class SearchFragment extends Fragment {
     CitiesAdapter mCitiesAdapter;
     HashSet<String> mCitiesClicked;
     List<Post> mRetrievedCachedPosts;
+    List<City> mRetrievedCachedCities;
     HashSet<String> mCategoriesClicked;
     CategoriesAdapter mCategoriesAdapter;
     HashSet<String> mCitiesAlreadyQueried;
@@ -130,10 +132,12 @@ public class SearchFragment extends Fragment {
         mCities = new LinkedList<>();
         mCitiesClicked = new HashSet<>();
         mCachedPosts = new ArrayList<>();
+        mCachedCities = new ArrayList<>();
         mAlreadyAdded = new ArrayList<>();
         mPostsCategories = new LinkedList<>();
         mCitiesAlreadyQueried = new HashSet<>();
         mRetrievedCachedPosts = new ArrayList<>();
+        mRetrievedCachedCities = new ArrayList<>();
 
         mRvCities = view.findViewById(R.id.rvCities);
         mSearchBox = view.findViewById(R.id.searchBox);
@@ -188,6 +192,8 @@ public class SearchFragment extends Fragment {
 
         //get data
         mRetrievedCachedPosts = getCachedPosts();
+        mRetrievedCachedCities = getCachedCities();
+
         if(mRetrievedCachedPosts.isEmpty()) {
             queryPosts();
         } else {
@@ -195,7 +201,12 @@ public class SearchFragment extends Fragment {
             mSearchResultsAdapter.addAll(mRetrievedCachedPosts);
         }
 
-        queryCities();
+        if(mRetrievedCachedCities.isEmpty()) {
+            queryCities();
+        } else {
+            mCitiesAdapter.addAll(mRetrievedCachedCities);
+        }
+
     }
 
     private void loadNextPosts() {
@@ -261,9 +272,13 @@ public class SearchFragment extends Fragment {
                     e.printStackTrace();
                     return;
                 }
+
                 mCitiesAdapter.addAll(cities);
 
                 for(City city: cities) mCitiesAlreadyQueried.add(city.getName());
+
+                //cache cities
+
             }
         });
     }
@@ -406,7 +421,7 @@ public class SearchFragment extends Fragment {
                 //add new ones
                 mSearchResultsAdapter.addAll(posts);
                 //cache results
-                cacheResults(posts, true, false);
+                cacheResults(posts, null, true, false);
             }
         });
 
@@ -442,7 +457,7 @@ public class SearchFragment extends Fragment {
                 mSearchResultsAdapter.clear();
                 mSearchResultsAdapter.addAll(posts);
                 //cache results
-                cacheResults(posts, true, false);
+                cacheResults(posts, null,true, false);
 
             }
         });
@@ -491,6 +506,8 @@ public class SearchFragment extends Fragment {
 
                         mSearchResultsAdapter.clear();
                         mSearchResultsAdapter.addAll(posts);
+                        //cache results
+                        cacheResults(null, cities,false, true);
                     }
                 });
             }
@@ -501,7 +518,7 @@ public class SearchFragment extends Fragment {
      * Checks local database for cached posts
      * @return: all cached objects in the user local storage
      */
-    public List<Post> getCachedPosts() {
+    private List<Post> getCachedPosts() {
         List<Post> retrievedPosts = new ArrayList<>();
 
         ParseQuery<Post> parseQuery = new ParseQuery<Post>(Post.class);
@@ -527,14 +544,35 @@ public class SearchFragment extends Fragment {
         return  retrievedPosts;
     }
 
+    private List<City> getCachedCities() {
+        List<City> retrievedCities = new ArrayList<>();
+
+        ParseQuery<City> parseQuery = new ParseQuery<City>(City.class);
+        parseQuery.addDescendingOrder("createdAt");
+
+        try {
+            retrievedCities = parseQuery.fromPin("searchedPosts").find();
+            System.out.println("cached cities " + retrievedCities);
+            for(City city: retrievedCities) {
+                mCitiesAlreadyQueried.add(city.getName());
+            }
+        } catch (ParseException e) {
+            Log.i("QUERY", "something went wrong querying cached posts " + e.toString());
+            e.printStackTrace();
+            return retrievedCities;
+        }
+        return retrievedCities;
+    }
     /**
-     * Caches results obtained by network queries
+     * Caches results obtained by network queries.
+     * if 10 posts have already been cached, delete cache before adding more posts to save user space
      * @param posts: the posts to cache
+     * @param cities: the cities to cache
      * @param cacheSearchResults: if true, then cache posts saved from results
      * @param cacheCitiesResults: if true then cache cities
+     *    Note: only one of the booleans can be true at a time
      */
-    private void cacheResults(List<Post> posts, Boolean cacheSearchResults, Boolean cacheCitiesResults) {
-        //if 10 posts have been cached, delete cache before adding more posts to save user space
+    private void cacheResults(List<Post> posts, List<City> cities, Boolean cacheSearchResults, Boolean cacheCitiesResults) {
         if(cacheSearchResults) {
             if(mRetrievedCachedPosts.size() >= 10) {
                 mRetrievedCachedPosts.clear();
@@ -544,6 +582,16 @@ public class SearchFragment extends Fragment {
             //cache searched results
             mCachedPosts.addAll(posts);
             ParseObject.pinAllInBackground("searchedPosts", mCachedPosts);
+        }
+
+        if(cacheCitiesResults) {
+            if(mRetrievedCachedCities.size() >= 10) {
+                mRetrievedCachedCities.clear();
+                ParseObject.unpinAllInBackground("cachedCities");
+            }
+
+            mCachedCities.addAll(cities);
+            ParseObject.pinAllInBackground("cachedCities", cities);
         }
     }
 }
