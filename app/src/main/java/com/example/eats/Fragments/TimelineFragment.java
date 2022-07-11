@@ -62,9 +62,6 @@ public class TimelineFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @NonNull Bundle savedInstanceState) {
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        Log.d("lifecycle","onViewCreated invoked");
-
         mPosts = new ArrayList<>();
         mAlreadyAdded = new HashSet<>();
         mCachedPosts = new ArrayList<>();
@@ -74,6 +71,7 @@ public class TimelineFragment extends Fragment {
         mPostsAdapter = new PostsAdapter(getContext(), mPosts);
         mGeohasher = new Geohasher(mUserLatitude, mUserLongitude);
         mUserGeoHash = new StringBuilder(mGeohasher.geoHash(12));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         VerticalSpaceItemDecoration verticalSpaceItemDecoration = new VerticalSpaceItemDecoration(40);
 
 

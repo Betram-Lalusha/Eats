@@ -1,6 +1,5 @@
 package com.example.eats.Fragments;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.ImageDecoder;
@@ -14,29 +13,24 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.file.FileDecoder;
 import com.example.eats.Activities.LoginActivity;
-import com.example.eats.Adapters.PostsAdapter;
 import com.example.eats.Adapters.UserProfileAdapter;
 import com.example.eats.EndlessRecyclerViewScrollListener;
+import com.example.eats.Helpers.VerticalSpaceItemDecoration;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
 import com.parse.FindCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseQuery;
@@ -45,10 +39,7 @@ import com.parse.SaveCallback;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -59,11 +50,11 @@ public class UserProfileFragment extends Fragment {
     TextView mUserName;
     List<Post> mUserPosts;
     ParseUser mCurrentUser;
-    RecyclerView mGridView;
     private File mPhotoFile;
     ProgressBar mProgressBar;
     ImageView mUserProfilePic;
     ProgressBar mRvProgressBar;
+    RecyclerView mRecyclerView;
     UserProfileAdapter mUserProfileAdapter;
     public String mPhotoFileName = "photo.jpg";
     // PICK_PHOTO_CODE is a constant integer
@@ -84,11 +75,13 @@ public class UserProfileFragment extends Fragment {
         mUserBio = view.findViewById(R.id.bio);
         mCurrentUser = ParseUser.getCurrentUser();
         mUserName = view.findViewById(R.id.username);
-        mGridView = view.findViewById(R.id.gridView);
+        mRecyclerView = view.findViewById(R.id.rvUserPosts);
         mProgressBar = view.findViewById(R.id.progressBar);
         mRvProgressBar = view.findViewById(R.id.rvProgressBar);
         mUserProfilePic = view.findViewById(R.id.userProfilePic);
         mUserProfileAdapter = new UserProfileAdapter(getContext(), mUserPosts);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        VerticalSpaceItemDecoration verticalSpaceItemDecoration = new VerticalSpaceItemDecoration(40);
 
         //press profile picture to set new profile picture
         mUserProfilePic.setOnClickListener(new View.OnClickListener() {
@@ -118,11 +111,12 @@ public class UserProfileFragment extends Fragment {
         mUserBio.setText(mCurrentUser.getString("bio"));
         Glide.with(getContext()).load(mCurrentUser.getParseFile("userProfilePic").getUrl()).into(mUserProfilePic);
 
-        StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(3, LinearLayoutManager.VERTICAL);
-        mGridView.setLayoutManager(staggeredGridLayoutManager);
-        mGridView.setAdapter(mUserProfileAdapter);
+        mRecyclerView.setLayoutManager(linearLayoutManager);
+        mRecyclerView.setAdapter(mUserProfileAdapter);
+        //to add space between elements in recycler view
+        mRecyclerView.addItemDecoration(verticalSpaceItemDecoration);
 
-        mEndlessRecyclerViewScrollListener = new EndlessRecyclerViewScrollListener(staggeredGridLayoutManager) {
+        mEndlessRecyclerViewScrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 // Triggered only when new data needs to be appended to the list
