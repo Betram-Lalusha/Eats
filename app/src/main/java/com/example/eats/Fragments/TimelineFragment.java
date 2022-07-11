@@ -179,7 +179,7 @@ public class TimelineFragment extends Fragment {
         parseQuery.addDescendingOrder("createdAt");
 
         try {
-            retrievedPosts = parseQuery.fromLocalDatastore().find();
+            retrievedPosts = parseQuery.fromPin("cachedPosts").find();
             for(Post post: retrievedPosts) {
                 mAlreadyAdded.add(post.getObjectId());
             }

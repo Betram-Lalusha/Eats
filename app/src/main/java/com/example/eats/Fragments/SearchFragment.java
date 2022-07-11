@@ -56,13 +56,16 @@ public class SearchFragment extends Fragment {
     List<City> mCities;
     TextView mSearchBox;
     RecyclerView mRvCities;
+    List<Post> mCachedPosts;
     ImageView mFeaturedImage;
     ImageButton mSearchButton;
     RecyclerView mRvCategories;
+    List<String> mAlreadyAdded;
     RecyclerView mRvSearchItems;
     List<Post> mPostsCategories;
     CitiesAdapter mCitiesAdapter;
     HashSet<String> mCitiesClicked;
+    List<Post> mRetrievedCachedPosts;
     HashSet<String> mCategoriesClicked;
     CategoriesAdapter mCategoriesAdapter;
     SearchResultsAdapter mSearchResultsAdapter;
@@ -124,7 +127,10 @@ public class SearchFragment extends Fragment {
         mPosts = new LinkedList<>();
         mCities = new LinkedList<>();
         mCitiesClicked = new HashSet<>();
+        mCachedPosts = new ArrayList<>();
+        mAlreadyAdded = new ArrayList<>();
         mPostsCategories = new LinkedList<>();
+        mRetrievedCachedPosts = new ArrayList<>();
 
         mRvCities = view.findViewById(R.id.rvCities);
         mSearchBox = view.findViewById(R.id.searchBox);
@@ -171,7 +177,10 @@ public class SearchFragment extends Fragment {
         mRvSearchItems.addOnScrollListener(mEndlessRecyclerViewScrollListener);
 
         //get data
-        queryPosts();
+        mRetrievedCachedPosts = getCachedPosts();
+        if(mRetrievedCachedPosts.isEmpty()) {
+            queryPosts();
+        } else mSearchResultsAdapter.addAll(mRetrievedCachedPosts);
         queryCities();
     }
 
@@ -212,10 +221,14 @@ public class SearchFragment extends Fragment {
                 }
                 Post featured = randomPost(posts.size(), posts);
 
+                mCachedPosts.addAll(posts);
                 mCategoriesAdapter.addAll(posts);
                 mSearchResultsAdapter.addAll(posts);
 
                 Glide.with(getContext()).load(featured.getMedia().getUrl()).into(mFeaturedImage);
+
+                //cache posts
+                ParseObject.pinAllInBackground("searchedPosts", mCachedPosts);
             }
         });
     }
@@ -376,6 +389,16 @@ public class SearchFragment extends Fragment {
 
                 //add new ones
                 mSearchResultsAdapter.addAll(posts);
+
+                //if 10 posts are cached, delete cache before adding more posts to save user space
+                if(mCachedPosts.size() >= 10) {
+                    mCachedPosts.clear();
+                    ParseObject.unpinAllInBackground("searchedPosts");
+                }
+
+                //cache searched results
+                mCachedPosts.addAll(posts);
+                ParseObject.pinAllInBackground("searchedPosts", mCachedPosts);
             }
         });
 
@@ -461,5 +484,31 @@ public class SearchFragment extends Fragment {
                 });
             }
         });
+    }
+
+    /**
+     * Checks local database for cached posts
+     * @return: all cached objects in the user local storage
+     */
+    public List<Post> getCachedPosts() {
+        List<Post> retrievedPosts = new ArrayList<>();
+
+        ParseQuery<Post> parseQuery = new ParseQuery<Post>(Post.class);
+        parseQuery.include(Post.USER);
+        parseQuery.addDescendingOrder("createdAt");
+
+        try {
+            retrievedPosts = parseQuery.fromPin("searchedPosts").find();
+            System.out.println("cached search results " + retrievedPosts);
+            for(Post post: retrievedPosts) {
+                mAlreadyAdded.add(post.getObjectId());
+            }
+        } catch (ParseException e) {
+            Log.i("QUERY", "something went wrong querying cached posts " + e.toString());
+            e.printStackTrace();
+            return retrievedPosts;
+        }
+
+        return  retrievedPosts;
     }
 }
