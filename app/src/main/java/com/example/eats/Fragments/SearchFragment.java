@@ -35,6 +35,7 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,6 +56,7 @@ public class SearchFragment extends Fragment {
     List<Post> mPosts;
     List<City> mCities;
     TextView mSearchBox;
+    ParseUser mCurrentUser;
     RecyclerView mRvCities;
     List<Post> mCachedPosts;
     List<City> mCachedCities;
@@ -139,6 +141,7 @@ public class SearchFragment extends Fragment {
         mRetrievedCachedPosts = new ArrayList<>();
         mRetrievedCachedCities = new ArrayList<>();
 
+        mCurrentUser = ParseUser.getCurrentUser();
         mRvCities = view.findViewById(R.id.rvCities);
         mSearchBox = view.findViewById(R.id.searchBox);
         mSearchButton = view.findViewById(R.id.searchButton);
@@ -253,7 +256,7 @@ public class SearchFragment extends Fragment {
                 Glide.with(getContext()).load(featured.getMedia().getUrl()).into(mFeaturedImage);
 
                 //cache posts
-                ParseObject.pinAllInBackground("searchedPosts", mCachedPosts);
+                ParseObject.pinAllInBackground(mCurrentUser.getObjectId() + "searchedPosts", mCachedPosts);
             }
         });
     }
@@ -526,7 +529,8 @@ public class SearchFragment extends Fragment {
         parseQuery.addDescendingOrder("createdAt");
 
         try {
-            retrievedPosts = parseQuery.fromPin("searchedPosts").find();;
+            retrievedPosts = parseQuery.fromPin(mCurrentUser.getObjectId() + "searchedPosts").find();
+            Log.d("cache","results for posts " + retrievedPosts);
             for(Post post: retrievedPosts) {
                 mAlreadyAdded.add(post.getObjectId());
             }
@@ -550,7 +554,8 @@ public class SearchFragment extends Fragment {
         parseQuery.addDescendingOrder("createdAt");
 
         try {
-            retrievedCities = parseQuery.fromPin("cachedCities").find();
+            retrievedCities = parseQuery.fromPin(mCurrentUser.getObjectId() + "cachedCities").find();
+            Log.d("cache","results for cities " + retrievedCities);
             for(City city: retrievedCities) {
                 mCitiesAlreadyQueried.add(city.getName());
             }
@@ -574,22 +579,22 @@ public class SearchFragment extends Fragment {
         if(cacheSearchResults) {
             if(mRetrievedCachedPosts.size() >= 10) {
                 mRetrievedCachedPosts.clear();
-                ParseObject.unpinAllInBackground("searchedPosts");
+                ParseObject.unpinAllInBackground(mCurrentUser.getObjectId() + "searchedPosts");
             }
 
             //cache searched results
             mCachedPosts.addAll(posts);
-            ParseObject.pinAllInBackground("searchedPosts", mCachedPosts);
+            ParseObject.pinAllInBackground(mCurrentUser.getObjectId() + "searchedPosts", mCachedPosts);
         }
 
         if(cacheCitiesResults) {
             if(mRetrievedCachedCities.size() >= 10) {
                 mRetrievedCachedCities.clear();
-                ParseObject.unpinAllInBackground("cachedCities");
+                ParseObject.unpinAllInBackground(mCurrentUser.getObjectId() + "cachedCities");
             }
 
             mCachedCities.addAll(cities);
-            ParseObject.pinAllInBackground("cachedCities", cities);
+            ParseObject.pinAllInBackground(mCurrentUser.getObjectId() + "cachedCities", cities);
         }
     }
 }

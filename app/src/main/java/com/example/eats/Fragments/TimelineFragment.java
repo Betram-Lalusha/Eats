@@ -23,6 +23,7 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -37,6 +38,7 @@ public class TimelineFragment extends Fragment {
     Geohasher mGeohasher;
     Double mUserLatitude;
     Double mUserLongitude;
+    ParseUser mCurrentUser;
     List<Post> mCachedPosts;
     RecyclerView mRecyclerView;
     PostsAdapter mPostsAdapter;
@@ -52,7 +54,6 @@ public class TimelineFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d("lifecycle","onCreateView invoked");
         //get user coordinates passed from Home Activity
         mUserLatitude = getArguments().getDouble("userLat", 37.4219862);
         mUserLongitude = getArguments().getDouble("userLong" ,-122.0842771);
@@ -66,6 +67,7 @@ public class TimelineFragment extends Fragment {
         mAlreadyAdded = new HashSet<>();
         mCachedPosts = new ArrayList<>();
         mRetrievedCachedPosts = new ArrayList<>();
+        mCurrentUser = ParseUser.getCurrentUser();
         mPb = (ProgressBar) view.findViewById(R.id.pbLoading);
         mRecyclerView = view.findViewById(R.id.recyclerView);
         mPostsAdapter = new PostsAdapter(getContext(), mPosts);
@@ -159,7 +161,12 @@ public class TimelineFragment extends Fragment {
                 mPostsAdapter.addAll(posts);
 
                 //cache posts
-                ParseObject.pinAllInBackground("cachedPosts", mCachedPosts);
+                //if cached posts size is 10, remove them and update with new ones
+                //this prevents user seen the exact same posts every time they login
+                if(mRetrievedCachedPosts.size() >= 10) {
+                    ParseObject.unpinAllInBackground(mCurrentUser.getObjectId() + "cachedPosts");
+                }
+                ParseObject.pinAllInBackground(mCurrentUser.getObjectId() + "cachedPosts", mCachedPosts);
             }
         }
 
@@ -177,10 +184,13 @@ public class TimelineFragment extends Fragment {
         parseQuery.addDescendingOrder("createdAt");
 
         try {
-            retrievedPosts = parseQuery.fromPin("cachedPosts").find();
+            retrievedPosts = parseQuery.fromPin(mCurrentUser.getObjectId() + "cachedPosts").find();
+            Log.d("cache","results " + retrievedPosts);
             for(Post post: retrievedPosts) {
                 mAlreadyAdded.add(post.getObjectId());
             }
+
+
         } catch (ParseException e) {
             Log.i("QUERY", "something went wrong querying cached posts " + e.toString());
             e.printStackTrace();

@@ -182,14 +182,16 @@ public class UserProfileFragment extends Fragment {
 
                 // save received posts to list and notify adapter of new data
                 mUserPosts.addAll(posts);
-                mCachedPosts.addAll(posts);
                 mUserProfileAdapter.notifyDataSetChanged();
                 mRvProgressBar.setVisibility(View.INVISIBLE);
 
                 for(Post post: posts) mAlreadyAdded.add(post.getObjectId());
 
                 //cache first 10 results
-                if(mRetrievedCachedPosts.size() <= 10) ParseObject.pinAllInBackground("cachedUserPosts", mCachedPosts);
+                if(mRetrievedCachedPosts.size() <= 10) {
+                    mCachedPosts.addAll(posts);
+                    ParseObject.pinAllInBackground(mCurrentUser.getObjectId(), mCachedPosts);
+                }
             }
         });
     }
@@ -298,7 +300,7 @@ public class UserProfileFragment extends Fragment {
         parseQuery.addDescendingOrder("createdAt");
 
         try {
-            retrievedPosts = parseQuery.fromPin("cachedUserPosts").find();
+            retrievedPosts = parseQuery.fromPin(mCurrentUser.getObjectId()).find();
             for(Post post: retrievedPosts) {
                 mAlreadyAdded.add(post.getObjectId());
             }
