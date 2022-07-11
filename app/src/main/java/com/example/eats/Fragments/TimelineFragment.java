@@ -167,6 +167,10 @@ public class TimelineFragment extends Fragment {
 
     }
 
+    /**
+     * Checks local database for cached posts
+     * @return: all cached objects in the user local storage
+     */
     public List<Post> getCachedPosts() {
         List<Post> retrievedPosts = new ArrayList<>();
 
@@ -176,7 +180,6 @@ public class TimelineFragment extends Fragment {
 
         try {
             retrievedPosts = parseQuery.fromLocalDatastore().find();
-            System.out.println("cached posts " + retrievedPosts);
             for(Post post: retrievedPosts) {
                 mAlreadyAdded.add(post.getObjectId());
             }
