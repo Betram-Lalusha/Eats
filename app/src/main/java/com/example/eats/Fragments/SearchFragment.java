@@ -68,10 +68,12 @@ public class SearchFragment extends Fragment {
     List<Post> mRetrievedCachedPosts;
     HashSet<String> mCategoriesClicked;
     CategoriesAdapter mCategoriesAdapter;
+    HashSet<String> mCitiesAlreadyQueried;
     SearchResultsAdapter mSearchResultsAdapter;
     private OnClickInterface mOnClickInterface;
     private OnClickInterface mCityClickInterface;
     EndlessRecyclerViewScrollListener mEndlessRecyclerViewScrollListener;
+    EndlessRecyclerViewScrollListener mCitiesEndlessRecyclerViewScrollListener;
     private final String GOOGLE_PLACES_API_BASE_URL = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json";
 
     public SearchFragment() {
@@ -130,6 +132,7 @@ public class SearchFragment extends Fragment {
         mCachedPosts = new ArrayList<>();
         mAlreadyAdded = new ArrayList<>();
         mPostsCategories = new LinkedList<>();
+        mCitiesAlreadyQueried = new HashSet<>();
         mRetrievedCachedPosts = new ArrayList<>();
 
         mRvCities = view.findViewById(R.id.rvCities);
@@ -160,6 +163,13 @@ public class SearchFragment extends Fragment {
             }
         };
 
+        mCitiesEndlessRecyclerViewScrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                queryCities();
+            }
+        };
+
 
         mSearchButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -172,9 +182,9 @@ public class SearchFragment extends Fragment {
             }
         });
 
-        mRvCities.addOnScrollListener(mEndlessRecyclerViewScrollListener);
         mRvCategories.addOnScrollListener(mEndlessRecyclerViewScrollListener);
         mRvSearchItems.addOnScrollListener(mEndlessRecyclerViewScrollListener);
+        mRvCities.addOnScrollListener(mCitiesEndlessRecyclerViewScrollListener);
 
         //get data
         mRetrievedCachedPosts = getCachedPosts();
@@ -239,8 +249,9 @@ public class SearchFragment extends Fragment {
 
     private void queryCities() {
         ParseQuery<City> query = ParseQuery.getQuery(City.class);
-        query.setLimit(6);
+        query.setLimit(4);
         query.addDescendingOrder("createdAt");
+        query.whereNotContainedIn("name",mCitiesAlreadyQueried);
 
         query.findInBackground(new FindCallback<City>() {
             @Override
@@ -250,8 +261,9 @@ public class SearchFragment extends Fragment {
                     e.printStackTrace();
                     return;
                 }
-
                 mCitiesAdapter.addAll(cities);
+
+                for(City city: cities) mCitiesAlreadyQueried.add(city.getName());
             }
         });
     }
