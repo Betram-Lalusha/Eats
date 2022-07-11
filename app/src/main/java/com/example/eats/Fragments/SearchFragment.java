@@ -533,10 +533,10 @@ public class SearchFragment extends Fragment {
      * @param cacheCitiesResults: if true then cache cities
      */
     private void cacheResults(List<Post> posts, Boolean cacheSearchResults, Boolean cacheCitiesResults) {
-        //if 10 posts are cached, delete cache before adding more posts to save user space
+        //if 10 posts have been cached, delete cache before adding more posts to save user space
         if(cacheSearchResults) {
-            if(mCachedPosts.size() >= 10) {
-                mCachedPosts.clear();
+            if(mRetrievedCachedPosts.size() >= 10) {
+                mRetrievedCachedPosts.clear();
                 ParseObject.unpinAllInBackground("searchedPosts");
             }
 
