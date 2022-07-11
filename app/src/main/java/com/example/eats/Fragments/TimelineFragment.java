@@ -21,6 +21,7 @@ import com.example.eats.Models.Post;
 import com.example.eats.R;
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;
@@ -36,10 +37,12 @@ public class TimelineFragment extends Fragment {
     Geohasher mGeohasher;
     Double mUserLatitude;
     Double mUserLongitude;
+    List<Post> mCachedPosts;
     RecyclerView mRecyclerView;
     PostsAdapter mPostsAdapter;
     StringBuilder mUserGeoHash;
     HashSet<String> mAlreadyAdded;
+    List<Post> mRetrievedCachedPosts;
     EndlessRecyclerViewScrollListener mEndlessRecyclerViewScrollListener;
     public TimelineFragment() {
         // Required empty public constructor
@@ -64,6 +67,8 @@ public class TimelineFragment extends Fragment {
 
         mPosts = new ArrayList<>();
         mAlreadyAdded = new HashSet<>();
+        mCachedPosts = new ArrayList<>();
+        mRetrievedCachedPosts = new ArrayList<>();
         mPb = (ProgressBar) view.findViewById(R.id.pbLoading);
         mRecyclerView = view.findViewById(R.id.recyclerView);
         mPostsAdapter = new PostsAdapter(getContext(), mPosts);
@@ -72,7 +77,6 @@ public class TimelineFragment extends Fragment {
         VerticalSpaceItemDecoration verticalSpaceItemDecoration = new VerticalSpaceItemDecoration(40);
 
 
-        //queryPosts();
 
         mRecyclerView.setAdapter(mPostsAdapter);
         mRecyclerView.setLayoutManager(linearLayoutManager);
@@ -89,7 +93,12 @@ public class TimelineFragment extends Fragment {
         };
 
         mRecyclerView.addOnScrollListener(mEndlessRecyclerViewScrollListener);
-        getPosts(4);
+        mRetrievedCachedPosts = getCachedPosts();
+
+        //only query for posts if cache is empty
+        if(mRetrievedCachedPosts.isEmpty()) {
+            getPosts(4);
+        } else mPostsAdapter.addAll(mRetrievedCachedPosts);
     }
 
     public  double distance(double pointLat, double pointLon, double userLat, double userLon,String unit) {
@@ -134,6 +143,8 @@ public class TimelineFragment extends Fragment {
                 e.printStackTrace();
                 return;
             }
+
+            //if no posts with user geohash are found,remove last character and try again
             if (posts.isEmpty()) {
                 mUserGeoHash.deleteCharAt(mUserGeoHash.length() - 1);
             } else {
@@ -145,11 +156,37 @@ public class TimelineFragment extends Fragment {
                     }
                     post.distanceFromUser = distance(post.getLatitude(), post.getLongiitude(), mUserLatitude, mUserLongitude,"K");
                 }
+
+                mCachedPosts.addAll(posts);
                 mPostsAdapter.addAll(posts);
 
+                //cache posts
+                ParseObject.pinAllInBackground("cachedPosts", mCachedPosts);
             }
         }
 
+    }
+
+    public List<Post> getCachedPosts() {
+        List<Post> retrievedPosts = new ArrayList<>();
+
+        ParseQuery<Post> parseQuery = new ParseQuery<Post>(Post.class);
+        parseQuery.include(Post.USER);
+        parseQuery.addDescendingOrder("createdAt");
+
+        try {
+            retrievedPosts = parseQuery.fromLocalDatastore().find();
+            System.out.println("cached posts " + retrievedPosts);
+            for(Post post: retrievedPosts) {
+                mAlreadyAdded.add(post.getObjectId());
+            }
+        } catch (ParseException e) {
+            Log.i("QUERY", "something went wrong querying cached posts " + e.toString());
+            e.printStackTrace();
+            return retrievedPosts;
+        }
+
+        return  retrievedPosts;
     }
 
 }
