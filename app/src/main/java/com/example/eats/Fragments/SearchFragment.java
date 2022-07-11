@@ -451,6 +451,7 @@ public class SearchFragment extends Fragment {
     private void filterByCity() {
         if(mCitiesClicked.isEmpty()) {
             mCitiesAdapter.clear();
+            mCitiesAlreadyQueried.clear();
             queryCities();
             queryPosts();
             return;
