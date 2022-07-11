@@ -181,6 +181,7 @@ public class SearchFragment extends Fragment {
         if(mRetrievedCachedPosts.isEmpty()) {
             queryPosts();
         } else mSearchResultsAdapter.addAll(mRetrievedCachedPosts);
+
         queryCities();
     }
 
@@ -509,6 +510,8 @@ public class SearchFragment extends Fragment {
             return retrievedPosts;
         }
 
+        Post featured = randomPost(retrievedPosts.size(),retrievedPosts);
+        Glide.with(getContext()).load(featured.getMedia().getUrl()).into(mFeaturedImage);
         return  retrievedPosts;
     }
 }
