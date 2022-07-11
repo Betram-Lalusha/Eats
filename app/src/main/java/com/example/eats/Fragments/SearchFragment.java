@@ -393,16 +393,8 @@ public class SearchFragment extends Fragment {
 
                 //add new ones
                 mSearchResultsAdapter.addAll(posts);
-
-                //if 10 posts are cached, delete cache before adding more posts to save user space
-                if(mCachedPosts.size() >= 10) {
-                    mCachedPosts.clear();
-                    ParseObject.unpinAllInBackground("searchedPosts");
-                }
-
-                //cache searched results
-                mCachedPosts.addAll(posts);
-                ParseObject.pinAllInBackground("searchedPosts", mCachedPosts);
+                //cache results
+                cacheResults(posts, true, false);
             }
         });
 
@@ -437,6 +429,8 @@ public class SearchFragment extends Fragment {
 
                 mSearchResultsAdapter.clear();
                 mSearchResultsAdapter.addAll(posts);
+                //cache results
+                cacheResults(posts, true, false);
 
             }
         });
@@ -513,8 +507,30 @@ public class SearchFragment extends Fragment {
             return retrievedPosts;
         }
 
-        Post featured = randomPost(retrievedPosts.size(),retrievedPosts);
-        Glide.with(getContext()).load(featured.getMedia().getUrl()).into(mFeaturedImage);
+        if(!retrievedPosts.isEmpty()) {
+            Post featured = randomPost(retrievedPosts.size(),retrievedPosts);
+            Glide.with(getContext()).load(featured.getMedia().getUrl()).into(mFeaturedImage);
+        }
         return  retrievedPosts;
+    }
+
+    /**
+     * Caches results obtained by network queries
+     * @param posts: the posts to cache
+     * @param cacheSearchResults: if true, then cache posts saved from results
+     * @param cacheCitiesResults: if true then cache cities
+     */
+    private void cacheResults(List<Post> posts, Boolean cacheSearchResults, Boolean cacheCitiesResults) {
+        //if 10 posts are cached, delete cache before adding more posts to save user space
+        if(cacheSearchResults) {
+            if(mCachedPosts.size() >= 10) {
+                mCachedPosts.clear();
+                ParseObject.unpinAllInBackground("searchedPosts");
+            }
+
+            //cache searched results
+            mCachedPosts.addAll(posts);
+            ParseObject.pinAllInBackground("searchedPosts", mCachedPosts);
+        }
     }
 }
