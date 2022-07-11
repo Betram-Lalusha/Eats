@@ -180,7 +180,10 @@ public class SearchFragment extends Fragment {
         mRetrievedCachedPosts = getCachedPosts();
         if(mRetrievedCachedPosts.isEmpty()) {
             queryPosts();
-        } else mSearchResultsAdapter.addAll(mRetrievedCachedPosts);
+        } else {
+            mCategoriesAdapter.addAll(mRetrievedCachedPosts);
+            mSearchResultsAdapter.addAll(mRetrievedCachedPosts);
+        }
 
         queryCities();
     }
