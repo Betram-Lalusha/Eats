@@ -198,7 +198,7 @@ public class MapFragment extends Fragment {
                 .icon(BitmapDescriptorFactory.fromBitmap(markerIcon)));
 
         userMarker.showInfoWindow();
-        
+
         for(Post post: posts) {
             markerIcon = getMarkerBitmapFromView(post, false);
             LatLng position = new LatLng(post.getLatitude(), post.getLongiitude());
