@@ -34,7 +34,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".RecentSearchesActivity"
+            android:name=".Activities.RecentSearchesActivity"
             android:exported="false" />
         <!--
              TODO: Before you run your application, you need a Google Maps API key.

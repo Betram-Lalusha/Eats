@@ -18,6 +18,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class RecentSearchesActivity extends AppCompatActivity {
@@ -31,6 +32,7 @@ public class RecentSearchesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_recent_searches);
 
         mCurrentUser = ParseUser.getCurrentUser();
+        mRetrievedSearchedPosts = new LinkedList<>();
         mRecyclerView = findViewById(R.id.rvRecentSearches);
 
         SearchResultsAdapter searchResultsAdapter = new SearchResultsAdapter(this, mRetrievedSearchedPosts);
