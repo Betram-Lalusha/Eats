@@ -526,8 +526,11 @@ public class SearchFragment extends Fragment {
             mCachedPosts.addAll(posts);
             ParseObject.pinAllInBackground(mCurrentUser.getObjectId() + "searchedPosts", mCachedPosts);
 
-            //include in recent searches
-            ParseObject.pinAllInBackground(mCurrentUser.getObjectId() + "recentSearches", mCachedCities);
+            //include in recent searches cache
+            if(mRetrievedRecentSearches.size() >= 20) {
+                ParseObject.unpinAllInBackground(mCurrentUser.getObjectId() + "recentSearches");
+            }
+            ParseObject.pinAllInBackground(mCurrentUser.getObjectId() + "recentSearches", posts);
         }
 
         if(cacheCitiesResults) {

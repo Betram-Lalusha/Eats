@@ -44,8 +44,8 @@ public class RecentSearchesActivity extends AppCompatActivity {
     }
 
     /**
-     * Checks local database for cached posts
-     * @return: all cached objects in the user local storage
+     * Checks local database for cached posts that were searched for by the user.
+     * @return: all cached objects in the user local storage that the user searched for.
      */
     private List<Post> getCachedPosts() {
         List<Post> retrievedPosts = new ArrayList<>();
@@ -55,11 +55,11 @@ public class RecentSearchesActivity extends AppCompatActivity {
         parseQuery.addDescendingOrder("createdAt");
 
         try {
-            retrievedPosts = parseQuery.fromPin(mCurrentUser.getObjectId() + "searchedPosts").find();
+            retrievedPosts = parseQuery.fromPin(mCurrentUser.getObjectId() + "recentSearches").find();
             Log.d("cache","results for posts " + retrievedPosts);
 
         } catch (ParseException e) {
-            Log.i("QUERY", "something went wrong querying cached posts " + e.toString());
+            Log.i("QUERY", "something went wrong querying cached recent searched posts " + e.toString());
             e.printStackTrace();
             return retrievedPosts;
         }
