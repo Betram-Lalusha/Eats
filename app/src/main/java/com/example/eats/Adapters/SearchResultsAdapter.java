@@ -82,7 +82,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
         }
 
         public void bind(Post post) {
-            mPostOwnerDistance.setText(String.valueOf(post.distanceFromUser) + "Km away");//hard coded...will be changed later
+            mPostOwnerDistance.setText(formatDistance(post.distanceFromUser)  + "Km away");//hard coded...will be changed later
             mPostPrice.setText("$" + String.valueOf(post.getPrice()));
             mPostOwnerName.setText(post.getParseUser().getUsername());
             Glide.with(mContext).load(post.getMedia().getUrl()).into(mSearchItem);
@@ -97,6 +97,11 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
                 }
             });
 
+        }
+
+        private String formatDistance(Double distanceFromUser) {
+            String distStr = String.valueOf(distanceFromUser);
+            return String.valueOf(distStr.charAt(0));
         }
     }
 

@@ -27,6 +27,7 @@ import com.example.eats.Adapters.CitiesAdapter;
 import com.example.eats.Adapters.SearchResultsAdapter;
 import com.example.eats.EndlessRecyclerViewScrollListener;
 import com.example.eats.Helpers.DistanceCalculator;
+import com.example.eats.Helpers.HorizontalSpaceItemDecorator;
 import com.example.eats.Interface.OnClickInterface;
 import com.example.eats.Models.City;
 import com.example.eats.Models.Place;
@@ -200,6 +201,9 @@ public class SearchFragment extends Fragment {
         mRvCategories.addOnScrollListener(mEndlessRecyclerViewScrollListener);
         mRvSearchItems.addOnScrollListener(mEndlessRecyclerViewScrollListener);
         mRvCities.addOnScrollListener(mCitiesEndlessRecyclerViewScrollListener);
+
+        HorizontalSpaceItemDecorator horizontalSpaceItemDecorator = new HorizontalSpaceItemDecorator(40);
+        mRvSearchItems.addItemDecoration(horizontalSpaceItemDecorator);
 
         //get data
         mRetrievedCachedPosts = getCachedPosts();
