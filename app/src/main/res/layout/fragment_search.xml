@@ -11,7 +11,7 @@
         android:id="@+id/searchBox"
         android:layout_width="335dp"
         android:layout_height="42dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/search_bck"
         android:ems="10"
@@ -26,7 +26,7 @@
         android:id="@+id/searchButton"
         android:layout_width="53dp"
         android:layout_height="42dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:src="@android:drawable/ic_menu_search"
         app:layout_constraintStart_toStartOf="parent"
@@ -40,7 +40,7 @@
         android:layout_marginStart="4dp"
         android:layout_marginTop="16dp"
         android:backgroundTint="@color/white"
-        android:src="@android:drawable/ic_menu_sort_by_size"
+        android:src="@drawable/ic_baseline_history_24"
         app:layout_constraintStart_toEndOf="@+id/searchBox"
         app:layout_constraintTop_toTopOf="parent" />
 
