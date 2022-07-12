@@ -555,19 +555,13 @@ public class SearchFragment extends Fragment {
         try {
             retrievedPosts = parseQuery.fromPin(mCurrentUser.getObjectId() + "recentSearches").find();
             Log.d("cache","results for posts " + retrievedPosts);
-            for(Post post: retrievedPosts) {
-                mAlreadyAdded.add(post.getObjectId());
-            }
+
         } catch (ParseException e) {
-            Log.i("QUERY", "something went wrong querying cached posts " + e.toString());
+            Log.i("QUERY", "something went wrong querying recent searched posts " + e.toString());
             e.printStackTrace();
             return retrievedPosts;
         }
 
-        if(!retrievedPosts.isEmpty()) {
-            Post featured = randomPost(retrievedPosts.size(),retrievedPosts);
-            Glide.with(getContext()).load(featured.getMedia().getUrl()).into(mFeaturedImage);
-        }
         return  retrievedPosts;
     }
 }
