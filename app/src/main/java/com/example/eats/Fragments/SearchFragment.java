@@ -2,6 +2,7 @@ package com.example.eats.Fragments;
 
 import static com.example.eats.BuildConfig.MAPS_API_KEY;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -22,6 +23,7 @@ import com.bumptech.glide.Glide;
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
+import com.example.eats.Activities.RecentSearchesActivity;
 import com.example.eats.Adapters.CategoriesAdapter;
 import com.example.eats.Adapters.CitiesAdapter;
 import com.example.eats.Adapters.SearchResultsAdapter;
@@ -66,6 +68,7 @@ public class SearchFragment extends Fragment {
     List<City> mCachedCities;
     ImageView mFeaturedImage;
     ImageButton mSearchButton;
+    ImageButton mHistoryButton;
     RecyclerView mRvCategories;
     List<String> mAlreadyAdded;
     RecyclerView mRvSearchItems;
@@ -155,6 +158,7 @@ public class SearchFragment extends Fragment {
         mSearchButton = view.findViewById(R.id.searchButton);
         mRvCategories = view.findViewById(R.id.rvCategories);
         mRvSearchItems = view.findViewById(R.id.rvSearchItems);
+        mHistoryButton = view.findViewById(R.id.historyButton);
 
         mRvCities.setLayoutManager(linearLayoutManager3);
         mRvCategories.setLayoutManager(linearLayoutManager);
@@ -196,6 +200,14 @@ public class SearchFragment extends Fragment {
 
                 searchDb(mSearchBox.getText().toString());
                 mSearchBox.setText("");
+            }
+        });
+
+        mHistoryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), RecentSearchesActivity.class);
+                startActivity(intent);
             }
         });
 
