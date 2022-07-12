@@ -117,7 +117,7 @@ public class UserProfileFragment extends Fragment {
         mUserProfileAdapter.addAll(mRetrievedCachedPosts);
         if(mRetrievedCachedPosts.size() < 5) {
             getUserPosts();
-        } 
+        }
 
         mUserName.setText(mCurrentUser.getUsername());
         mUserBio.setText(mCurrentUser.getString("bio"));

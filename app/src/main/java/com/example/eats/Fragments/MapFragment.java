@@ -216,7 +216,7 @@ public class MapFragment extends Fragment {
      *  * Code adopted from: https://stackoverflow.com/questions/14811579/how-to-create-a-custom-shaped-bitmap-marker-with-android-map-api-v2
      */
     private Bitmap getMarkerBitmapFromView(Post post, Boolean isUserMarker) {
-
+        mCustomMarkerView = ((LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.custom_marker, null);
         TextView markerSnippet = (TextView)  mCustomMarkerView.findViewById(R.id.markerSnippet);
         ImageView markerImageView = (ImageView) mCustomMarkerView.findViewById(R.id.markerImage);
 
