@@ -26,6 +26,7 @@ import com.example.eats.Adapters.CategoriesAdapter;
 import com.example.eats.Adapters.CitiesAdapter;
 import com.example.eats.Adapters.SearchResultsAdapter;
 import com.example.eats.EndlessRecyclerViewScrollListener;
+import com.example.eats.Helpers.DistanceCalculator;
 import com.example.eats.Interface.OnClickInterface;
 import com.example.eats.Models.City;
 import com.example.eats.Models.Place;
@@ -78,6 +79,7 @@ public class SearchFragment extends Fragment {
     SearchResultsAdapter mSearchResultsAdapter;
     private OnClickInterface mOnClickInterface;
     private OnClickInterface mCityClickInterface;
+    private DistanceCalculator mDistanceCalculator;
     EndlessRecyclerViewScrollListener mEndlessRecyclerViewScrollListener;
     EndlessRecyclerViewScrollListener mCitiesEndlessRecyclerViewScrollListener;
 
@@ -157,8 +159,9 @@ public class SearchFragment extends Fragment {
         mRvSearchItems.setLayoutManager(linearLayoutManager2);
 
         mFeaturedImage = view.findViewById(R.id.featuredImage);
-        mCitiesAdapter = new CitiesAdapter(getContext(), mCities, mCityClickInterface);
         mSearchResultsAdapter = new SearchResultsAdapter(getContext(), mPosts);
+        mCitiesAdapter = new CitiesAdapter(getContext(), mCities, mCityClickInterface);
+        mDistanceCalculator = new DistanceCalculator("K", mUserLatitude, mUserLatitude);
         mCategoriesAdapter = new CategoriesAdapter(getContext(), mPostsCategories, mOnClickInterface);
 
         mRvCities.setAdapter(mCitiesAdapter);
@@ -242,7 +245,7 @@ public class SearchFragment extends Fragment {
                     Glide.with(getContext()).load(featured.getMedia().getUrl()).into(mFeaturedImage);
                 }
 
-                for(Post post: posts) post.distanceFromUser = distance(post.getLatitude(), post.getLongiitude(), mUserLatitude, mUserLongitude, "K");
+                for(Post post: posts) post.distanceFromUser = mDistanceCalculator.distance(post.getLatitude(), post.getLongiitude());
                 mCachedPosts.addAll(posts);
                 mCategoriesAdapter.addAll(posts);
                 mSearchResultsAdapter.addAll(posts);
@@ -521,25 +524,6 @@ public class SearchFragment extends Fragment {
 
             mCachedCities.addAll(cities);
             ParseObject.pinAllInBackground(mCurrentUser.getObjectId() + "cachedCities", cities);
-        }
-    }
-
-    public  double distance(double pointLat, double pointLon, double userLat, double userLon,String unit) {
-        if ((pointLat == userLat) && (pointLon == userLon)) {
-            return 0;
-        }
-        else {
-            double theta = pointLon - userLon;
-            double dist = Math.sin(Math.toRadians(pointLat)) * Math.sin(Math.toRadians(userLat)) + Math.cos(Math.toRadians(pointLat)) * Math.cos(Math.toRadians(userLat)) * Math.cos(Math.toRadians(theta));
-            dist = Math.acos(dist);
-            dist = Math.toDegrees(dist);
-            dist = dist * 60 * 1.1515;
-            if (unit.equals("K")) {
-                dist = dist * 1.609344;
-            } else if (unit.equals("N")) {
-                dist = dist * 0.8684;
-            }
-            return (dist);
         }
     }
 }

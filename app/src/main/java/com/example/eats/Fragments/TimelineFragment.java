@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 import com.example.eats.Adapters.PostsAdapter;
 import com.example.eats.EndlessRecyclerViewScrollListener;
 import com.example.eats.Geohashing.Geohasher;
+import com.example.eats.Helpers.DistanceCalculator;
 import com.example.eats.Helpers.VerticalSpaceItemDecoration;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
@@ -45,6 +46,7 @@ public class TimelineFragment extends Fragment {
     StringBuilder mUserGeoHash;
     HashSet<String> mAlreadyAdded;
     List<Post> mRetrievedCachedPosts;
+    private DistanceCalculator mDistanceCalculator;
     EndlessRecyclerViewScrollListener mEndlessRecyclerViewScrollListener;
     public TimelineFragment() {
         // Required empty public constructor
@@ -73,6 +75,7 @@ public class TimelineFragment extends Fragment {
         mPostsAdapter = new PostsAdapter(getContext(), mPosts);
         mGeohasher = new Geohasher(mUserLatitude, mUserLongitude);
         mUserGeoHash = new StringBuilder(mGeohasher.geoHash(12));
+        mDistanceCalculator = new DistanceCalculator("K",mUserLatitude, mUserLongitude);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         VerticalSpaceItemDecoration verticalSpaceItemDecoration = new VerticalSpaceItemDecoration(40);
 
@@ -100,26 +103,6 @@ public class TimelineFragment extends Fragment {
             getPosts(4);
         } else mPostsAdapter.addAll(mRetrievedCachedPosts);
     }
-
-    public  double distance(double pointLat, double pointLon, double userLat, double userLon,String unit) {
-        if ((pointLat == userLat) && (pointLon == userLon)) {
-            return 0;
-        }
-        else {
-            double theta = pointLon - userLon;
-            double dist = Math.sin(Math.toRadians(pointLat)) * Math.sin(Math.toRadians(userLat)) + Math.cos(Math.toRadians(pointLat)) * Math.cos(Math.toRadians(userLat)) * Math.cos(Math.toRadians(theta));
-            dist = Math.acos(dist);
-            dist = Math.toDegrees(dist);
-            dist = dist * 60 * 1.1515;
-            if (unit.equals("K")) {
-                dist = dist * 1.609344;
-            } else if (unit.equals("N")) {
-                dist = dist * 0.8684;
-            }
-            return (dist);
-        }
-    }
-
 
     /**
      * Gets posts from the database that start with the current hash valu of the user's geo hash until either the number of required posts are found
@@ -154,7 +137,7 @@ public class TimelineFragment extends Fragment {
                         posts.remove(post);
                         continue;
                     }
-                    post.distanceFromUser = distance(post.getLatitude(), post.getLongiitude(), mUserLatitude, mUserLongitude,"K");
+                    post.distanceFromUser = mDistanceCalculator.distance(post.getLatitude(), post.getLongiitude());
                 }
 
                 mCachedPosts.addAll(posts);
