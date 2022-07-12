@@ -554,7 +554,7 @@ public class SearchFragment extends Fragment {
         parseQuery.addDescendingOrder("createdAt");
 
         try {
-            retrievedCities = parseQuery.fromPin(mCurrentUser.getObjectId() + "cachedCities").find();
+            retrievedCities = parseQuery.fromPin(mCurrentUser.getObjectId()  + "cachedCities").find();
             Log.d("cache","results for cities " + retrievedCities);
             for(City city: retrievedCities) {
                 mCitiesAlreadyQueried.add(city.getName());
@@ -579,7 +579,7 @@ public class SearchFragment extends Fragment {
         if(cacheSearchResults) {
             if(mRetrievedCachedPosts.size() >= 10) {
                 mRetrievedCachedPosts.clear();
-                ParseObject.unpinAllInBackground(mCurrentUser.getObjectId() + "searchedPosts");
+                ParseObject.unpinAllInBackground(mCurrentUser.getObjectId() +  "searchedPosts");
             }
 
             //cache searched results

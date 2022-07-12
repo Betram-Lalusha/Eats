@@ -114,7 +114,7 @@ public class UserProfileFragment extends Fragment {
 
         //query for user posts
         mRetrievedCachedPosts = getCachedPosts();
-        if(mRetrievedCachedPosts.isEmpty()) {
+        if(mRetrievedCachedPosts.size() < 5) {
             getUserPosts();
         } else {
             mUserProfileAdapter.addAll(mRetrievedCachedPosts);
@@ -133,67 +133,102 @@ public class UserProfileFragment extends Fragment {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 // Triggered only when new data needs to be appended to the list
-                loadNextPosts();
+                System.out.println("triggered!");
+                getUserPosts();
             }
         };
+
+        mRecyclerView.addOnScrollListener(mEndlessRecyclerViewScrollListener);
 
     }
 
     private void loadNextPosts() {
         mRvProgressBar.setVisibility(View.VISIBLE);
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
-        query.setLimit(16);
+        query.setLimit(5);
         query.include(Post.USER);
+        query.whereNotContainedIn("objectId", mAlreadyAdded);
         query.whereEqualTo(Post.USER, ParseUser.getCurrentUser());
-        query.whereLessThan("createdAt", mUserPosts.get(mUserPosts.size() - 1).getDate());
+        //query.whereLessThan("createdAt", mUserPosts.get(mUserPosts.size() - 1).getDate());
         query.addDescendingOrder("createdAt");
         query.findInBackground(new FindCallback<Post>() {
             @Override
             public void done(List<Post> posts, ParseException e) {
                 if(e != null) {
                     Log.i("HOME", "something went wrong obtaining posts " + e);
+                    return;
                 }
-                mUserPosts.addAll(posts);
+
+                Log.d("HOME", "user fragment next posts " + posts);
+                Log.d("HOME", "cached user posts " + mRetrievedCachedPosts);
+                mUserProfileAdapter.addAll(posts);
                 mUserProfileAdapter.notifyDataSetChanged();
+
+               //for(Post post: posts) mAlreadyAdded.add(post.getObjectId());
             }
 
         });
 
         //remove progress bar
         mRvProgressBar.setVisibility(View.INVISIBLE);
+        mEndlessRecyclerViewScrollListener.resetState();
     }
 
     private void getUserPosts() {
         mRvProgressBar.setVisibility(View.VISIBLE);
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
-        query.setLimit(16);
+        query.setLimit(5);
         query.include(Post.USER);
         query.addDescendingOrder("createdAt");
         query.whereNotContainedIn("objectId", mAlreadyAdded);
         query.whereEqualTo(Post.USER, ParseUser.getCurrentUser());
-        query.findInBackground(new FindCallback<Post>() {
-            @Override
-            public void done(List<Post> posts, ParseException e) {
-                if(e != null) {
-                    Log.i("HOME", "something went wrong obtaining posts " + e);
-                    mRvProgressBar.setVisibility(View.INVISIBLE);
-                    return;
-                }
 
-                // save received posts to list and notify adapter of new data
-                mUserPosts.addAll(posts);
-                mUserProfileAdapter.notifyDataSetChanged();
-                mRvProgressBar.setVisibility(View.INVISIBLE);
+        List<Post> posts = new LinkedList<>();
+        try {
+            posts = query.find();
+            // save received posts to list and notify adapter of new data
+            mUserPosts.addAll(posts);
+            mUserProfileAdapter.notifyDataSetChanged();
+            mUserProfileAdapter.addAll(posts);
+            mRvProgressBar.setVisibility(View.INVISIBLE);
 
-                for(Post post: posts) mAlreadyAdded.add(post.getObjectId());
+            for(Post post: posts) mAlreadyAdded.add(post.getObjectId());
 
-                //cache first 10 results
-                if(mRetrievedCachedPosts.size() <= 10) {
-                    mCachedPosts.addAll(posts);
-                    ParseObject.pinAllInBackground(mCurrentUser.getObjectId(), mCachedPosts);
-                }
+
+            //cache first 5 results
+            if(mRetrievedCachedPosts.size() < 5) {
+                mCachedPosts.addAll(posts);
+                ParseObject.pinAllInBackground(mCurrentUser.getObjectId(), mCachedPosts);
             }
-        });
+        } catch (ParseException e) {
+            Log.i("HOME", "something went wrong obtaining posts " + e);
+            mRvProgressBar.setVisibility(View.INVISIBLE);
+            return;
+        }
+//        query.findInBackground(new FindCallback<Post>() {
+//            @Override
+//            public void done(List<Post> posts, ParseException e) {
+//                if(e != null) {
+//                    Log.i("HOME", "something went wrong obtaining posts " + e);
+//                    mRvProgressBar.setVisibility(View.INVISIBLE);
+//                    return;
+//                }
+//
+//                // save received posts to list and notify adapter of new data
+//                mUserProfileAdapter.addAll(posts);
+//                mRvProgressBar.setVisibility(View.INVISIBLE);
+//
+//                for(Post post: posts) mAlreadyAdded.add(post.getObjectId());
+//
+//
+//                //cache first 5 results
+//                if(mRetrievedCachedPosts.size() < 5) {
+//                    mCachedPosts.addAll(posts);
+//                    ParseObject.pinAllInBackground(mCurrentUser.getObjectId(), mCachedPosts);
+//                }
+//            }
+//        });
+
     }
 
     // Trigger gallery selection for a photo
