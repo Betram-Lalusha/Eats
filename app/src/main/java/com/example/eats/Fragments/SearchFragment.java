@@ -78,7 +78,6 @@ public class SearchFragment extends Fragment {
     private OnClickInterface mCityClickInterface;
     EndlessRecyclerViewScrollListener mEndlessRecyclerViewScrollListener;
     EndlessRecyclerViewScrollListener mCitiesEndlessRecyclerViewScrollListener;
-    private final String GOOGLE_PLACES_API_BASE_URL = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json";
 
     public SearchFragment() {
         // Required empty public constructor
@@ -166,13 +165,14 @@ public class SearchFragment extends Fragment {
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 // Triggered only when new data needs to be appended to the list
                 // Add whatever code is needed to append new items to the bottom of the list
-                loadNextPosts();
+                queryPosts();
             }
         };
 
         mCitiesEndlessRecyclerViewScrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                Log.d("QUERY", "triggered city scroll!");
                 queryCities();
             }
         };
@@ -212,32 +212,17 @@ public class SearchFragment extends Fragment {
 
     }
 
-    private void loadNextPosts() {
-        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
-        query.whereLessThan("createdAt", mPosts.get(mPosts.size() - 1).getDate());
-        query.setLimit(4);
-        query.include(Post.USER);
-        query.addDescendingOrder("createdAt");
-        query.findInBackground(new FindCallback<Post>() {
-            @Override
-            public void done(List<Post> posts, ParseException e) {
-                if(e != null) {
-                    Log.i("HOME", "something went wrong obtaining posts " + e);
-                }
-
-                mCategoriesAdapter.addAll(posts);
-                mSearchResultsAdapter.addAll(posts);
-            }
-
-        });
-
-    }
-
+    /**
+     * queries parse database for posts. The query ignores any posts already queried
+     * by keeping track of a list object Ids already queried displayed on the scren
+     */
     private void queryPosts() {
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
         query.setLimit(6);
         query.include(Post.USER);
         query.addDescendingOrder("createdAt");
+        query.whereNotContainedIn("objectId", mAlreadyAdded);
+
 
         query.findInBackground(new FindCallback<Post>() {
             @Override
@@ -247,43 +232,46 @@ public class SearchFragment extends Fragment {
                     e.printStackTrace();
                     return;
                 }
-                Post featured = randomPost(posts.size(), posts);
+                if(!posts.isEmpty()) {
+                    Post featured = randomPost(posts.size(), posts);
+                    Glide.with(getContext()).load(featured.getMedia().getUrl()).into(mFeaturedImage);
+                }
 
                 mCachedPosts.addAll(posts);
                 mCategoriesAdapter.addAll(posts);
                 mSearchResultsAdapter.addAll(posts);
 
-                Glide.with(getContext()).load(featured.getMedia().getUrl()).into(mFeaturedImage);
+
 
                 //cache posts
                 ParseObject.pinAllInBackground(mCurrentUser.getObjectId() + "searchedPosts", mCachedPosts);
+
+                for(Post post: posts) mAlreadyAdded.add(post.getObjectId());
             }
         });
     }
 
+    /**
+     * Queries the parse databse for cities.All cities already cached or queried for are ignored
+     * by the query.
+     */
     private void queryCities() {
         ParseQuery<City> query = ParseQuery.getQuery(City.class);
         query.setLimit(4);
         query.addDescendingOrder("createdAt");
         query.whereNotContainedIn("name",mCitiesAlreadyQueried);
 
-        query.findInBackground(new FindCallback<City>() {
-            @Override
-            public void done(List<City> cities, ParseException e) {
-                if(e != null) {
-                    Log.i("QUERY", "something went wrong querying  in search fragment " + e.toString());
-                    e.printStackTrace();
-                    return;
-                }
+        List<City> cities = new ArrayList<>();
+        try {
+            cities = query.find();
+            mCitiesAdapter.addAll(cities);
 
-                mCitiesAdapter.addAll(cities);
-
-                for(City city: cities) mCitiesAlreadyQueried.add(city.getName());
-
-                //cache cities
-
-            }
-        });
+            for(City city: cities) mCitiesAlreadyQueried.add(city.getName());
+        } catch (ParseException e) {
+            Log.i("QUERY", "something went wrong querying  in search fragment " + e.toString());
+            e.printStackTrace();
+            return;
+        }
     }
 
     /**
@@ -364,7 +352,10 @@ public class SearchFragment extends Fragment {
     private void filterByCategory() {
         if(mCategoriesClicked.isEmpty()) {
             mSearchResultsAdapter.clear();
-            queryPosts();
+            mAlreadyAdded.clear();
+            Log.d("HERE", "here " + mRetrievedCachedPosts);
+            mSearchResultsAdapter.addAll(mRetrievedCachedPosts);
+            for(Post post: mRetrievedCachedPosts)  mAlreadyAdded.add(post.getObjectId());
             return;
         }
 
@@ -396,9 +387,11 @@ public class SearchFragment extends Fragment {
     private void filterByCity() {
         if(mCitiesClicked.isEmpty()) {
             mCitiesAdapter.clear();
+            mAlreadyAdded.clear();
             mCitiesAlreadyQueried.clear();
-            queryCities();
-            queryPosts();
+            mCitiesAdapter.addAll(mRetrievedCachedCities);
+            for(City city: mRetrievedCachedCities) mCitiesAlreadyQueried.add(city.getName());
+            mSearchResultsAdapter.addAll(mRetrievedCachedPosts);
             return;
         }
 
