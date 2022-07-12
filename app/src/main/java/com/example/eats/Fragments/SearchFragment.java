@@ -279,6 +279,10 @@ public class SearchFragment extends Fragment {
             cities = query.find();
             mCitiesAdapter.addAll(cities);
 
+            //cache posts
+            ParseObject.pinAllInBackground(mCurrentUser.getObjectId() + "cachedCities", cities);
+
+
             for(City city: cities) mCitiesAlreadyQueried.add(city.getName());
         } catch (ParseException e) {
             Log.i("QUERY", "something went wrong querying  in search fragment " + e.toString());
@@ -402,6 +406,7 @@ public class SearchFragment extends Fragment {
             mCitiesAdapter.clear();
             mAlreadyAdded.clear();
             mCitiesAlreadyQueried.clear();
+            Log.d("TIRED", "retrieved " + mRetrievedCachedCities);
             mCitiesAdapter.addAll(mRetrievedCachedCities);
             for(City city: mRetrievedCachedCities) mCitiesAlreadyQueried.add(city.getName());
             mSearchResultsAdapter.addAll(mRetrievedCachedPosts);
