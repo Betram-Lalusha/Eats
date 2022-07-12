@@ -114,11 +114,10 @@ public class UserProfileFragment extends Fragment {
 
         //query for user posts
         mRetrievedCachedPosts = getCachedPosts();
+        mUserProfileAdapter.addAll(mRetrievedCachedPosts);
         if(mRetrievedCachedPosts.size() < 5) {
             getUserPosts();
-        } else {
-            mUserProfileAdapter.addAll(mRetrievedCachedPosts);
-        }
+        } 
 
         mUserName.setText(mCurrentUser.getUsername());
         mUserBio.setText(mCurrentUser.getString("bio"));
@@ -133,45 +132,12 @@ public class UserProfileFragment extends Fragment {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 // Triggered only when new data needs to be appended to the list
-                System.out.println("triggered!");
                 getUserPosts();
             }
         };
 
         mRecyclerView.addOnScrollListener(mEndlessRecyclerViewScrollListener);
 
-    }
-
-    private void loadNextPosts() {
-        mRvProgressBar.setVisibility(View.VISIBLE);
-        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
-        query.setLimit(5);
-        query.include(Post.USER);
-        query.whereNotContainedIn("objectId", mAlreadyAdded);
-        query.whereEqualTo(Post.USER, ParseUser.getCurrentUser());
-        //query.whereLessThan("createdAt", mUserPosts.get(mUserPosts.size() - 1).getDate());
-        query.addDescendingOrder("createdAt");
-        query.findInBackground(new FindCallback<Post>() {
-            @Override
-            public void done(List<Post> posts, ParseException e) {
-                if(e != null) {
-                    Log.i("HOME", "something went wrong obtaining posts " + e);
-                    return;
-                }
-
-                Log.d("HOME", "user fragment next posts " + posts);
-                Log.d("HOME", "cached user posts " + mRetrievedCachedPosts);
-                mUserProfileAdapter.addAll(posts);
-                mUserProfileAdapter.notifyDataSetChanged();
-
-               //for(Post post: posts) mAlreadyAdded.add(post.getObjectId());
-            }
-
-        });
-
-        //remove progress bar
-        mRvProgressBar.setVisibility(View.INVISIBLE);
-        mEndlessRecyclerViewScrollListener.resetState();
     }
 
     private void getUserPosts() {
