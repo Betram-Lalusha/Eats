@@ -123,7 +123,8 @@ public class MapFragment extends Fragment {
 
                 //move the map's camera to the user's  location.
                 googleMap.moveCamera(CameraUpdateFactory.newLatLng(userLoc));
-                googleMap.setMinZoomPreference(15);
+                googleMap.setMinZoomPreference(5);
+
 
             }
         });
@@ -190,12 +191,14 @@ public class MapFragment extends Fragment {
     private void addMarkers(GoogleMap googleMap, List<Post> posts, LatLng userLoc) {
         // Add a marker at current signed in user location,
         Bitmap markerIcon = getMarkerBitmapFromView(posts.get(0), true);
-        googleMap.addMarker(new MarkerOptions()
+        Marker userMarker = googleMap.addMarker(new MarkerOptions()
                 .position(userLoc)
                 .title("me")
                 .zIndex(1.0f)
                 .icon(BitmapDescriptorFactory.fromBitmap(markerIcon)));
 
+        userMarker.showInfoWindow();
+        
         for(Post post: posts) {
             markerIcon = getMarkerBitmapFromView(post, false);
             LatLng position = new LatLng(post.getLatitude(), post.getLongiitude());
