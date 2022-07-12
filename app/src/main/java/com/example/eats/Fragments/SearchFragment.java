@@ -75,6 +75,7 @@ public class SearchFragment extends Fragment {
     List<Post> mRetrievedCachedPosts;
     List<City> mRetrievedCachedCities;
     HashSet<String> mCategoriesClicked;
+    List<Post> mRetrievedRecentSearches;
     CategoriesAdapter mCategoriesAdapter;
     HashSet<String> mCitiesAlreadyQueried;
     SearchResultsAdapter mSearchResultsAdapter;
@@ -208,6 +209,7 @@ public class SearchFragment extends Fragment {
         //get data
         mRetrievedCachedPosts = getCachedPosts();
         mRetrievedCachedCities = getCachedCities();
+        mRetrievedRecentSearches = getRecentSearches();
 
         if(mRetrievedCachedPosts.isEmpty()) {
             queryPosts();
@@ -523,6 +525,9 @@ public class SearchFragment extends Fragment {
             //cache searched results
             mCachedPosts.addAll(posts);
             ParseObject.pinAllInBackground(mCurrentUser.getObjectId() + "searchedPosts", mCachedPosts);
+
+            //include in recent searches
+            ParseObject.pinAllInBackground(mCurrentUser.getObjectId() + "recentSearches", mCachedCities);
         }
 
         if(cacheCitiesResults) {
@@ -534,5 +539,35 @@ public class SearchFragment extends Fragment {
             mCachedCities.addAll(cities);
             ParseObject.pinAllInBackground(mCurrentUser.getObjectId() + "cachedCities", cities);
         }
+    }
+
+    /**
+     * Checks local database for cached posts that were searched for by the user.
+     * @return: all cached objects in the user local storage that the user searched for.
+     */
+    private List<Post> getRecentSearches() {
+        List<Post> retrievedPosts = new ArrayList<>();
+
+        ParseQuery<Post> parseQuery = new ParseQuery<Post>(Post.class);
+        parseQuery.include(Post.USER);
+        parseQuery.addDescendingOrder("createdAt");
+
+        try {
+            retrievedPosts = parseQuery.fromPin(mCurrentUser.getObjectId() + "recentSearches").find();
+            Log.d("cache","results for posts " + retrievedPosts);
+            for(Post post: retrievedPosts) {
+                mAlreadyAdded.add(post.getObjectId());
+            }
+        } catch (ParseException e) {
+            Log.i("QUERY", "something went wrong querying cached posts " + e.toString());
+            e.printStackTrace();
+            return retrievedPosts;
+        }
+
+        if(!retrievedPosts.isEmpty()) {
+            Post featured = randomPost(retrievedPosts.size(),retrievedPosts);
+            Glide.with(getContext()).load(featured.getMedia().getUrl()).into(mFeaturedImage);
+        }
+        return  retrievedPosts;
     }
 }
