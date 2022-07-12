@@ -205,29 +205,6 @@ public class UserProfileFragment extends Fragment {
             mRvProgressBar.setVisibility(View.INVISIBLE);
             return;
         }
-//        query.findInBackground(new FindCallback<Post>() {
-//            @Override
-//            public void done(List<Post> posts, ParseException e) {
-//                if(e != null) {
-//                    Log.i("HOME", "something went wrong obtaining posts " + e);
-//                    mRvProgressBar.setVisibility(View.INVISIBLE);
-//                    return;
-//                }
-//
-//                // save received posts to list and notify adapter of new data
-//                mUserProfileAdapter.addAll(posts);
-//                mRvProgressBar.setVisibility(View.INVISIBLE);
-//
-//                for(Post post: posts) mAlreadyAdded.add(post.getObjectId());
-//
-//
-//                //cache first 5 results
-//                if(mRetrievedCachedPosts.size() < 5) {
-//                    mCachedPosts.addAll(posts);
-//                    ParseObject.pinAllInBackground(mCurrentUser.getObjectId(), mCachedPosts);
-//                }
-//            }
-//        });
 
     }
 
