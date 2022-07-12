@@ -68,6 +68,7 @@ public class MapFragment extends Fragment {
     List<Post> mPosts;
     Double mUserLatitude;
     Double mUserLongitude;
+    View mCustomMarkerView;
     IconGenerator mIconGenerator;
 
     @Override
@@ -83,6 +84,7 @@ public class MapFragment extends Fragment {
         mIconGenerator = new IconGenerator(getContext());
         mUserLatitude = getArguments().getDouble("userLat", 37.4219862);
         mUserLongitude = getArguments().getDouble("userLong" ,-122.0842771);
+        mCustomMarkerView = ((LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.custom_marker, null);
 
         //handle exception thrown by getBitMapFromLink
         if (android.os.Build.VERSION.SDK_INT > 9) {
@@ -215,9 +217,8 @@ public class MapFragment extends Fragment {
      */
     private Bitmap getMarkerBitmapFromView(Post post, Boolean isUserMarker) {
 
-        View customMarkerView = ((LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.custom_marker, null);
-        TextView markerSnippet = (TextView)  customMarkerView.findViewById(R.id.markerSnippet);
-        ImageView markerImageView = (ImageView) customMarkerView.findViewById(R.id.markerImage);
+        TextView markerSnippet = (TextView)  mCustomMarkerView.findViewById(R.id.markerSnippet);
+        ImageView markerImageView = (ImageView) mCustomMarkerView.findViewById(R.id.markerImage);
 
         if(isUserMarker) {
             //load user pfp into marker
@@ -233,17 +234,17 @@ public class MapFragment extends Fragment {
             markerSnippet.setText(post.getCaption());
         }
 
-        customMarkerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        customMarkerView.layout(0, 0, customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight());
-        customMarkerView.buildDrawingCache();
-        Bitmap returnedBitmap = Bitmap.createBitmap(customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight(),
+        mCustomMarkerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        mCustomMarkerView.layout(0, 0, mCustomMarkerView.getMeasuredWidth(), mCustomMarkerView.getMeasuredHeight());
+        mCustomMarkerView.buildDrawingCache();
+        Bitmap returnedBitmap = Bitmap.createBitmap(mCustomMarkerView.getMeasuredWidth(), mCustomMarkerView.getMeasuredHeight(),
                 Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(returnedBitmap);
         canvas.drawColor(Color.WHITE, PorterDuff.Mode.SRC_IN);
-        Drawable drawable = customMarkerView.getBackground();
+        Drawable drawable = mCustomMarkerView.getBackground();
         if (drawable != null)
             drawable.draw(canvas);
-        customMarkerView.draw(canvas);
+        mCustomMarkerView.draw(canvas);
         return returnedBitmap;
     }
 
