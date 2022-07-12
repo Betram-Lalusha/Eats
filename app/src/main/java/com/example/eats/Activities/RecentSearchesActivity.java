@@ -10,6 +10,8 @@ import android.util.Log;
 
 import com.bumptech.glide.Glide;
 import com.example.eats.Adapters.SearchResultsAdapter;
+import com.example.eats.Helpers.HorizontalSpaceItemDecorator;
+import com.example.eats.Helpers.VerticalSpaceItemDecoration;
 import com.example.eats.Models.City;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
@@ -36,10 +38,14 @@ public class RecentSearchesActivity extends AppCompatActivity {
         mRecyclerView = findViewById(R.id.rvRecentSearches);
 
         SearchResultsAdapter searchResultsAdapter = new SearchResultsAdapter(this, mRetrievedSearchedPosts);
+        VerticalSpaceItemDecoration verticalSpaceItemDecoration = new VerticalSpaceItemDecoration(10);
+        HorizontalSpaceItemDecorator horizontalSpaceItemDecorator = new HorizontalSpaceItemDecorator(10);
         StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL);
 
         mRecyclerView.setLayoutManager(staggeredGridLayoutManager);
         mRecyclerView.setAdapter(searchResultsAdapter);
+        mRecyclerView.addItemDecoration(verticalSpaceItemDecoration);
+        mRecyclerView.addItemDecoration(horizontalSpaceItemDecorator);
 
         mRetrievedSearchedPosts = getCachedPosts();
         searchResultsAdapter.addAll(mRetrievedSearchedPosts);
