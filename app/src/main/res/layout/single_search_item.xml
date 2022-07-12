@@ -60,6 +60,7 @@
                     android:layout_height="19dp"
                     android:layout_marginStart="4dp"
                     android:text="TextView"
+                    android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
@@ -74,6 +75,8 @@
                     android:layout_marginStart="4dp"
                     android:layout_marginTop="2dp"
                     android:text="TextView"
+                    android:textColor="#FF9800"
+                    android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
@@ -90,6 +93,8 @@
                 android:layout_marginStart="32dp"
                 android:layout_marginTop="8dp"
                 android:text="TextView"
+                android:textColor="#4DF19C"
+                android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@+id/constraintLayout"
                 app:layout_constraintTop_toBottomOf="@+id/imageOfPost" />
 

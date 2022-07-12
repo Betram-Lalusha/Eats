@@ -76,6 +76,7 @@ public class HomeActivity extends AppCompatActivity {
                         break;
                     case R.id.exploreButton:
                         fragment = new SearchFragment();
+                        fragment.setArguments(bundle);
                         break;
                     default:
                         fragment = new TimelineFragment();

@@ -56,6 +56,8 @@ public class SearchFragment extends Fragment {
     List<Post> mPosts;
     List<City> mCities;
     TextView mSearchBox;
+    Double mUserLatitude;
+    Double mUserLongitude;
     ParseUser mCurrentUser;
     RecyclerView mRvCities;
     List<Post> mCachedPosts;
@@ -117,6 +119,9 @@ public class SearchFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        //get user coordinates passed from Home Activity
+        mUserLatitude = getArguments().getDouble("userLat", 37.4219862);
+        mUserLongitude = getArguments().getDouble("userLong" ,-122.0842771);
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_search, container, false);
 
@@ -237,6 +242,7 @@ public class SearchFragment extends Fragment {
                     Glide.with(getContext()).load(featured.getMedia().getUrl()).into(mFeaturedImage);
                 }
 
+                for(Post post: posts) post.distanceFromUser = distance(post.getLatitude(), post.getLongiitude(), mUserLatitude, mUserLongitude, "K");
                 mCachedPosts.addAll(posts);
                 mCategoriesAdapter.addAll(posts);
                 mSearchResultsAdapter.addAll(posts);
@@ -515,6 +521,25 @@ public class SearchFragment extends Fragment {
 
             mCachedCities.addAll(cities);
             ParseObject.pinAllInBackground(mCurrentUser.getObjectId() + "cachedCities", cities);
+        }
+    }
+
+    public  double distance(double pointLat, double pointLon, double userLat, double userLon,String unit) {
+        if ((pointLat == userLat) && (pointLon == userLon)) {
+            return 0;
+        }
+        else {
+            double theta = pointLon - userLon;
+            double dist = Math.sin(Math.toRadians(pointLat)) * Math.sin(Math.toRadians(userLat)) + Math.cos(Math.toRadians(pointLat)) * Math.cos(Math.toRadians(userLat)) * Math.cos(Math.toRadians(theta));
+            dist = Math.acos(dist);
+            dist = Math.toDegrees(dist);
+            dist = dist * 60 * 1.1515;
+            if (unit.equals("K")) {
+                dist = dist * 1.609344;
+            } else if (unit.equals("N")) {
+                dist = dist * 0.8684;
+            }
+            return (dist);
         }
     }
 }
