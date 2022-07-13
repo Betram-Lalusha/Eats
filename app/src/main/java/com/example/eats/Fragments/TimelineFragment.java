@@ -114,6 +114,7 @@ public class TimelineFragment extends Fragment {
         query.include(Post.USER);
         query.setLimit(minNumber);
         query.addDescendingOrder("createdAt");
+        query.whereNotEqualTo("user", mCurrentUser);
         query.whereNotContainedIn("objectId", mAlreadyAdded);
 
         List<Post> posts = new LinkedList<>();
