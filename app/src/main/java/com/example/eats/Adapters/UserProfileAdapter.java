@@ -68,13 +68,9 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
 
     // Add a list of items -- change to type used
     public void addAll(List<Post> list) {
-        Log.d("HAHA", "already " + mAlreadyAdded);
-        Log.d("HAHA2", "trying to add " + list);
-        Log.d("HAHA3", "before trying to add " + mPosts);
         for(Post post: list)  {
             if(mAlreadyAdded.add(post.getObjectId())) mPosts.add(post);
         }
-        Log.d("HAHA4", "after trying to add " + mPosts);
         notifyDataSetChanged();
     }
 
