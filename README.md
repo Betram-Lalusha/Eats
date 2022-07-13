@@ -283,14 +283,16 @@
                }
             };
            ```
-           - example of multiple categories clicked at once (In App ScreenShot): (attach picture here)
+           - example of multiple categories clicked at once (In App ScreenShot). The clicked categories are colored orange: 
+           ![](multipleCategoryClickSC.png)
          
 # Stretch Features Continued
 - Custom TextView background for better UI
 - Custom Markers to display on the map
   - My markers show the profilePicture of the person that made the post and the caption is used as the snippet
   - I accomplished this by converting an xml file into a bitmap that can be used by google maps as an icon for a marker
-  - In app screen shots of custom markers (attach picture here)
+  - In app screen shots of custom markers 
+  ![](customMarkersSC.png)
 - Users can profiles of other users
   - the current signed in user can visit other people's profiles by tapping on the profile picture embedded in a post
   - user can see list of all posts made by the user whose profile they visit
