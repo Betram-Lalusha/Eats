@@ -34,7 +34,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".OtherUserProfileActivity"
+            android:name=".Activities.OtherUserProfileActivity"
             android:exported="false" />
         <activity
             android:name=".Activities.RecentSearchesActivity"
