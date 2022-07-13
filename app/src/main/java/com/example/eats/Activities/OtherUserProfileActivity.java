@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -21,6 +22,8 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+
+import org.parceler.Parcels;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -44,17 +47,18 @@ public class OtherUserProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_user_profile);
 
+        Intent intent = getIntent();
         getSupportActionBar().hide();
 
         mUserPosts = new LinkedList<Post>();
         mUserBio = findViewById(R.id.bio);
-        mCurrentUser = ParseUser.getCurrentUser();
         mUserName = findViewById(R.id.username);
         mRecyclerView = findViewById(R.id.rvUserPosts);
         mRvProgressBar = findViewById(R.id.rvProgressBar);
         mUserProfilePic = findViewById(R.id.userProfilePic);
         mUserProfileAdapter = new UserProfileAdapter(this, mUserPosts);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        mCurrentUser = (ParseUser) Parcels.unwrap(intent.getParcelableExtra("user"));
         VerticalSpaceItemDecoration verticalSpaceItemDecoration = new VerticalSpaceItemDecoration(40);
 
         mUserName.setText(mCurrentUser.getUsername());
