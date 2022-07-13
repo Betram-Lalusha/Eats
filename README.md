@@ -33,7 +33,7 @@
 **Optional Nice-to-have Stories**
 
 * Enable users to comment on a post
-* Enable users to share a post
+* Enable users to like a post
 * * Search/filter: users can search for specfic items or places
 
 ### 2. Screen Archetypes
@@ -45,7 +45,7 @@
 * Map
    * user can see homes selling or sharing food and resturants near them and anywhere in the world
 * Profile Screen 
-   * User sees their previous posts. Visiting someone else' profile enables the user to follow or block that user and also to see posts that were made by that user
+   * User sees their previous posts. Visiting someone else' profile enables the user to see posts that were made by that user
 * Search.
    * Search bar on top allows user to search for particular food or places.
 * Details Screen
@@ -81,33 +81,45 @@
    | Property      | Type     | Description |
    | ------------- | -------- | ------------|
    | objectId      | String   | unique id for the user post (default field) |
-   | user        | Pointer to User| image author |
+   | user        | Pointer to User|  author of the post |
    | image         | File     | image that user posts |
-   | caption       | String   | image caption by author |
+   | caption       | String   | string caption by author |
    | commentsCount | Number   | number of comments that has been posted to an image |
    | likesCount    | Number   | number of likes for the post |
    | createdAt     | DateTime | date when post is created (default field) |
-   | updatedAt     | DateTime | date when post is last updated (default field) |
-   | location     | Array of Strings| Contains the latitude of the user location at index 0 and longitude at index 1|
+   | updatedAt     | DateTime | date when post was last updated (default field) |
+   | latitude     | Number| Latitude of coordinate where the post was made|
+   | longitude     | Number| Longitude of coordinate where the post was made|
    | price     | Number| The cost of the food per item|
-   | comments     | Array of Strings| All commments on a post|
+   | category     | String| The category that the food item belongs to (e.g mexican food)|
+   | city     | Pointer City| The city that the post was made in|
+   | geohash     | String| The geohash idenitfying which grid (area) on earth the post was made|
    
    #### User
 
    | Property      | Type     | Description |
    | ------------- | -------- | ------------|
    | objectId      | String   | unique id for the user post (default field) |
-   | userName      | String   | the screen name of the user |
+   | username      | String   | the screen name of the user |
    | userProfilePic| File     | image to be used as avatar for user |
    | bio           | String(Optional)| Offers a description about the user |
    | password | Alphanumeric   | password user uses for authentication |
-   | email    | String   | email account associated with user to be used for two-step verifcaition and notifications from app |
+   | email    | String   | email account associated with user|
    | createdAt     | DateTime | date when user created account (default field) |
    | updatedAt     | DateTime | date when user last updated their account (default field) |
-   | followers    | Array of Strings (or pointers if possible)| Contains pointers to all users following user or their userIds|
-   | following    | Array of Strings (or pointers if possible)| Contains pointers to all users that the user follows or their userIds|
-   | bank details     | Object (Optional--Stretch Feature)| Bank details- card number, cvv, name on account, expiry month and year- to enable transactions|
-   | pastTranscations     | Object(Stretch Feature)| Contains all of the user's past transactions, both purchases and sales|
+   | emailVerified     | Boolean | indicates whether user has verified their email (default field) |
+   | authData     | Parse Object | contains info about user authentication (default field) |
+   
+      #### City
+
+   | Property      | Type     | Description |
+   | ------------- | -------- | ------------|
+   | objectId      | String   | unique id for the user post (default field) |
+   | name      | String   | the name of the city |
+   | imageUrl| File     | image of the city obtained from Google Maps Places API |
+   | createdAt     | DateTime | date when user created account (default field) |
+   | updatedAt     | DateTime | date when user last updated their account (default field) |
+
 ### Networking
 #### List of network requests by screen
    - Home Feed Screen
@@ -133,10 +145,6 @@
             });
         }
          ```
-      - (Create/POST) Create a new like on a post
-      - (Delete) Delete existing like
-      - (Create/POST) Create a new comment on a post
-      - (Delete) Delete existing comment
    - Create Post Screen
       - (Create/POST) Create a new post object
    - Profile Screen
@@ -147,4 +155,265 @@
       - (Read/GET) Query the user's current location
       - (Read/GET) Query all posts of food currently in database and return their location
 #### [OPTIONAL:] Existing API Endpoints
-##### An API Of Ice And Fire
+
+### Description of completed MVP Goals Functionality
+- Login Activity
+ - users can enter username and password to sign in
+ - If user enters wrong credentials, feedback is given to them to let them know they entered "invalid username/password"
+ - users can tap "create account" button to make new account
+- Sign Up Activity
+ - users can create a new account
+- TimeLine Fragment
+ - users can see list of posts close to them
+ - users can click on post to see details about post
+ - infinite scroll to enable user to see more posts as they scroll down
+- Map Fragment
+ - user can see their location on the map
+ - user can see posts near them represented by markers
+ - users can click on posts to see detais about the post
+ - user can zoom in and out of map as they please to see more posts
+- Post Fragment
+ - user can add a new post
+ - user can either take a new picture or select a picture from their gallery to attach to their post
+ - user can see feedback about progress of their post being made with their intermediate progress view
+- User Profile Fragment
+ - User can see their profile picture, user name, and bio
+ - User can see list of all posts they have made
+ - Users can change profile picture by tapping on their avatar
+ - Users can log out of app by long pressing their avatar
+ - Users can see details of a post by clicking on it
+ - Users can delete a post they made by long pressing
+
+### Stretch Features
+- Search Fragment
+    - Enables users to search for specific posts
+    - Users can search by typing name of item they want. This search is done by querying the database for posts whose caption, description or category starts with the user query
+    - Users can filter items by
+        - City of posts (e.g show posts in San Fransisco only)
+        - Category of posts (e.g show posts about ice cream only)
+    - User can see Featured item image. The featured item is randomly generated post from the list of posts returned that has been "featured" and remains on display 
+    - Infinite scroll to show all posts returned
+    - users can click on a post to see details about it
+- Recent History Activity
+    - Users can see the recent posts they searched for
+    - Users can click on a post to see details about it
+    - Caching is used to enable this functionality (more on this in Complex Features section)
+- Geocoder
+    - Used to get city where user made post
+    - This works as follows:
+     - when user makes a post, their coordinates are fed to the Geocoder class
+     - The geocoder returns response of the form:
+       [Address[addressLines=[0:"1600 Amphitheatre Pkwy, Mountain View, CA 94043, USA"],feature=1600,admin=California,sub-admin=Santa Clara County,locality=Mountain View,thoroughfare=Amphitheatre Parkway,postalCode=94043,countryCode=US,countryName=United States,hasLatitude=true,latitude=37.422065599999996,hasLongitude=true,longitude=-122.08408969999998,phone=null,url=null,extras=null]]
+     - The field of interest in the returned list is the "locality" (e.g Mountain View in the above example response)
+     - This is then used to query places API for a photo of the locality (city)
+- Google Places API
+    - Used google places API to get image of city where user made a post
+    - The city is then added to list if cities in the search fragment
+       - This is used to help users see which cities they can filter posts by
+    - request to Google Places API were made using AsyncHttpClient
+- Created Custom onClick interface
+    - Created a custom on click interface to respond to click events on items in recycler view
+    - I did this because the recycler view has no default on click listener that identifies which specific items have been clicked
+    - This functionality was needed to help me keep track of which categories the user has clicked in the search fragment so that I can use them to filter posts  by the clicked categories. I wanted to enable the user to click *multiple* categories at once. The default listener on a recycler views adapter on allows selection of one item at a time.
+    - To solve this, I created my own onClick interface
+    - Here is the code
+      ```
+      public interface OnClickInterface {
+          void setClick(String Category);
+      }
+      ```
+      - I then attached it to the adpater 
+      ```
+      //modified adapter class to attach custom onClick listener
+      public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.ViewHolder>{
+          .
+          .
+          .
+          OnClickInterface mOnClickInterface;
+          
+          //modified constructer to pass in custom onClick listener
+          public CategoriesAdapter(Context context, List<Post> posts, OnClickInterface onClickInterface) {
+              .
+              .
+              .
+              this.mOnClickInterface = onClickInterface;
+          }
+          .
+          .
+          .
+          //modified inner ViewHolder class
+          public class ViewHolder  extends  RecyclerView.ViewHolder{
+              .
+              .
+              .
+
+              public void bind(Post post) {
+                  .
+                  .
+                  .
+
+                  //listens for click event
+                  mCategory.setOnClickListener(new View.OnClickListener() {
+                      @Override
+                      public void onClick(View v) {
+                          .
+                          .
+                          .
+
+                         //set custom on click interface
+                         mOnClickInterface.setClick(post.getCategory());
+                     }
+                  });
+
+            }
+            .
+            .
+            .
+        }
+        ```
+        - I then used it to keep track of clicked categories in the search fragment like this
+            ```
+              @Override
+             public void onCreate(Bundle savedInstanceState) {
+                 super.onCreate(savedInstanceState);
+
+                 mCategoriesClicked = new HashSet<>();
+
+                 //set custom on click interface
+                 //this adds clicked categories to the set and removes items clicked if they are already in the set
+                mOnClickInterface = new OnClickInterface() {
+                   @Override
+                   public void setClick(String category) {
+                       if(!mCategoriesClicked.add(category)) {
+                       mCategoriesClicked.remove(category);
+                   }
+                   
+                   //call function to filter posts by current selected categories
+                   filterByCategory();
+               }
+            };
+           ```
+           - example of multiple categories clicked at once (In App ScreenShot): (attach picture here)
+         
+#Stretch Features Continued
+- Custom TextView background for better UI
+- Custom Markers to display on the map
+  - My markers show the profilePicture of the person that made the post and the caption is used as the snippet
+  - I accomplished this by converting an xml file into a bitmap that can be used by google maps as an icon for a marker
+  - In app screen shots of custom markers (attach picture here)
+- Users can profiles of other users
+ - the current signed in user can visit other people's profiles by tapping on the profile picture embedded in a post
+ - user can see list of all posts made by the user whose profile they visit
+
+#Complex Features
+1. Geohashing
+   1.1 Background
+     Eats is app whose sole purpose is to enable users to post home made food and see posts of homemade food made by others so they can check them out. It would, however, defeat the purpose if say someone in Australia is seeing posts made in Canada. Unless they commute to Canada regularly, there is a near zero chance they'll end up ... To solve this, Eats orders posts in the TimeLine fragment by distance from the signed in user. This way, posts that are closest to the user apper first and posts that are further away are loaded as users scrolls further down.
+   1.2 The challenge with ordering posts
+     Imagine a scenario where Eats becomes a world wide hit. The database has millions of posts and millions of users signed in at the same time looking for delicious homemade food. How do we order posts by distance for each of these users? The naive solution would be to scan the entire database, calculate the distance between a user and each post and return, say, the first 10 closest posts found. This is an expensive and time consuming approach that would definitely not scale as number of posts and users increase. The server would have to calculate the distance of each user (from a set of millions of users) from each post (from a set of millions of posts) to find the closest ones. Imagine the server doing this for 1 million users at the exact same time.
+  1.3 Scaling ordering of posts
+    To make this scalable, I employed Geohashing, a geo coordinate indexing system developed by Gustavo Niemeyer (https://en.wikipedia.org/wiki/Geohash).
+    Geohashing divides the earth into smaller grids and hashes coordinates into these grids. Places that have the same coordinates will have the same goehash and will belong to the same grid. Geohashing is used in searching for nearby places because it gauranties that coordinates with the same prefix are close to each other. 
+    1.3.1 Example: here is the geohash of MPK Building 26: 9q9j5zmbtzdp. Here is the geohash of place in RedWood city (3.3 miles away from MPK 26): 9q9j686sdh2m. These results were obtained from http://geohash.org/9q9j686sdh2m, the official geohash website set up by Niemeyer himself. As can be noticed, the two geohashes have the same prefix 9q9j. Here is the geohash of BayFront fitness (0.3 miles away from MPK 26): 9q9j5zg6pp35. As can be noticed, the common prefic between MPK 26 and bayfront fitness is longer (9q9j5) than the common prefix between MPK 26 and redwood city. This is inline with the fact that MPK 26 is closer to bayfront fitness than it is to redwood city. Here is another geohash of Tide Academy (5 minutes away from MPK 26):9q9j5z7tru5e. Notice again how the common prefix (9q9j5z) for the geohashes between MPK 26 and Tide Academy is longer than the last 2. In conclusion, the closer points are together, the longer the common prefix is between them.
+    1.3.2 How Geohasing is used to suggest close by places
+     Say a user is at MPK 26. Their geohash as shown above is 9q9j5zmbtzdp. Remember, places close to each other have a common prefix. To find places close to the user, the databse is first queried for posts that have the same hash as the user (because places in the same grid/area have the same geohash). If no posts are found with this the user geohash, We simply keep removing the last character of the user's geohash until posts that start with the new geohash are found. In the above example, we can continually strip away the last character from the user's geohash until the geohash becomes 9q9j5z. Now posts at Tide Academy will be returned! If the user still wants to see more posts, we continue to strip away the last character until the geohash becomes 9q9j5. Now posts at both BayFront fitness and Tide Academy are returned! The process continues until the user stops scrolling down to see more posts or the geohas becomes empty!
+     1.3.3 How this makes suggestion of nearby places scalable
+     This is scalable because we no longer have to query the databse for all posts and calculate the distance of each post from the user. With geohashing, we only have to return posts that start with the current users geohash! Then only distance for these posts will be calculated.
+     1.3.4 How Geohash is used in Eats
+       1.3.4.1 
+       I first created a Geohasher class with geohash method that implements the geohashing algorithm. Here is the code:
+       ```
+         /**
+     * Method converts latitudes and longitude coordinates into a geohash using Gustavo Niemeyer's
+     * geocoding system and unique base32. The method takes the given coordinates and repeatedly halves them
+     * until the required accuracy is met.
+     * @param precision: number indicates how long, precise, the resulting string should be
+     * @return: the geohash of the given coordinates
+     */
+    public String geoHash(int precision) {
+
+        int index = 0;
+        String geohash = "";
+        int numberOfBits = 0;
+        Double maxLat = 90.0;
+        Double minLat = -90.0;
+        Double maxLong = 180.0;
+        Double minLong = -180.0;
+        Boolean evenBit = true;
+        Double latitude =  this.mLatitude;
+        Double longitude = this.mLongitude;
+
+        while (geohash.length() < precision) {
+            if(evenBit) {
+                //test every line
+                //half longitude
+                Double midLong = (minLong + maxLong) / 2;
+                if(longitude >= midLong) {
+                    index = index * 2  + 1;
+                    minLong = midLong;
+                } else {
+                    index = index * 2;
+                    maxLong = midLong;
+                }
+            } else {
+                //half latitude
+                Double midLat = (minLat + maxLat) / 2;
+                if(latitude >= midLat) {
+                    index = index * 2 + 1;
+                    minLat = midLat;
+                } else {
+                    index = index * 2;
+                    maxLat = midLat;
+                }
+            }
+
+            evenBit = !evenBit;
+
+            //vysor
+            numberOfBits++;
+            if(numberOfBits == 5) {
+                geohash += base32.charAt(index);
+                index = 0;
+                numberOfBits = 0;
+            }
+        }
+
+
+        return geohash;
+    }
+    ```
+    
+    This class is then used in the post fragment when a user makes a post. It used to find the geohash of the user at the time of post creation and attach it to the Post object. e.g post.setGeohash(mGeohasher.geoHash(12));
+    The Post model in the database has geohash column and it will be populated by this geohash.
+    
+    When the user goes to the timeline fragment to see nearby posts, the databse is queried for posts whose geohash starts with the user's current geohash.If no posts are found, the last character is continously strupped away from the user's geohash until posts are found. Here is a code snippet
+    
+    ```
+     while (mUserGeoHash.length() > 0 && posts.size() < minNumber) {
+            try {
+                query.whereStartsWith("geohash", mUserGeoHash.toString());
+                posts = query.find();
+            } catch (ParseException e) {
+                Log.i("QUERY", "something went wrong querying posts " + e.toString());
+                e.printStackTrace();
+                return;
+            }
+
+            //if no posts with user geohash are found,remove last character and try again
+            if (posts.isEmpty()) {
+                mUserGeoHash.deleteCharAt(mUserGeoHash.length() - 1);
+            } else {
+                for(int i = 0; i < posts.size(); i++) {
+                    Post post = posts.get(i);
+                    if(!mAlreadyAdded.add(post.getObjectId())) {
+                        posts.remove(post);
+                        continue;
+                    }
+                    post.distanceFromUser = mDistanceCalculator.distance(post.getLatitude(), post.getLongiitude());
+                }
+           }
+     }
+     ```
+    
+
+      
