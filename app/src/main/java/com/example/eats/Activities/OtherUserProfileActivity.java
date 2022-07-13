@@ -44,6 +44,8 @@ public class OtherUserProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_user_profile);
 
+        getSupportActionBar().hide();
+
         mUserPosts = new LinkedList<Post>();
         mUserBio = findViewById(R.id.bio);
         mCurrentUser = ParseUser.getCurrentUser();

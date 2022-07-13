@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.eats.Activities.DetailActivity;
+import com.example.eats.Activities.OtherUserProfileActivity;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
 import com.parse.ParseObject;
@@ -109,11 +110,21 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
             mPostImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(mContext, "clicked post by " + post.getParseUser().getUsername() , Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(mContext, DetailActivity.class);
 
                     //use url instead of passing image to detail activity
                     intent.putExtra("post", Parcels.wrap(post));
+                    mContext.startActivity(intent);
+                }
+            });
+
+            mOwnerPfp.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(mContext, OtherUserProfileActivity.class);
+
+                    //use url instead of passing image to detail activity
+                    intent.putExtra("user", Parcels.wrap(post.getParseUser()));
                     mContext.startActivity(intent);
                 }
             });
