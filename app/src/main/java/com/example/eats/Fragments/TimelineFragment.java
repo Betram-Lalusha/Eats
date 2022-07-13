@@ -106,7 +106,7 @@ public class TimelineFragment extends Fragment {
 
     /**
      * Gets posts from the database that start with the current hash valu of the user's geo hash until either the number of required posts are found
-     * or the user's has becomes empty
+     * or the user's hash becomes empty
      * @param minNumber: the minimum number of posts to return from the databse
      */
     private void getPosts(int minNumber) {

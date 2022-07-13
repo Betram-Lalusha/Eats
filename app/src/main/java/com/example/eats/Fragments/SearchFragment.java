@@ -260,7 +260,9 @@ public class SearchFragment extends Fragment {
                 }
                 if(!posts.isEmpty()) {
                     Post featured = randomPost(posts.size(), posts);
-                    Glide.with(getContext()).load(featured.getMedia().getUrl()).into(mFeaturedImage);
+                    if(getActivity() != null) {
+                        Glide.with(getContext()).load(featured.getMedia().getUrl()).into(mFeaturedImage);
+                    }
                 }
 
                 for(Post post: posts) post.distanceFromUser = mDistanceCalculator.distance(post.getLatitude(), post.getLongiitude());

@@ -100,8 +100,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
         }
 
         private String formatDistance(Double distanceFromUser) {
-            String distStr = String.valueOf(distanceFromUser);
-            return String.valueOf(distStr.charAt(0));
+            return String.valueOf(Math.round(distanceFromUser));
         }
     }
 

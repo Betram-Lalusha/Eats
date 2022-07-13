@@ -45,10 +45,15 @@ public class DetailActivity extends AppCompatActivity {
         mCaption.setText(mPost.getCaption());
         mDescription.setText(mPost.getDetails());
         mUserName.setText(mPost.getParseUser().getUsername());
-        mUserDistance.setText(String.valueOf((mPost.distanceFromUser)) + "Km away");
+        mUserDistance.setText(formatDistance(mPost.distanceFromUser) + "Km away");
         mPrice.setText(mPost.getPrice() > 0 ? "$" + String.valueOf(mPost.getPrice()) : "free");
         Glide.with(DetailActivity.this).load(mPost.getMedia().getUrl()).into(mPostImage);
         Glide.with(DetailActivity.this).load(mPost.getParseUser().getParseFile("userProfilePic").getUrl()).into(mUserImage);
 
+    }
+
+    private String formatDistance(Double distanceFromUser) {
+        System.out.println("dist " + distanceFromUser);
+        return String.valueOf(Math.round(distanceFromUser));
     }
 }

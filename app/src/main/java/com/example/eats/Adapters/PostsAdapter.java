@@ -131,8 +131,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
         }
 
         private String formatDistance(Double distanceFromUser) {
-            String distStr = String.valueOf(distanceFromUser);
-            return String.valueOf(distStr.charAt(0));
+           return String.valueOf(Math.round(distanceFromUser));
         }
     }
 }

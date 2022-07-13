@@ -17,7 +17,7 @@ public class DistanceCalculator {
             return 0;
         }
         else {
-            double theta = pointLon- this.mUserLongitude;
+            double theta = pointLon - this.mUserLongitude;
             double dist = Math.sin(Math.toRadians(pointLat)) * Math.sin(Math.toRadians(this.mUserLatitude)) + Math.cos(Math.toRadians(pointLat)) * Math.cos(Math.toRadians(this.mUserLatitude)) * Math.cos(Math.toRadians(theta));
             dist = Math.acos(dist);
             dist = Math.toDegrees(dist);
