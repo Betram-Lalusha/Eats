@@ -37,6 +37,7 @@ public class RecentSearchesActivity extends AppCompatActivity {
         mRetrievedSearchedPosts = new LinkedList<>();
         mRecyclerView = findViewById(R.id.rvRecentSearches);
 
+        getSupportActionBar().setTitle("Recent Searches");
         SearchResultsAdapter searchResultsAdapter = new SearchResultsAdapter(this, mRetrievedSearchedPosts);
         VerticalSpaceItemDecoration verticalSpaceItemDecoration = new VerticalSpaceItemDecoration(10);
         HorizontalSpaceItemDecorator horizontalSpaceItemDecorator = new HorizontalSpaceItemDecorator(10);
