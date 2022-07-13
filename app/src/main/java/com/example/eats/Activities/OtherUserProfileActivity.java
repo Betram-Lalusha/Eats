@@ -5,6 +5,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -15,6 +17,9 @@ import com.example.eats.EndlessRecyclerViewScrollListener;
 import com.example.eats.Helpers.VerticalSpaceItemDecoration;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.io.File;
@@ -28,11 +33,12 @@ public class OtherUserProfileActivity extends AppCompatActivity {
     TextView mUserName;
     List<Post> mUserPosts;
     ParseUser mCurrentUser;
-    ProgressBar mProgressBar;
     ImageView mUserProfilePic;
     RecyclerView mRecyclerView;
+    ProgressBar mRvProgressBar;
     UserProfileAdapter mUserProfileAdapter;
     EndlessRecyclerViewScrollListener mEndlessRecyclerViewScrollListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +49,7 @@ public class OtherUserProfileActivity extends AppCompatActivity {
         mCurrentUser = ParseUser.getCurrentUser();
         mUserName = findViewById(R.id.username);
         mRecyclerView = findViewById(R.id.rvUserPosts);
-        mProgressBar = findViewById(R.id.progressBar);
+        mRvProgressBar = findViewById(R.id.rvProgressBar);
         mUserProfilePic = findViewById(R.id.userProfilePic);
         mUserProfileAdapter = new UserProfileAdapter(this, mUserPosts);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -67,5 +73,33 @@ public class OtherUserProfileActivity extends AppCompatActivity {
         };
 
         mRecyclerView.addOnScrollListener(mEndlessRecyclerViewScrollListener);
+    }
+
+    private void getUserPosts() {
+        mRvProgressBar.setVisibility(View.VISIBLE);
+        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
+        query.setLimit(5);
+        query.include(Post.USER);
+        query.addDescendingOrder("createdAt");
+        query.whereEqualTo(Post.USER, ParseUser.getCurrentUser());
+
+        List<Post> posts = new LinkedList<>();
+        try {
+            posts = query.find();
+            // save received posts to list and notify adapter of new data
+            mUserPosts.addAll(posts);
+            mUserProfileAdapter.notifyDataSetChanged();
+            mUserProfileAdapter.addAll(posts);
+            mRvProgressBar.setVisibility(View.INVISIBLE);
+
+            //for(Post post: posts) mAlreadyAdded.add(post.getObjectId());
+
+        } catch (ParseException e) {
+            Log.i("HOME", "something went wrong obtaining posts " + e);
+            mRvProgressBar.setVisibility(View.INVISIBLE);
+            return;
+        }
+
+
     }
 }
