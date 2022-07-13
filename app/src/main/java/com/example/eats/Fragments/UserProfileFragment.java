@@ -42,6 +42,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -58,7 +59,7 @@ public class UserProfileFragment extends Fragment {
     ImageView mUserProfilePic;
     ProgressBar mRvProgressBar;
     RecyclerView mRecyclerView;
-    List<String> mAlreadyAdded;
+    HashSet<String> mAlreadyAdded;
     List<Post> mRetrievedCachedPosts;
     UserProfileAdapter mUserProfileAdapter;
     public String mPhotoFileName = "photo.jpg";
@@ -77,7 +78,7 @@ public class UserProfileFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @NonNull Bundle savedInstanceState) {
         mCachedPosts = new ArrayList<>();
-        mAlreadyAdded = new ArrayList<>();
+        mAlreadyAdded = new HashSet<>();
         mUserPosts = new LinkedList<Post>();
         mUserBio = view.findViewById(R.id.bio);
         mCurrentUser = ParseUser.getCurrentUser();

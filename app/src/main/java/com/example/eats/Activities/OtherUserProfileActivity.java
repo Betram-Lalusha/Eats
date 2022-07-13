@@ -27,6 +27,7 @@ import org.parceler.Parcels;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -39,6 +40,7 @@ public class OtherUserProfileActivity extends AppCompatActivity {
     ImageView mUserProfilePic;
     RecyclerView mRecyclerView;
     ProgressBar mRvProgressBar;
+    HashSet<String> mAlreadyAdded;
     UserProfileAdapter mUserProfileAdapter;
     EndlessRecyclerViewScrollListener mEndlessRecyclerViewScrollListener;
 
@@ -50,7 +52,10 @@ public class OtherUserProfileActivity extends AppCompatActivity {
         Intent intent = getIntent();
         getSupportActionBar().hide();
 
+        mAlreadyAdded = new HashSet<>();
         mUserPosts = new LinkedList<Post>();
+
+        mCurrentUser = new ParseUser();
         mUserBio = findViewById(R.id.bio);
         mUserName = findViewById(R.id.username);
         mRecyclerView = findViewById(R.id.rvUserPosts);
@@ -58,7 +63,7 @@ public class OtherUserProfileActivity extends AppCompatActivity {
         mUserProfilePic = findViewById(R.id.userProfilePic);
         mUserProfileAdapter = new UserProfileAdapter(this, mUserPosts);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        mCurrentUser = (ParseUser) Parcels.unwrap(intent.getParcelableExtra("user"));
+        mCurrentUser = Parcels.unwrap(intent.getParcelableExtra("user"));
         VerticalSpaceItemDecoration verticalSpaceItemDecoration = new VerticalSpaceItemDecoration(40);
 
         mUserName.setText(mCurrentUser.getUsername());
@@ -79,6 +84,8 @@ public class OtherUserProfileActivity extends AppCompatActivity {
         };
 
         mRecyclerView.addOnScrollListener(mEndlessRecyclerViewScrollListener);
+
+        getUserPosts();
     }
 
     private void getUserPosts() {
@@ -87,7 +94,8 @@ public class OtherUserProfileActivity extends AppCompatActivity {
         query.setLimit(5);
         query.include(Post.USER);
         query.addDescendingOrder("createdAt");
-        query.whereEqualTo(Post.USER, ParseUser.getCurrentUser());
+        query.whereEqualTo(Post.USER, mCurrentUser);
+        query.whereNotContainedIn("objectId", mAlreadyAdded);
 
         List<Post> posts = new LinkedList<>();
         try {
@@ -95,10 +103,10 @@ public class OtherUserProfileActivity extends AppCompatActivity {
             // save received posts to list and notify adapter of new data
             mUserPosts.addAll(posts);
             mUserProfileAdapter.notifyDataSetChanged();
-            mUserProfileAdapter.addAll(posts);
+            //mUserProfileAdapter.addAll(posts);
             mRvProgressBar.setVisibility(View.INVISIBLE);
 
-            //for(Post post: posts) mAlreadyAdded.add(post.getObjectId());
+            for(Post post: posts) mAlreadyAdded.add(post.getObjectId());
 
         } catch (ParseException e) {
             Log.i("HOME", "something went wrong obtaining posts " + e);
