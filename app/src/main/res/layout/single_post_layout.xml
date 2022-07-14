@@ -147,6 +147,17 @@
                     app:layout_constraintStart_toEndOf="@+id/imageOfOwner"
                     app:layout_constraintTop_toBottomOf="@+id/captionOfPost" />
 
+                <ImageButton
+                    android:id="@+id/imageButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@drawable/search_item_bck"
+                    app:layout_constraintBottom_toTopOf="@+id/nameOfOwner"
+                    app:layout_constraintStart_toEndOf="@+id/imageOfOwner"
+                    app:srcCompat="@drawable/ic_baseline_star_border_24" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
