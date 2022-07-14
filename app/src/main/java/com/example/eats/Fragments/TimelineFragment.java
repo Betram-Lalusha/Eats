@@ -81,6 +81,8 @@ public class TimelineFragment extends Fragment {
 
 
 
+        Log.d("TIMELINE GEO", "user geohash " + mUserGeoHash);
+        Log.d("TIMELINE GEO", "user coordinates " + mUserLatitude + ", " + mUserLongitude);
         mRecyclerView.setAdapter(mPostsAdapter);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         //to add space between elements in recycler view
