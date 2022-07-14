@@ -122,7 +122,7 @@ public class OtherUserProfileActivity extends AppCompatActivity {
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
         query.include(Post.USER);
         query.whereNotContainedIn("objectId", mAlreadyAdded);
-        query.whereEqualTo(Post.USER, ParseUser.getCurrentUser());
+        query.whereEqualTo(Post.USER, mCurrentUser);
         query.addDescendingOrder("createdAt");
         query.findInBackground(new FindCallback<Post>() {
             @Override
