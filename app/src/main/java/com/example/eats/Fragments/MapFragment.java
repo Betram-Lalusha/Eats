@@ -231,7 +231,7 @@ public class MapFragment extends Fragment {
             markerSnippet.setVisibility(View.GONE);
         } else {
             //load user pfp into marker
-            Bitmap image = getBitMapFromLink(post.getParseUser().getParseFile("userProfilePic").getUrl());
+            Bitmap image = getBitMapFromLink(post.getMedia().getUrl());
             markerImageView.setImageBitmap(image);
             //set marker snippet
             markerSnippet.setText(post.getCaption());
