@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -49,6 +50,17 @@ public class DetailActivity extends AppCompatActivity {
         mPrice.setText(mPost.getPrice() > 0 ? "$" + String.valueOf(mPost.getPrice()) : "free");
         Glide.with(DetailActivity.this).load(mPost.getMedia().getUrl()).into(mPostImage);
         Glide.with(DetailActivity.this).load(mPost.getParseUser().getParseFile("userProfilePic").getUrl()).into(mUserImage);
+
+        mUserImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(DetailActivity.this, OtherUserProfileActivity.class);
+
+                //use url instead of passing image to detail activity
+                intent.putExtra("user", Parcels.wrap(mPost.getParseUser()));
+                startActivity(intent);
+            }
+        });
 
     }
 
