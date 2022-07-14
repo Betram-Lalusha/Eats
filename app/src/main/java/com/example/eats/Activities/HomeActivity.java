@@ -92,6 +92,8 @@ public class HomeActivity extends AppCompatActivity {
         getLastLocation();
     }
 
+
+
     @SuppressLint("MissingPermission")
     private void getLastLocation() {
         // check if permissions are given
