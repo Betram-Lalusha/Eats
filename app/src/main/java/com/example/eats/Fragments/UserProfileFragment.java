@@ -116,10 +116,7 @@ public class UserProfileFragment extends Fragment {
 
         //query for user posts
         mRetrievedCachedPosts = getCachedPosts();
-        System.out.println("alreadyContained23 " + mRetrievedCachedPosts);
-        System.out.println("alreadyContained24 " + mAlreadyAdded);
         if(mRetrievedCachedPosts.isEmpty()){
-            System.out.println("here 34");
             getUserPosts();
         }
 

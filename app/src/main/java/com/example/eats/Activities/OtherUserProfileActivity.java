@@ -18,6 +18,7 @@ import com.example.eats.EndlessRecyclerViewScrollListener;
 import com.example.eats.Helpers.VerticalSpaceItemDecoration;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
+import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -79,7 +80,8 @@ public class OtherUserProfileActivity extends AppCompatActivity {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 // Triggered only when new data needs to be appended to the list
-                getUserPosts();
+                loadNextData();
+                for(Post post: mUserPosts) mAlreadyAdded.add(post.getObjectId());
             }
         };
 
@@ -88,32 +90,53 @@ public class OtherUserProfileActivity extends AppCompatActivity {
         getUserPosts();
     }
 
-    private void getUserPosts() {
-        mRvProgressBar.setVisibility(View.VISIBLE);
+    protected void getUserPosts() {
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
         query.setLimit(5);
         query.include(Post.USER);
-        query.addDescendingOrder("createdAt");
         query.whereEqualTo(Post.USER, mCurrentUser);
+        query.addDescendingOrder("createdAt");
+        query.findInBackground(new FindCallback<Post>() {
+            @Override
+            public void done(List<Post> posts, ParseException e) {
+                if(e != null) {
+                    Log.i("HOME", "something went wrong obtaining posts " + e);
+                }
+
+                // save received posts to list and notify adapter of new data
+                mUserPosts.addAll(posts);
+                mUserProfileAdapter.notifyDataSetChanged();
+                mEndlessRecyclerViewScrollListener.resetState();
+
+                for(Post post: posts) mAlreadyAdded.add(post.getObjectId());
+                Log.d("INFINTE", "added " + mAlreadyAdded);
+            }
+        });
+    }
+
+    /**
+     * Loads more posts from the database when infinte scroll is triggered.
+     * Only posts already not in the cache are retrieved
+     */
+    private void loadNextData() {
+        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
+        query.include(Post.USER);
         query.whereNotContainedIn("objectId", mAlreadyAdded);
+        query.whereEqualTo(Post.USER, ParseUser.getCurrentUser());
+        query.addDescendingOrder("createdAt");
+        query.findInBackground(new FindCallback<Post>() {
+            @Override
+            public void done(List<Post> posts, ParseException e) {
+                if(e != null) {
+                    Log.i("HOME", "something went wrong obtaining posts " + e);
+                }
 
-        List<Post> posts = new LinkedList<>();
-        try {
-            posts = query.find();
-            // save received posts to list and notify adapter of new data
-            mUserPosts.addAll(posts);
-            mUserProfileAdapter.notifyDataSetChanged();
-            //mUserProfileAdapter.addAll(posts);
-            mRvProgressBar.setVisibility(View.INVISIBLE);
+                mUserPosts.addAll(posts);
+                mUserProfileAdapter.notifyDataSetChanged();
+                mEndlessRecyclerViewScrollListener.resetState();
 
-            for(Post post: posts) mAlreadyAdded.add(post.getObjectId());
+            }
 
-        } catch (ParseException e) {
-            Log.i("HOME", "something went wrong obtaining posts " + e);
-            mRvProgressBar.setVisibility(View.INVISIBLE);
-            return;
-        }
-
-
+        });
     }
 }
