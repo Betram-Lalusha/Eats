@@ -53,7 +53,6 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private String formatDistance(Double distanceFromUser) {
-        System.out.println("dist " + distanceFromUser);
         return String.valueOf(Math.round(distanceFromUser));
     }
 }

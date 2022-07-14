@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -115,8 +116,10 @@ public class UserProfileFragment extends Fragment {
 
         //query for user posts
         mRetrievedCachedPosts = getCachedPosts();
-        mUserProfileAdapter.addAll(mRetrievedCachedPosts);
-        if(mRetrievedCachedPosts.size() < 5) {
+        System.out.println("alreadyContained23 " + mRetrievedCachedPosts);
+        System.out.println("alreadyContained24 " + mAlreadyAdded);
+        if(mRetrievedCachedPosts.isEmpty()){
+            System.out.println("here 34");
             getUserPosts();
         }
 
@@ -133,7 +136,8 @@ public class UserProfileFragment extends Fragment {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 // Triggered only when new data needs to be appended to the list
-                getUserPosts();
+                loadNextData();
+                for(Post post: mUserPosts) mAlreadyAdded.add(post.getObjectId());
             }
         };
 
@@ -141,39 +145,33 @@ public class UserProfileFragment extends Fragment {
 
     }
 
-    private void getUserPosts() {
-        mRvProgressBar.setVisibility(View.VISIBLE);
+    protected void getUserPosts() {
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
         query.setLimit(5);
         query.include(Post.USER);
-        query.addDescendingOrder("createdAt");
-        query.whereNotContainedIn("objectId", mAlreadyAdded);
         query.whereEqualTo(Post.USER, ParseUser.getCurrentUser());
+        query.addDescendingOrder("createdAt");
+        query.findInBackground(new FindCallback<Post>() {
+            @Override
+            public void done(List<Post> posts, ParseException e) {
+                if(e != null) {
+                    Log.i("HOME", "something went wrong obtaining posts " + e);
+                }
 
-        List<Post> posts = new LinkedList<>();
-        try {
-            posts = query.find();
-            // save received posts to list and notify adapter of new data
-            mUserPosts.addAll(posts);
-            mUserProfileAdapter.notifyDataSetChanged();
-            mUserProfileAdapter.addAll(posts);
-            mRvProgressBar.setVisibility(View.INVISIBLE);
+                // save received posts to list and notify adapter of new data
+                mUserPosts.addAll(posts);
+                mUserProfileAdapter.notifyDataSetChanged();
+                mEndlessRecyclerViewScrollListener.resetState();
 
-            for(Post post: posts) mAlreadyAdded.add(post.getObjectId());
-
-
-            //cache first 5 results
-            if(mRetrievedCachedPosts.size() < 5) {
-                mCachedPosts.addAll(posts);
-                ParseObject.pinAllInBackground(mCurrentUser.getObjectId(), mCachedPosts);
+                for(Post post: posts) mAlreadyAdded.add(post.getObjectId());
+                Log.d("INFINTE", "added " + mAlreadyAdded);
+                if(mRetrievedCachedPosts.size() < 5) {
+                    ParseObject.pinAllInBackground(mCurrentUser.getObjectId(), posts);
+                }
             }
-        } catch (ParseException e) {
-            Log.i("HOME", "something went wrong obtaining posts " + e);
-            mRvProgressBar.setVisibility(View.INVISIBLE);
-            return;
-        }
-
+        });
     }
+
 
     // Trigger gallery selection for a photo
     public void onPickPhoto(View view) {
@@ -276,10 +274,13 @@ public class UserProfileFragment extends Fragment {
 
         ParseQuery<Post> parseQuery = new ParseQuery<Post>(Post.class);
         parseQuery.include(Post.USER);
+        parseQuery.ignoreACLs();
         parseQuery.addDescendingOrder("createdAt");
 
         try {
             retrievedPosts = parseQuery.fromPin(mCurrentUser.getObjectId()).find();
+            mUserPosts.addAll(retrievedPosts);
+            mUserProfileAdapter.notifyDataSetChanged();
             for(Post post: retrievedPosts) {
                 mAlreadyAdded.add(post.getObjectId());
             }
@@ -290,6 +291,32 @@ public class UserProfileFragment extends Fragment {
         }
 
         return  retrievedPosts;
+    }
+
+    /**
+     * Loads more posts from the database when infinte scroll is triggered.
+     * Only posts already not in the cache are retrieved
+     */
+    private void loadNextData() {
+        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
+        query.include(Post.USER);
+        query.whereNotContainedIn("objectId", mAlreadyAdded);
+        query.whereEqualTo(Post.USER, ParseUser.getCurrentUser());
+        query.addDescendingOrder("createdAt");
+        query.findInBackground(new FindCallback<Post>() {
+            @Override
+            public void done(List<Post> posts, ParseException e) {
+                if(e != null) {
+                    Log.i("HOME", "something went wrong obtaining posts " + e);
+                }
+
+                mUserPosts.addAll(posts);
+                mUserProfileAdapter.notifyDataSetChanged();
+                mEndlessRecyclerViewScrollListener.resetState();
+
+            }
+
+        });
     }
 
 

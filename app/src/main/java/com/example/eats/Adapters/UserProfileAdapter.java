@@ -33,13 +33,11 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
 
     Context mContext;
     List<Post> mPosts;
-    HashSet<String> mAlreadyAdded;
 
 
     public UserProfileAdapter(Context context, List<Post> posts) {
         this.mPosts = posts;
         this.mContext = context;
-        this.mAlreadyAdded = new HashSet<>();
     }
 
     @NonNull
@@ -68,9 +66,7 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
 
     // Add a list of items -- change to type used
     public void addAll(List<Post> list) {
-        for(Post post: list)  {
-            if(mAlreadyAdded.add(post.getObjectId())) mPosts.add(post);
-        }
+        mPosts.addAll(list);
         notifyDataSetChanged();
     }
 
