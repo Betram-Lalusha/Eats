@@ -109,7 +109,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
         }
 
         public void bind(Post post) {
-
+            ParseUser currentUser = ParseUser.getCurrentUser();
+            List<String> accountsFollowing = (List<String>) currentUser.get("following");
 
             mCaption.setText(post.getCaption());
             mCategory.setText(post.getCategory());
@@ -121,6 +122,11 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
                 Glide.with(mContext).load(post.getParseUser().getParseFile("userProfilePic").getUrl()).into(mOwnerPfp);
             } else mOwnerPfp.setImageResource(R.drawable.default_image);
 
+            if(accountsFollowing.contains(post.getParseUser().getObjectId())) {
+                mFollowButton.setImageResource(ic_baseline_star_24);
+            } else {
+                mFollowButton.setImageResource(R.drawable.ic_baseline_star_border_24);
+            }
             //event listener for tap on image
             mPostImage.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -148,9 +154,6 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
             mFollowButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ParseUser currentUser = ParseUser.getCurrentUser();
-                    JSONArray arr = ParseInstallation.getCurrentInstallation().getJSONArray("channels");
-                    Log.d("FOLLOWED", "channels accounts arr " + arr );
                     List<String> accountsFollowing = (List<String>) currentUser.get("following");
                     Log.d("FOLLOWED", "followed accounts " + accountsFollowing);
                     if(accountsFollowing == null) accountsFollowing = new LinkedList<>();
