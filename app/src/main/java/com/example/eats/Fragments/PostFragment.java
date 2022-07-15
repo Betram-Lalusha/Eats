@@ -45,6 +45,7 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
@@ -546,6 +547,20 @@ public class PostFragment extends Fragment {
                                 //clear image
                                 mAddedImage.setImageResource(R.drawable.eats_logo);
                                 Toast.makeText(getContext(), "saved successfully!.", Toast.LENGTH_SHORT).show();
+
+                                //send notification to people that follow this user
+                                ParsePush parsePush = new ParsePush();
+                                parsePush.setChannel(ParseUser.getCurrentUser().getObjectId());
+                                JSONObject data = new JSONObject();
+                                try {
+                                    data.put("alert", enteredCaption);
+                                    data.put("title", ParseUser.getCurrentUser().getUsername());
+                                } catch (JSONException ex) {
+                                    ex.printStackTrace();
+                                }
+
+                                parsePush.setData(data);
+                                parsePush.sendInBackground();
 
                             }
                         });

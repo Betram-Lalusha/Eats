@@ -26,6 +26,8 @@ public class ParseApplication extends Application {
                 .enableLocalDataStore()
                 .build());
 
-        ParseInstallation.getCurrentInstallation().saveInBackground();
+        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+        installation.put("GCMSenderId", "1071974939904");
+        installation.saveInBackground();
     }
 }
