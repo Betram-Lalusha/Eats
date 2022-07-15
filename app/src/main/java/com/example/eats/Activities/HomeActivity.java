@@ -23,7 +23,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class HomeActivity extends AppCompatActivity {
-    
+
     Location mLastLocation;
     BottomNavigationView mBottomNavigationView;
     FusedLocationProviderClient mFusedLocationClient;

@@ -12,6 +12,8 @@
         <entry key="app/src/main/res/drawable/edit_text_background.xml" value="0.213" />
         <entry key="app/src/main/res/drawable/hamburger_31775.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_baseline_person_pin_24.xml" value="0.525" />
+        <entry key="app/src/main/res/drawable/ic_baseline_star_24.xml" value="0.685" />
+        <entry key="app/src/main/res/drawable/ic_baseline_star_border_24.xml" value="0.685" />
         <entry key="app/src/main/res/drawable/icons8_euro_money_30.xml" value="0.521" />
         <entry key="app/src/main/res/drawable/icons8_euro_money_48.xml" value="0.521" />
         <entry key="app/src/main/res/drawable/meat_576210.xml" value="0.1" />
@@ -20,6 +22,8 @@
         <entry key="app/src/main/res/drawable/search_item_bck.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/sign_in_button.xml" value="0.943" />
         <entry key="app/src/main/res/drawable/spare_ribs_575310.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/star_bkg.xml" value="0.685" />
+        <entry key="app/src/main/res/drawable/start_following.xml" value="0.685" />
         <entry key="app/src/main/res/drawable/steak_575806_1280.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_detail.xml" value="0.28951367781155013" />
         <entry key="app/src/main/res/layout/activity_home.xml" value="0.67" />

@@ -1,7 +1,10 @@
 package com.example.eats.Adapters;
 
+import static com.example.eats.R.drawable.ic_baseline_star_24;
+
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.GradientDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -154,9 +157,12 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
 
                     //remove user if they already follow this account
                     if(!accountsFollowing.contains(post.getParseUser().getObjectId())) {
+                        mFollowButton.setImageResource(ic_baseline_star_24);
+                        // mFollowButton.setBackgroundResource(R.drawable.star_bkg);
                         accountsFollowing.add(post.getParseUser().getObjectId());
                         ParsePush.subscribeInBackground(post.getParseUser().getObjectId());
                     } else {
+                        mFollowButton.setImageResource(R.drawable.ic_baseline_star_border_24);
                         accountsFollowing.remove(post.getParseUser().getObjectId());
                         ParsePush.unsubscribeInBackground(post.getParseUser().getObjectId());
                     }
