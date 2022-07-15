@@ -6,6 +6,7 @@ import com.example.eats.Models.City;
 import com.example.eats.Models.Post;
 import com.example.eats.Models.User;
 import com.parse.Parse;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 
 public class ParseApplication extends Application {
@@ -24,5 +25,7 @@ public class ParseApplication extends Application {
                 .server(getString(R.string.back4app_server_url))
                 .enableLocalDataStore()
                 .build());
+
+        ParseInstallation.getCurrentInstallation().saveInBackground();
     }
 }

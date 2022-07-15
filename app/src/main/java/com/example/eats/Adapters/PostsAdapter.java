@@ -20,7 +20,9 @@ import com.example.eats.Activities.OtherUserProfileActivity;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
 import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
@@ -144,21 +146,24 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
                 @Override
                 public void onClick(View v) {
                     ParseUser currentUser = ParseUser.getCurrentUser();
-                    JSONArray arr = currentUser.getJSONArray("followedBy");
-                    Log.d("FOLLOWED", "followed accounts arr " + arr );
-                    List<String> accountsFollowing = (List<String>)currentUser.get("following");
+                    JSONArray arr = ParseInstallation.getCurrentInstallation().getJSONArray("channels");
+                    Log.d("FOLLOWED", "channels accounts arr " + arr );
+                    List<String> accountsFollowing = (List<String>) currentUser.get("following");
                     Log.d("FOLLOWED", "followed accounts " + accountsFollowing);
                     if(accountsFollowing == null) accountsFollowing = new LinkedList<>();
 
                     //remove user if they already follow this account
                     if(!accountsFollowing.contains(post.getParseUser().getObjectId())) {
                         accountsFollowing.add(post.getParseUser().getObjectId());
-                    } else accountsFollowing.remove(post.getParseUser().getObjectId());
+                        ParsePush.subscribeInBackground(post.getParseUser().getObjectId());
+                    } else {
+                        accountsFollowing.remove(post.getParseUser().getObjectId());
+                        ParsePush.unsubscribeInBackground(post.getParseUser().getObjectId());
+                    }
                     Log.d("FOLLOWED", "followed accounts2 " + accountsFollowing);
-
                     currentUser.put("following", accountsFollowing);
-
                     currentUser.saveInBackground();
+
 
                 }
             });
