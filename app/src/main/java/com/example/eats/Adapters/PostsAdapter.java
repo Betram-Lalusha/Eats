@@ -19,10 +19,13 @@ import com.example.eats.Activities.DetailActivity;
 import com.example.eats.Activities.OtherUserProfileActivity;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
+import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
+import org.json.JSONArray;
 import org.parceler.Parcels;
 
 import java.util.HashSet;
@@ -140,18 +143,20 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
             mFollowButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    List<String> followedAccounts = (List<String>) ParseUser.getCurrentUser().get("following");
-                    Log.d("FOLLOWED", "followed accounts " + followedAccounts);
-                    if(followedAccounts == null) followedAccounts = new LinkedList<>();
+                    ParseUser currentUser = ParseUser.getCurrentUser();
+                    JSONArray arr = currentUser.getJSONArray("followedBy");
+                    Log.d("FOLLOWED", "followed accounts arr " + arr );
+                    List<String> accountsFollowing = (List<String>)currentUser.get("following");
+                    Log.d("FOLLOWED", "followed accounts " + accountsFollowing);
+                    if(accountsFollowing == null) accountsFollowing = new LinkedList<>();
 
                     //remove user if they already follow this account
-                    if(!followedAccounts.contains(post.getObjectId())) {
-                        followedAccounts.add(post.getObjectId());
-                    } else followedAccounts.remove(post.getObjectId());
-                    Log.d("FOLLOWED", "followed accounts2 " + followedAccounts);
+                    if(!accountsFollowing.contains(post.getParseUser().getObjectId())) {
+                        accountsFollowing.add(post.getParseUser().getObjectId());
+                    } else accountsFollowing.remove(post.getParseUser().getObjectId());
+                    Log.d("FOLLOWED", "followed accounts2 " + accountsFollowing);
 
-                    ParseUser currentUser = ParseUser.getCurrentUser();
-                    currentUser.put("following", followedAccounts);
+                    currentUser.put("following", accountsFollowing);
 
                     currentUser.saveInBackground();
 
