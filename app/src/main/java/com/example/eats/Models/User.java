@@ -11,10 +11,11 @@ import java.util.Date;
 @ParseClassName("User")
 public class User extends ParseObject {
 
-    public static final String USER_NAME = "username";
-    public static final String PASSWORD = "password";
-    public static final String USER_PROFILE_PIC = "userProfilePic";
     public static final String EMAIL = "email";
+    public static final String PASSWORD = "password";
+    public static final String USER_NAME = "username";
+    public static final String FOLLOWING = "following";
+    public static final String USER_PROFILE_PIC = "userProfilePic";
 
     public User() {}
 
@@ -51,4 +52,6 @@ public class User extends ParseObject {
     public void signUp(String userName, String password) {
         signUp(userName, password);
     }
+
+    public String[] getFollowedAccounts() {return (String[]) get(FOLLOWING);}
 }

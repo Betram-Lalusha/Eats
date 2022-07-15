@@ -2,9 +2,11 @@ package com.example.eats.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,10 +20,13 @@ import com.example.eats.Activities.OtherUserProfileActivity;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import org.parceler.Parcels;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
@@ -78,6 +83,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
         TextView mOwnerName;
         ImageView mOwnerPfp;
         ImageView mPostImage;
+        ImageButton mFollowButton;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -89,6 +95,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
             mPostImage = itemView.findViewById(R.id.imageOfPost);
             mDistance = itemView.findViewById(R.id.distanceOfPost);
             mCategory = itemView.findViewById(R.id.categoryOfPost);
+            mFollowButton = itemView.findViewById(R.id.followButton);
 
 
         }
@@ -126,6 +133,28 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
                     //use url instead of passing image to detail activity
                     intent.putExtra("user", Parcels.wrap(post.getParseUser()));
                     mContext.startActivity(intent);
+                }
+            });
+
+            //click follow button to follow or unfollow account
+            mFollowButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    List<String> followedAccounts = (List<String>) ParseUser.getCurrentUser().get("following");
+                    Log.d("FOLLOWED", "followed accounts " + followedAccounts);
+                    if(followedAccounts == null) followedAccounts = new LinkedList<>();
+
+                    //remove user if they already follow this account
+                    if(!followedAccounts.contains(post.getObjectId())) {
+                        followedAccounts.add(post.getObjectId());
+                    } else followedAccounts.remove(post.getObjectId());
+                    Log.d("FOLLOWED", "followed accounts2 " + followedAccounts);
+
+                    ParseUser currentUser = ParseUser.getCurrentUser();
+                    currentUser.put("following", followedAccounts);
+
+                    currentUser.saveInBackground();
+
                 }
             });
         }
