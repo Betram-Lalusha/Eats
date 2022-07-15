@@ -101,7 +101,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void goToHome() {
-        Intent intent = new Intent(this, HomeActivity.class);
+        Intent intent = new Intent(this, RequestLocation.class);
         startActivity(intent);
         finish();
     }
