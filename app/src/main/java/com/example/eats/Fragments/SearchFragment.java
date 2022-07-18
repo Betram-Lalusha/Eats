@@ -167,7 +167,7 @@ public class SearchFragment extends Fragment {
         mFeaturedImage = view.findViewById(R.id.featuredImage);
         mSearchResultsAdapter = new SearchResultsAdapter(getContext(), mPosts);
         mCitiesAdapter = new CitiesAdapter(getContext(), mCities, mCityClickInterface);
-        mDistanceCalculator = new DistanceCalculator("K", mUserLatitude, mUserLatitude);
+        mDistanceCalculator = new DistanceCalculator("K", mUserLatitude, mUserLongitude);
         mCategoriesAdapter = new CategoriesAdapter(getContext(), mPostsCategories, mOnClickInterface);
 
         mRvCities.setAdapter(mCitiesAdapter);

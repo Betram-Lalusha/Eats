@@ -121,6 +121,8 @@ public class Post extends ParseObject {
         return getString(GEOHASH);
     }
 
+    public double getDistanceFromUser() {return this.distanceFromUser;}
+
     @Override
     public String toString() {
         return this.getParseUser().getUsername() + " " + this.getCaption();

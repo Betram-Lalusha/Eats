@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.MenuItem;
 
 
@@ -37,6 +38,7 @@ public class HomeActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         Intent intent = getIntent();
         mLastLocation = intent.getParcelableExtra("userLastLocation");
+        Log.d("HOMEACTIVITY", "user loc " + mLastLocation);
         mBottomNavigationView = findViewById(R.id.bottom_navigation);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mBottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
