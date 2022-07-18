@@ -31,6 +31,8 @@ public class OnBoardingActivity extends AppCompatActivity {
         mDoneButton = findViewById(R.id.doneButton);
         mFragmentManager = getSupportFragmentManager();
 
+        getSupportActionBar().hide();
+
         final PaperOnboardingFragment paperOnboardingFragment = PaperOnboardingFragment.newInstance(getDataForOnBoarding());
         FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
 
@@ -54,9 +56,14 @@ public class OnBoardingActivity extends AppCompatActivity {
         // title, then color of background is passed ,
         // then the image to show on the screen is passed
         // and at last icon to navigate from one screen to other
-        PaperOnboardingPage source = new PaperOnboardingPage("Gfg", "Welcome to GeeksForGeeks", Color.parseColor("#ffb174"),R.drawable.apple, R.drawable.ic_baseline_star_24);
-        PaperOnboardingPage source1 = new PaperOnboardingPage("Practice", "Practice questions from all topics", Color.parseColor("#22eaaa"),R.drawable.eats_logo, R.drawable.default_image);
-        PaperOnboardingPage source2 = new PaperOnboardingPage("", " ", Color.parseColor("#ee5a5a"),R.drawable.hamburger_31775, R.drawable.apple);
+        PaperOnboardingPage source = new PaperOnboardingPage("Eats", "We're so glad you're here", Color.parseColor("#ffb174"),R.drawable.apple, R.drawable.eats_logo);
+        PaperOnboardingPage source1 = new PaperOnboardingPage("TimeLine", "Following Accounts", Color.parseColor("#22eaaa"),R.drawable.timeline_tut_1, R.drawable.default_image);
+        PaperOnboardingPage source2 = new PaperOnboardingPage("TimeLine", "Followed Accounts", Color.parseColor("#22eaaa"),R.drawable.timeline_tut_2, R.drawable.default_image);
+        PaperOnboardingPage source3 = new PaperOnboardingPage("Nearby Spots", "See eats spots near you", Color.parseColor("#ee5a5a"),R.drawable.map_frag_tut, R.drawable.icons8_distance_64);
+        PaperOnboardingPage source4 = new PaperOnboardingPage("Create", "How to add an Image", Color.parseColor("#fce803"), R.drawable.post_frag_tut, R.drawable.chef_311369);
+        PaperOnboardingPage source5 = new PaperOnboardingPage("Options", "Take new picture or select from gallery", Color.parseColor("#fce803"), R.drawable.smaller, R.drawable.chef_311369);
+        PaperOnboardingPage source6 = new PaperOnboardingPage("Search", "Filter items by category", Color.parseColor("#03fcfc"), R.drawable.search_frag_3, R.drawable.ic_baseline_explore_24);
+        PaperOnboardingPage source7 = new PaperOnboardingPage("Search", "Filter items by city", Color.parseColor("#03fcfc"), R.drawable.filter_by_city, R.drawable.ic_baseline_explore_24);
 
         // array list is used to store
         // data of onbaording screen
@@ -67,6 +74,10 @@ public class OnBoardingActivity extends AppCompatActivity {
         elements.add(source);
         elements.add(source1);
         elements.add(source2);
+        elements.add(source3);
+        elements.add(source4);
+        elements.add(source5);
+        elements.add(source6);
         return elements;
     }
 
