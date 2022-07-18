@@ -115,7 +115,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
             mCaption.setText(post.getCaption());
             mCategory.setText(post.getCategory());
             mOwnerName.setText(post.getParseUser().getUsername());
-            mDistance.setText(formatDistance(post.distanceFromUser) + "km");
+            mDistance.setText(formatDistance(post.distanceFromUser) + " miles");
             Glide.with(mContext).load(post.getMedia().getUrl()).into(mPostImage);
             mPrice.setText(post.getPrice() > 0 ? "$" + String.valueOf(post.getPrice()) : "free");
             if(post.getParseUser().getParseFile("userProfilePic") != null) {
@@ -178,8 +178,13 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
             });
         }
 
+        /**
+         * formats distance as a string in miles after converting from kilometers
+         * @param distanceFromUser: the distance of a post from the user
+         * @return: the formatted distance in miles as a string
+         */
         private String formatDistance(Double distanceFromUser) {
-           return String.valueOf(Math.round(distanceFromUser));
+           return String.valueOf(Math.round(distanceFromUser * 0.621371));
         }
     }
 }

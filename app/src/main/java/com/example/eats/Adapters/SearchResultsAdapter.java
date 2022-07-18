@@ -82,7 +82,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
         }
 
         public void bind(Post post) {
-            mPostOwnerDistance.setText(formatDistance(post.distanceFromUser)  + "Km away");//hard coded...will be changed later
+            mPostOwnerDistance.setText(formatDistance(post.distanceFromUser)  + " miles away");//hard coded...will be changed later
             mPostPrice.setText("$" + String.valueOf(post.getPrice()));
             mPostOwnerName.setText(post.getParseUser().getUsername());
             Glide.with(mContext).load(post.getMedia().getUrl()).into(mSearchItem);
@@ -99,8 +99,13 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
 
         }
 
+        /**
+         * formats distance as a string in miles after converting from kilometers
+         * @param distanceFromUser: the distance of a post from the user
+         * @return: the formatted distance in miles as a string
+         */
         private String formatDistance(Double distanceFromUser) {
-            return String.valueOf(Math.round(distanceFromUser));
+            return String.valueOf(Math.round(distanceFromUser * 0.621371));
         }
     }
 
