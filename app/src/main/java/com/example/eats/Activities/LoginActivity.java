@@ -105,6 +105,7 @@ public class LoginActivity extends AppCompatActivity {
                     System.out.println("here!");
                     // The user hasn't seen the OnboardingSupportFragment yet, so show it
                     startActivity(new Intent(LoginActivity.this, OnBoardingActivity.class));
+                    finish();
                 } else {
                     System.out.println("here 2!");
                     goToHome();

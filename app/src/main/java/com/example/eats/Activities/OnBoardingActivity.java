@@ -4,10 +4,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.View;
+import android.widget.Button;
 
 import com.example.eats.R;
 import com.ramotion.paperonboarding.PaperOnboardingFragment;
@@ -17,13 +20,15 @@ import java.util.ArrayList;
 
 public class OnBoardingActivity extends AppCompatActivity {
 
-    private final String COMPLETED_ONBOARDING_PREF_NAME = "userSawTutorial";
+    Button mDoneButton;
     private FragmentManager mFragmentManager;
+    private final String COMPLETED_ONBOARDING_PREF_NAME = "userSawTutorial";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_on_boarding);
 
+        mDoneButton = findViewById(R.id.doneButton);
         mFragmentManager = getSupportFragmentManager();
 
         final PaperOnboardingFragment paperOnboardingFragment = PaperOnboardingFragment.newInstance(getDataForOnBoarding());
@@ -32,6 +37,15 @@ public class OnBoardingActivity extends AppCompatActivity {
         fragmentTransaction.add(R.id.frame_layout, paperOnboardingFragment);
 
         fragmentTransaction.commit();
+
+        mDoneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(OnBoardingActivity.this, RequestLocation.class);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 
     private ArrayList<PaperOnboardingPage> getDataForOnBoarding() {
