@@ -122,11 +122,14 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder>{
                 Glide.with(mContext).load(post.getParseUser().getParseFile("userProfilePic").getUrl()).into(mOwnerPfp);
             } else mOwnerPfp.setImageResource(R.drawable.default_image);
 
-            if(accountsFollowing.contains(post.getParseUser().getObjectId())) {
-                mFollowButton.setImageResource(ic_baseline_star_24);
-            } else {
-                mFollowButton.setImageResource(R.drawable.ic_baseline_star_border_24);
+            if(accountsFollowing != null) {
+                if(accountsFollowing.contains(post.getParseUser().getObjectId())) {
+                    mFollowButton.setImageResource(ic_baseline_star_24);
+                } else {
+                    mFollowButton.setImageResource(R.drawable.ic_baseline_star_border_24);
+                }
             }
+
             //event listener for tap on image
             mPostImage.setOnClickListener(new View.OnClickListener() {
                 @Override

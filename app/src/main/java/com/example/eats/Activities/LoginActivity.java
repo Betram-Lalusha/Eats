@@ -3,7 +3,9 @@ package com.example.eats.Activities;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -23,6 +25,7 @@ public class LoginActivity extends AppCompatActivity {
     TextView mCreateAccount;
     TextView mErrorOccurred;
     ProgressBar mLoginProgressBar;
+    private final String COMPLETED_ONBOARDING_PREF_NAME = "userSawTutorial";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +87,6 @@ public class LoginActivity extends AppCompatActivity {
         ParseUser.logInInBackground(enteredName, enteredPassword, new LogInCallback() {
             @Override
             public void done(ParseUser user, ParseException e) {
-                //TODO...show user errors tthat occured
                 if (e != null) {
                     mErrorOccurred.setText(e.getMessage());
                     mErrorOccurred.setVisibility(View.VISIBLE);
@@ -95,7 +97,19 @@ public class LoginActivity extends AppCompatActivity {
 
                 mLoginProgressBar.setVisibility(View.INVISIBLE);
                 Toast.makeText(LoginActivity.this, "sucessfully logged in!", Toast.LENGTH_SHORT).show();
-                goToHome();
+                SharedPreferences sharedPreferences =
+                        PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
+                // Check if we need to display our OnboardingSupportFragment
+                if (!sharedPreferences.getBoolean(
+                       COMPLETED_ONBOARDING_PREF_NAME, false)) {
+                    System.out.println("here!");
+                    // The user hasn't seen the OnboardingSupportFragment yet, so show it
+                    startActivity(new Intent(LoginActivity.this, OnBoardingActivity.class));
+                } else {
+                    System.out.println("here 2!");
+                    goToHome();
+                }
+
             }
         });
     }
