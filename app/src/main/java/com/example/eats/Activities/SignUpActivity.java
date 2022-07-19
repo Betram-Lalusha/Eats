@@ -83,13 +83,6 @@ public class SignUpActivity extends AppCompatActivity {
                     return;
                 }
 
-//                int currId =  (int) mSetUserPfp.getTag();
-//                if(mSetUserPfp.getDrawable() == null || currId == mDefaultId) {
-//                    Toast.makeText(SignUpActivity.this, "no image added", Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-//
-//                Toast.makeText(SignUpActivity.this, "everything is fine!", Toast.LENGTH_SHORT).show();
                 saveUser(userEmail, userName, userPassword, mPhotoFile);
             }
         });
@@ -102,20 +95,12 @@ public class SignUpActivity extends AppCompatActivity {
         user.setPassword(password);
         user.setEmail(userEmail);
 
-//        ParseFile photo = new ParseFile(mPhotoFile);
-//        photo.saveInBackground(new SaveCallback() {
-//            @Override
-//            public void done(ParseException e) {
-//                if(e == null)  System.out.println("okay");
-//            }
-//        });
-//// other fields can be set just like with ParseObject
 
         user.signUpInBackground(new SignUpCallback() {
             public void done(ParseException e) {
                 if (e == null) {
                     // Hooray! Let them use the app now.
-                    goToHome();
+                    goToOnBoarding();
                 } else {
                     // Sign up didn't succeed. Look at the ParseException
                     // to figure out what went wrong
@@ -126,8 +111,8 @@ public class SignUpActivity extends AppCompatActivity {
         });
     }
 
-    private void goToHome() {
-        Intent intent = new Intent(this, HomeActivity.class);
+    private void goToOnBoarding() {
+        Intent intent = new Intent(this, OnBoardingActivity.class);
         startActivity(intent);
         finish();
     }

@@ -56,7 +56,7 @@ public class OnBoardingActivity extends AppCompatActivity {
         // title, then color of background is passed ,
         // then the image to show on the screen is passed
         // and at last icon to navigate from one screen to other
-        PaperOnboardingPage source = new PaperOnboardingPage("Eats", "We're so glad you're here", Color.parseColor("#ffb174"),R.drawable.apple, R.drawable.eats_logo);
+        PaperOnboardingPage source = new PaperOnboardingPage("Welcome to Eats", "We're so glad you're here", Color.parseColor("#ffb174"),R.drawable.apple, R.drawable.eats_logo);
         PaperOnboardingPage source1 = new PaperOnboardingPage("TimeLine", "Following Accounts", Color.parseColor("#22eaaa"),R.drawable.timeline_tut_1, R.drawable.default_image);
         PaperOnboardingPage source2 = new PaperOnboardingPage("TimeLine", "Followed Accounts", Color.parseColor("#22eaaa"),R.drawable.timeline_tut_2, R.drawable.default_image);
         PaperOnboardingPage source3 = new PaperOnboardingPage("Nearby Spots", "See eats spots near you", Color.parseColor("#ee5a5a"),R.drawable.map_frag_tut, R.drawable.icons8_distance_64);

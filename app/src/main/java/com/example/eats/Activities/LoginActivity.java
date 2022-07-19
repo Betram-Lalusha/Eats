@@ -102,15 +102,12 @@ public class LoginActivity extends AppCompatActivity {
                 // Check if we need to display our OnboardingSupportFragment
                 if (!sharedPreferences.getBoolean(
                        COMPLETED_ONBOARDING_PREF_NAME, false)) {
-                    System.out.println("here!");
                     // The user hasn't seen the OnboardingSupportFragment yet, so show it
                     startActivity(new Intent(LoginActivity.this, OnBoardingActivity.class));
                     finish();
                 } else {
-                    System.out.println("here 2!");
                     goToHome();
                 }
-
             }
         });
     }
