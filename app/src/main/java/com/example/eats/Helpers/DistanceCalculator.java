@@ -22,7 +22,7 @@ public class DistanceCalculator {
      */
     public  double distance(double pointLat, double pointLon) {
         if ((pointLat == this.mUserLatitude) && (pointLon == this.mUserLongitude)) {
-            Log.d(TAG, "Returning 0");
+            //Log.d(TAG, "Returning 0");
             return 0;
         }
         else {
@@ -37,7 +37,7 @@ public class DistanceCalculator {
                 dist = dist * 0.8684;
             }
 
-            Log.d(TAG, "Returning " + dist);
+            //Log.d(TAG, "Returning " + dist);
             return (dist);
         }
     }
