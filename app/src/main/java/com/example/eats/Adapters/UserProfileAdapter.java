@@ -7,7 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -72,16 +74,27 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
 
     public class ViewHolder  extends  RecyclerView.ViewHolder{
         ImageView mPostImage;
+        TextView mdeletePostText;
+        Button mDeletePostButton;
         TextView mUserPostCaption;
+        ProgressBar mDeletingPgBar;
         ConstraintLayout mUserPost;
+        ConstraintLayout mAlertBox;
         TextView mUserPostDescription;
+        Button mCancelDeletePostButton;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+
+            mAlertBox = itemView.findViewById(R.id.alertBox);
             mUserPost = itemView.findViewById(R.id.userPost);
             mPostImage = itemView.findViewById(R.id.postImage);
+            mDeletingPgBar = itemView.findViewById(R.id.deletingPgBar);
+            mdeletePostText = itemView.findViewById(R.id.deletePostText);
             mUserPostCaption = itemView.findViewById(R.id.userPostCaption);
+            mDeletePostButton = itemView.findViewById(R.id.deletePostButton);
             mUserPostDescription = itemView.findViewById(R.id.userPostDescription);
+            mCancelDeletePostButton = itemView.findViewById(R.id.cancelDeletePostButton);
 
         }
 
@@ -105,21 +118,40 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
             mUserPost.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
+                    mAlertBox.setVisibility(View.VISIBLE);
+                    return false;
+                }
+            });
+
+            mCancelDeletePostButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mAlertBox.setVisibility(View.GONE);
+                }
+            });
+
+            mDeletePostButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mDeletingPgBar.setVisibility(View.VISIBLE);
                     post.deleteInBackground(new DeleteCallback() {
                         @Override
                         public void done(ParseException e) {
                             if(e != null) {
                                 Log.i("LONG_CLICK","something went wrong deleting an item " + e);
                                 Toast.makeText(mContext, "something went wrong deleting the image. Try again", Toast.LENGTH_LONG).show();
+                                mDeletingPgBar.setVisibility(View.INVISIBLE);
+                                return;
                             }
 
                             mPosts.remove(post);
                             notifyDataSetChanged();
+                            mDeletingPgBar.setVisibility(View.INVISIBLE);
                         }
                     });
-                    return false;
                 }
             });
+
         }
     }
 }
