@@ -144,6 +144,7 @@ public class PostFragment extends Fragment {
         mSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mSavingPost.setVisibility(View.VISIBLE);
                 String enteredCaption = mSetCaption.getText().toString();
                 String enteredCategory = mSetCategory.getText().toString();
                 String enteredDescription = mSetDescription.getText().toString();
@@ -151,26 +152,31 @@ public class PostFragment extends Fragment {
                 //feedback if no photo is taken
                 if(mPhotoFile == null || mAddedImage.getDrawable() == null ||!mNewImage) {
                     Toast.makeText(getContext(), "no image added", Toast.LENGTH_SHORT).show();
+                    mSavingPost.setVisibility(View.INVISIBLE);
                     return;
                 }
                 if(enteredCaption.isEmpty()) {
                     Toast.makeText(getContext(), "caption cannot be empty", Toast.LENGTH_SHORT).show();
+                    mSavingPost.setVisibility(View.INVISIBLE);
                     return;
                 }
 
                 if(enteredCategory.isEmpty()){
                     Toast.makeText(getContext(), "category cannot be empty", Toast.LENGTH_SHORT).show();
+                    mSavingPost.setVisibility(View.INVISIBLE);
                     return;
                 }
 
                 if(enteredDescription.isEmpty()) {
                     Toast.makeText(getContext(), "description cannot be empty", Toast.LENGTH_SHORT).show();
+                    mSavingPost.setVisibility(View.INVISIBLE);
                     return;
                 }
 
                 mSubmitButton.setEnabled(false);
                 ParseUser currentUser = ParseUser.getCurrentUser();
                 checkIfCityExists(enteredCaption, enteredCategory,  currentUser,enteredPrice, enteredDescription, mSelectedImage);
+                mSavingPost.setVisibility(View.INVISIBLE);
             }
         });
 
@@ -208,7 +214,6 @@ public class PostFragment extends Fragment {
      * @param selectedImage: the post image to associate with the post
      */
     private void checkIfCityExists(String enteredCaption, String enteredCategory, ParseUser currentUser, Number price, String enteredDescription, @NonNull Bitmap selectedImage) {
-        mSavingPost.setVisibility(View.VISIBLE);
 
         String city = getCityFromUserLats();
         ParseQuery<City> parseQuery = new ParseQuery<City>(City.class);
@@ -231,7 +236,6 @@ public class PostFragment extends Fragment {
                 }
             }
         });
-        mSavingPost.setVisibility(View.GONE);
 
     }
 
@@ -331,8 +335,7 @@ public class PostFragment extends Fragment {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("geo " + fromLocation);
-        return fromLocation ==  null ? "No city" : fromLocation.get(0).getLocality();
+        return fromLocation ==  null ? "unknown city" : fromLocation.get(0).getLocality();
     }
 
     /**
