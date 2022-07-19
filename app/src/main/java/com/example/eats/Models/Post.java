@@ -125,6 +125,7 @@ public class Post extends ParseObject {
 
     @Override
     public String toString() {
-        return this.getParseUser().getUsername() + " " + this.getCaption();
+
+        return this.getParseUser().getUsername() + " " + this.getCaption() + ", Dist " + this.distanceFromUser;
     }
 }

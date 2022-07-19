@@ -88,6 +88,8 @@ public class SearchFragment extends Fragment {
     EndlessRecyclerViewScrollListener mEndlessRecyclerViewScrollListener;
     EndlessRecyclerViewScrollListener mCitiesEndlessRecyclerViewScrollListener;
 
+    private final String TAG = "SearchFragment";
+
     public SearchFragment() {
         // Required empty public constructor
     }
@@ -226,6 +228,7 @@ public class SearchFragment extends Fragment {
         if(mRetrievedCachedPosts.isEmpty()) {
             queryPosts();
         } else {
+            Log.d(TAG, "retrieved Posts " + mRetrievedCachedPosts);
             mCategoriesAdapter.addAll(mRetrievedCachedPosts);
             mSearchResultsAdapter.addAll(mRetrievedCachedPosts);
         }
@@ -266,6 +269,8 @@ public class SearchFragment extends Fragment {
                 }
 
                 for(Post post: posts) post.distanceFromUser = mDistanceCalculator.distance(post.getLatitude(), post.getLongiitude());
+
+                Log.d(TAG, "retrieved Posts 2 " + mRetrievedCachedPosts);
                 mCachedPosts.addAll(posts);
                 mCategoriesAdapter.addAll(posts);
                 mSearchResultsAdapter.addAll(posts);
@@ -487,6 +492,7 @@ public class SearchFragment extends Fragment {
             Log.d("cache","results for posts " + retrievedPosts);
             for(Post post: retrievedPosts) {
                 mAlreadyAdded.add(post.getObjectId());
+                post.distanceFromUser = mDistanceCalculator.distance(post.getLatitude(), post.getLongiitude());
             }
         } catch (ParseException e) {
             Log.i("QUERY", "something went wrong querying cached posts " + e.toString());

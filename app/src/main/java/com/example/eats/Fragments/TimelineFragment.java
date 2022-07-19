@@ -174,6 +174,7 @@ public class TimelineFragment extends Fragment {
             Log.d("cache","results " + retrievedPosts);
             for(Post post: retrievedPosts) {
                 mAlreadyAdded.add(post.getObjectId());
+                post.distanceFromUser = mDistanceCalculator.distance(post.getLatitude(), post.getLongiitude());
             }
 
 
