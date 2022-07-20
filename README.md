@@ -505,7 +505,21 @@ I used it like this: mRecyclerView.addItemDecoration(verticalSpaceItemDecoration
   - used to dsiplay map in Map Fragment
 - Parse
   - used for database storage and querying
+
+# Name of Files containing complex features
+1. Geohasher.java : contains declaration of Geohasher class and algorithm that calculates geohash of user. Usage of this class can be found in TimeLineFragment's queryPosts function
+2. DistanceCalculator.java : responsible for calculating distance between two coordinates. Usage can be found in Search fragment and Timeline fragment
+3. SearchFragment: contains all methods responsible for filtering and resoonding to user queries.
+   i. Main methods doing this include: ilterByCategory, filterByCity, and searchDb
    
+# Testing
+
+The geohashing method and distance calculator were both tested. The geohasher was tested by comparing geohashes obtained from the official geohashing website and those produced by the algorithm. Results were expected to be exact matches as the same coordinates must have the same geohash if the geohashing algorithm I implemented was accurate.
+
+The distance calculator was tested by compring distances between coordinates obtained from apple maps and those obtained from the distance calculator algorithm. A margin of error of |0.8| was allowed as precision was not expected to match but results were expected to be exactly the same when rounded off to the nearest whole number. Some tested edge cases include
+ 1. When the two coordinates are the same
+ 2. When one of the coordinates has both latitude and longitude equal to 0.0
+
      
 
       
