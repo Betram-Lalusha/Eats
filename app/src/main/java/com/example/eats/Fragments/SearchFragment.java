@@ -50,6 +50,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.Stack;
 import java.util.stream.Collectors;
 
 import okhttp3.Headers;
@@ -108,7 +109,6 @@ public class SearchFragment extends Fragment {
                 if(!mCategoriesClicked.add(category)) {
                     mCategoriesClicked.remove(category);
                 }
-
                 filterByCategory();
             }
         };
@@ -391,9 +391,14 @@ public class SearchFragment extends Fragment {
         if(mCategoriesClicked.isEmpty()) {
             mSearchResultsAdapter.clear();
             mAlreadyAdded.clear();
-            Log.d("HERE", "here " + mRetrievedCachedPosts);
-            mSearchResultsAdapter.addAll(mRetrievedCachedPosts);
-            for(Post post: mRetrievedCachedPosts)  mAlreadyAdded.add(post.getObjectId());
+            if(mRetrievedCachedPosts.isEmpty()) {
+                mPosts.addAll(mCachedPosts);
+                mSearchResultsAdapter.notifyDataSetChanged();
+                for(Post post: mCachedPosts)  mAlreadyAdded.add(post.getObjectId());
+            } else {
+                mSearchResultsAdapter.addAll(mRetrievedCachedPosts);
+                for(Post post: mRetrievedCachedPosts)  mAlreadyAdded.add(post.getObjectId());
+            }
             return;
         }
 
@@ -551,7 +556,6 @@ public class SearchFragment extends Fragment {
                 ParseObject.unpinAllInBackground(mCurrentUser.getObjectId() + "recentSearches");
             }
 
-            for(Post post: posts)  mRetrievedRecentSearches.add(0, post);
             ParseObject.pinAllInBackground(mCurrentUser.getObjectId() + "recentSearches", posts);
         }
 
