@@ -1,6 +1,7 @@
 package com.example.eats.Fragments;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -36,6 +37,7 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -77,6 +79,7 @@ public class SearchFragment extends Fragment {
     EndlessRecyclerViewScrollListener mCitiesEndlessRecyclerViewScrollListener;
 
     List<RecentSearchedItem> mRecentSearchedItems;
+    HashSet<String> mAlreadyAddedSearchedItem;
 
     private final String TAG = "SearchFragment";
 
@@ -145,6 +148,7 @@ public class SearchFragment extends Fragment {
 
         mRecentSearchedItems = new LinkedList<>();
         mRetrievedRecentSearches = new LinkedList<>();
+        mAlreadyAddedSearchedItem = new HashSet<>();
 
         mCurrentUser = ParseUser.getCurrentUser();
         mRvCities = view.findViewById(R.id.rvCities);
@@ -551,13 +555,17 @@ public class SearchFragment extends Fragment {
                 ParseObject.unpinAllInBackground(mCurrentUser.getObjectId() + "recentSearches");
             }
 
+            Log.d("EQUALS", "beofre add " + mAlreadyAddedSearchedItem);
             for(Post post: posts) {
                 RecentSearchedItem recentSearchedItem = new RecentSearchedItem();
                 recentSearchedItem.setPost(post);
-                mRecentSearchedItems.add(recentSearchedItem);
-                mRetrievedRecentSearches.add(0, post);
+                recentSearchedItem.setPosition(mRecentSearchedItems.size());
+                if(mAlreadyAddedSearchedItem.add(recentSearchedItem.getPost().getObjectId())) {
+                    mRecentSearchedItems.add(recentSearchedItem);
+                }
+                //mRetrievedRecentSearches.add(0, post);
             }
-
+            Log.d("EQUALS", "after add " + mAlreadyAddedSearchedItem);
             ParseObject.pinAllInBackground(mCurrentUser.getObjectId() + "recentSearches", mRecentSearchedItems);
             //ParseObject.pinAllInBackground(mCurrentUser.getObjectId() + "recentSearches", mRetrievedRecentSearches);
         }
@@ -577,26 +585,6 @@ public class SearchFragment extends Fragment {
      * Checks local database for cached posts that were searched for by the user.
      * @return: all cached objects in the user local storage that the user searched for.
      */
-//    private List<Post> getRecentSearches() {
-//        List<Post> retrievedPosts = new ArrayList<>();
-//
-//        ParseQuery<Post> parseQuery = new ParseQuery<Post>(Post.class);
-//        parseQuery.include(Post.USER);
-//        parseQuery.addDescendingOrder("createdAt");
-//
-//        try {
-//            retrievedPosts = parseQuery.fromPin(mCurrentUser.getObjectId() + "recentSearches").find();
-//            Log.d("cache","results for posts " + retrievedPosts);
-//
-//        } catch (ParseException e) {
-//            Log.i("QUERY", "something went wrong querying recent searched posts " + e.toString());
-//            e.printStackTrace();
-//            return retrievedPosts;
-//        }
-//
-//        return  retrievedPosts;
-//    }
-
     private List<RecentSearchedItem> getRecentSearches() {
         List<RecentSearchedItem> retrievedPosts = new ArrayList<>();
 
@@ -614,6 +602,8 @@ public class SearchFragment extends Fragment {
             return retrievedPosts;
         }
 
+        for(RecentSearchedItem recentSearchedItem: retrievedPosts) mAlreadyAddedSearchedItem.add(recentSearchedItem.getPost().getObjectId());
+        //mAlreadyAddedSearchedItem.addAll(retrievedPosts);
         Log.d("RECENT-ITEMS", "recents " + retrievedPosts);
         return  retrievedPosts;
     }

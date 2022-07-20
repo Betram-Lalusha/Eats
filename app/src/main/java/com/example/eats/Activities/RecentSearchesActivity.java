@@ -14,6 +14,7 @@ import com.example.eats.Helpers.HorizontalSpaceItemDecorator;
 import com.example.eats.Helpers.VerticalSpaceItemDecoration;
 import com.example.eats.Models.City;
 import com.example.eats.Models.Post;
+import com.example.eats.Models.RecentSearchedItem;
 import com.example.eats.R;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -28,6 +29,8 @@ public class RecentSearchesActivity extends AppCompatActivity {
     ParseUser mCurrentUser;
     RecyclerView mRecyclerView;
     List<Post> mRetrievedSearchedPosts;
+    List<RecentSearchedItem> mRetrievedRecentSearchedItems;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,20 +51,26 @@ public class RecentSearchesActivity extends AppCompatActivity {
         mRecyclerView.addItemDecoration(verticalSpaceItemDecoration);
         mRecyclerView.addItemDecoration(horizontalSpaceItemDecorator);
 
-        mRetrievedSearchedPosts = getCachedPosts();
-        searchResultsAdapter.addAll(mRetrievedSearchedPosts);
+       // mRetrievedSearchedPosts = getCachedPosts();
+        mRetrievedRecentSearchedItems = getCachedPosts();
+        for(RecentSearchedItem recentSearchedItem: mRetrievedRecentSearchedItems) {
+            mRetrievedSearchedPosts.add(recentSearchedItem.getPost());
+            searchResultsAdapter.notifyDataSetChanged();
+        }
+
+        Log.d("ACT", "retr " + mRetrievedSearchedPosts);
     }
 
     /**
      * Checks local database for cached posts that were searched for by the user.
      * @return: all cached objects in the user local storage that the user searched for.
      */
-    private List<Post> getCachedPosts() {
-        List<Post> retrievedPosts = new ArrayList<>();
+    private List<RecentSearchedItem> getCachedPosts() {
+        List<RecentSearchedItem> retrievedPosts = new ArrayList<>();
 
-        ParseQuery<Post> parseQuery = new ParseQuery<Post>(Post.class);
-        parseQuery.include(Post.USER);
-        parseQuery.addDescendingOrder("createdAt");
+        ParseQuery<RecentSearchedItem> parseQuery = new ParseQuery<RecentSearchedItem>(RecentSearchedItem.class);
+        parseQuery.include(RecentSearchedItem.POST);
+        parseQuery.addDescendingOrder("position");
 
         try {
             retrievedPosts = parseQuery.fromPin(mCurrentUser.getObjectId() + "recentSearches").find();
