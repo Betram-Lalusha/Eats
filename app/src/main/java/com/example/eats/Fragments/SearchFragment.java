@@ -1,7 +1,5 @@
 package com.example.eats.Fragments;
 
-import static com.example.eats.BuildConfig.MAPS_API_KEY;
-
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -20,9 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.codepath.asynchttpclient.AsyncHttpClient;
-import com.codepath.asynchttpclient.RequestParams;
-import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.example.eats.Activities.RecentSearchesActivity;
 import com.example.eats.Adapters.CategoriesAdapter;
 import com.example.eats.Adapters.CitiesAdapter;
@@ -32,7 +27,6 @@ import com.example.eats.Helpers.DistanceCalculator;
 import com.example.eats.Helpers.HorizontalSpaceItemDecorator;
 import com.example.eats.Interface.OnClickInterface;
 import com.example.eats.Models.City;
-import com.example.eats.Models.Place;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
 import com.parse.FindCallback;
@@ -41,19 +35,11 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-import java.util.Stack;
-import java.util.stream.Collectors;
-
-import okhttp3.Headers;
 
 public class SearchFragment extends Fragment {
 
@@ -553,10 +539,12 @@ public class SearchFragment extends Fragment {
 
             //include in recent searches cache
             if(mRetrievedRecentSearches.size() >= 8) {
+                mRetrievedRecentSearches.clear();
                 ParseObject.unpinAllInBackground(mCurrentUser.getObjectId() + "recentSearches");
             }
-
-            ParseObject.pinAllInBackground(mCurrentUser.getObjectId() + "recentSearches", posts);
+            
+            for(Post post: posts) mRetrievedRecentSearches.add(0, post);
+            ParseObject.pinAllInBackground(mCurrentUser.getObjectId() + "recentSearches", mRetrievedRecentSearches);
         }
 
         if(cacheCitiesResults) {
