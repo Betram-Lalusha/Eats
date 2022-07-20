@@ -5,7 +5,7 @@ import com.parse.ParseObject;
 
 @ParseClassName("RecentSearchedItem")
 public class RecentSearchedItem extends ParseObject {
-    public final String POST = "post";
+    public static final String POST = "post";
     public  RecentSearchedItem() {}
 
     public void setPost(Post post) {
@@ -13,4 +13,9 @@ public class RecentSearchedItem extends ParseObject {
     }
 
     public Post getPost(){return (Post) get(POST);}
+
+    @Override
+    public String toString() {
+        return "{post: " + getPost() + ", timeCreated: " + getPost().getCreatedAt() + "}";
+    }
 }

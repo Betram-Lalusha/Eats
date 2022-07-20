@@ -28,6 +28,7 @@ import com.example.eats.Helpers.HorizontalSpaceItemDecorator;
 import com.example.eats.Interface.OnClickInterface;
 import com.example.eats.Models.City;
 import com.example.eats.Models.Post;
+import com.example.eats.Models.RecentSearchedItem;
 import com.example.eats.R;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -74,6 +75,8 @@ public class SearchFragment extends Fragment {
     private DistanceCalculator mDistanceCalculator;
     EndlessRecyclerViewScrollListener mEndlessRecyclerViewScrollListener;
     EndlessRecyclerViewScrollListener mCitiesEndlessRecyclerViewScrollListener;
+
+    List<RecentSearchedItem> mRecentSearchedItems;
 
     private final String TAG = "SearchFragment";
 
@@ -139,6 +142,9 @@ public class SearchFragment extends Fragment {
         mCitiesAlreadyQueried = new HashSet<>();
         mRetrievedCachedPosts = new ArrayList<>();
         mRetrievedCachedCities = new ArrayList<>();
+
+        mRecentSearchedItems = new LinkedList<>();
+        mRetrievedRecentSearches = new LinkedList<>();
 
         mCurrentUser = ParseUser.getCurrentUser();
         mRvCities = view.findViewById(R.id.rvCities);
@@ -209,7 +215,9 @@ public class SearchFragment extends Fragment {
         //get data
         mRetrievedCachedPosts = getCachedPosts();
         mRetrievedCachedCities = getCachedCities();
-        mRetrievedRecentSearches = getRecentSearches();
+        //mRetrievedRecentSearches = getRecentSearches();
+
+        mRecentSearchedItems = getRecentSearches();
 
         if(mRetrievedCachedPosts.isEmpty()) {
             queryPosts();
@@ -538,13 +546,20 @@ public class SearchFragment extends Fragment {
             ParseObject.pinAllInBackground(mCurrentUser.getObjectId() + "searchedPosts", mCachedPosts);
 
             //include in recent searches cache
-            if(mRetrievedRecentSearches.size() >= 8) {
-                mRetrievedRecentSearches.clear();
+            if(mRecentSearchedItems.size() >= 8) {
+                mRecentSearchedItems.clear();
                 ParseObject.unpinAllInBackground(mCurrentUser.getObjectId() + "recentSearches");
             }
 
-            for(Post post: posts) mRetrievedRecentSearches.add(0, post);
-            ParseObject.pinAllInBackground(mCurrentUser.getObjectId() + "recentSearches", mRetrievedRecentSearches);
+            for(Post post: posts) {
+                RecentSearchedItem recentSearchedItem = new RecentSearchedItem();
+                recentSearchedItem.setPost(post);
+                mRecentSearchedItems.add(recentSearchedItem);
+                mRetrievedRecentSearches.add(0, post);
+            }
+
+            ParseObject.pinAllInBackground(mCurrentUser.getObjectId() + "recentSearches", mRecentSearchedItems);
+            //ParseObject.pinAllInBackground(mCurrentUser.getObjectId() + "recentSearches", mRetrievedRecentSearches);
         }
 
         if(cacheCitiesResults) {
@@ -562,11 +577,31 @@ public class SearchFragment extends Fragment {
      * Checks local database for cached posts that were searched for by the user.
      * @return: all cached objects in the user local storage that the user searched for.
      */
-    private List<Post> getRecentSearches() {
-        List<Post> retrievedPosts = new ArrayList<>();
+//    private List<Post> getRecentSearches() {
+//        List<Post> retrievedPosts = new ArrayList<>();
+//
+//        ParseQuery<Post> parseQuery = new ParseQuery<Post>(Post.class);
+//        parseQuery.include(Post.USER);
+//        parseQuery.addDescendingOrder("createdAt");
+//
+//        try {
+//            retrievedPosts = parseQuery.fromPin(mCurrentUser.getObjectId() + "recentSearches").find();
+//            Log.d("cache","results for posts " + retrievedPosts);
+//
+//        } catch (ParseException e) {
+//            Log.i("QUERY", "something went wrong querying recent searched posts " + e.toString());
+//            e.printStackTrace();
+//            return retrievedPosts;
+//        }
+//
+//        return  retrievedPosts;
+//    }
 
-        ParseQuery<Post> parseQuery = new ParseQuery<Post>(Post.class);
-        parseQuery.include(Post.USER);
+    private List<RecentSearchedItem> getRecentSearches() {
+        List<RecentSearchedItem> retrievedPosts = new ArrayList<>();
+
+        ParseQuery<RecentSearchedItem> parseQuery = new ParseQuery<RecentSearchedItem>(RecentSearchedItem.class);
+        parseQuery.include(RecentSearchedItem.POST);
         parseQuery.addDescendingOrder("createdAt");
 
         try {
@@ -579,6 +614,7 @@ public class SearchFragment extends Fragment {
             return retrievedPosts;
         }
 
+        Log.d("RECENT-ITEMS", "recents " + retrievedPosts);
         return  retrievedPosts;
     }
 }

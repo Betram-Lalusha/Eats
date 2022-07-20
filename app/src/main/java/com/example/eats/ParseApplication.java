@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.example.eats.Models.City;
 import com.example.eats.Models.Post;
+import com.example.eats.Models.RecentSearchedItem;
 import com.example.eats.Models.User;
 import com.parse.Parse;
 import com.parse.ParseInstallation;
@@ -17,6 +18,7 @@ public class ParseApplication extends Application {
         ParseObject.registerSubclass(Post.class);
         ParseObject.registerSubclass(User.class);
         ParseObject.registerSubclass(City.class);
+        ParseObject.registerSubclass(RecentSearchedItem.class);
         //enable local storage for caching
         Parse.enableLocalDatastore(this);
         Parse.initialize(new Parse.Configuration.Builder(this)
