@@ -542,7 +542,7 @@ public class SearchFragment extends Fragment {
                 mRetrievedRecentSearches.clear();
                 ParseObject.unpinAllInBackground(mCurrentUser.getObjectId() + "recentSearches");
             }
-            
+
             for(Post post: posts) mRetrievedRecentSearches.add(0, post);
             ParseObject.pinAllInBackground(mCurrentUser.getObjectId() + "recentSearches", mRetrievedRecentSearches);
         }
