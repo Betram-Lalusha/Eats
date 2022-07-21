@@ -292,6 +292,7 @@ public class SearchFragment extends Fragment {
         query.setLimit(4);
         query.addDescendingOrder("createdAt");
         query.whereNotContainedIn("name",mCitiesAlreadyQueried);
+        Log.d("TIRED", "cities already queried 22 " + mCitiesAlreadyQueried);
 
         List<City> cities = new ArrayList<>();
         try {
@@ -299,10 +300,13 @@ public class SearchFragment extends Fragment {
             mCitiesAdapter.addAll(cities);
 
             //cache posts
+            //if(mCachedCities.isEmpty())  mCachedCities.addAll(cities);
             ParseObject.pinAllInBackground(mCurrentUser.getObjectId() + "cachedCities", cities);
 
 
-            for(City city: cities) mCitiesAlreadyQueried.add(city.getName());
+            for(City city: cities) {
+                if(mCitiesAlreadyQueried.add(city.getName())) mCachedCities.add(city);
+            }
         } catch (ParseException e) {
             Log.i("QUERY", "something went wrong querying  in search fragment " + e.toString());
             e.printStackTrace();
@@ -428,12 +432,20 @@ public class SearchFragment extends Fragment {
     private void filterByCity() {
         if(mCitiesClicked.isEmpty()) {
             mCitiesAdapter.clear();
-            mAlreadyAdded.clear();
-            mCitiesAlreadyQueried.clear();
-            Log.d("TIRED", "retrieved " + mRetrievedCachedCities);
+            mSearchResultsAdapter.clear();
+            //mCitiesAlreadyQueried.clear();
+            Log.d("TIRED", "cities already queried posts" +mCachedPosts);
+            Log.d("TIRED", "cities already queried post" + mCachedCities);
+            if(mRetrievedCachedCities.isEmpty()) {;
+                mCitiesAdapter.addAll(mCachedCities);
+                mSearchResultsAdapter.addAll(mCachedPosts);
+                for(City city: mCachedCities) mCitiesAlreadyQueried.add(city.getName());
+                return;
+            }
             mCitiesAdapter.addAll(mRetrievedCachedCities);
-            for(City city: mRetrievedCachedCities) mCitiesAlreadyQueried.add(city.getName());
             mSearchResultsAdapter.addAll(mRetrievedCachedPosts);
+            for(City city: mRetrievedCachedCities) mCitiesAlreadyQueried.add(city.getName());
+            Log.d("TIRED", "cities already queried " + mCitiesAlreadyQueried);
             return;
         }
 
@@ -576,8 +588,8 @@ public class SearchFragment extends Fragment {
                 ParseObject.unpinAllInBackground(mCurrentUser.getObjectId() + "cachedCities");
             }
 
-            mCachedCities.addAll(cities);
-            ParseObject.pinAllInBackground(mCurrentUser.getObjectId() + "cachedCities", cities);
+            for(City city: cities) if(mCitiesAlreadyQueried.add(city.getName())) mCachedCities.add(city);;
+            ParseObject.pinAllInBackground(mCurrentUser.getObjectId() + "cachedCities", mCachedCities);
         }
     }
 
