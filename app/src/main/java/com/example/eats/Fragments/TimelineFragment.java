@@ -143,7 +143,7 @@ public class TimelineFragment extends Fragment {
             }
 
             //if no posts with user geohash are found,remove last character and try again
-            if (posts.isEmpty()) {
+            if (posts.isEmpty() && mUserGeoHash.length() > 0) {
                 mUserGeoHash.deleteCharAt(mUserGeoHash.length() - 1);
             } else {
                 for(int i = 0; i < posts.size(); i++) {
