@@ -187,4 +187,11 @@ public class TimelineFragment extends Fragment {
         return  retrievedPosts;
     }
 
+    private class BackgroundThread implements Runnable {
+        @Override
+        public void run() {
+            getPosts(4);
+        }
+    }
+
 }
