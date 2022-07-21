@@ -69,7 +69,7 @@ public class HomeActivity extends AppCompatActivity {
                         fragment.setArguments(bundle);
                         break;
                     default:
-                        fragment = new SearchFragment();
+                        fragment = new TimelineFragment();
                         break;
                 }
 
@@ -78,7 +78,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        mBottomNavigationView.setSelectedItemId(R.id.exploreButton);
+        mBottomNavigationView.setSelectedItemId(R.id.homeButton);
     }
 
 }
