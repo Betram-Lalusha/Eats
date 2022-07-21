@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,6 +49,8 @@ public class TimelineFragment extends Fragment {
     List<Post> mRetrievedCachedPosts;
     private DistanceCalculator mDistanceCalculator;
     EndlessRecyclerViewScrollListener mEndlessRecyclerViewScrollListener;
+
+    private Handler mMainHandler = new Handler();
     public TimelineFragment() {
         // Required empty public constructor
     }
@@ -102,7 +105,8 @@ public class TimelineFragment extends Fragment {
 
         //only query for posts if cache is empty
         if(mRetrievedCachedPosts.isEmpty()) {
-            getPosts(4);
+            BackgroundThread backgroundThread = new BackgroundThread();
+            new Thread(backgroundThread).start();
         } else mPostsAdapter.addAll(mRetrievedCachedPosts);
     }
 
@@ -112,6 +116,7 @@ public class TimelineFragment extends Fragment {
      * @param minNumber: the minimum number of posts to return from the databse
      */
     private void getPosts(int minNumber) {
+        mPb.setVisibility(View.VISIBLE);
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
         query.include(Post.USER);
         query.setLimit(minNumber);
@@ -127,6 +132,13 @@ public class TimelineFragment extends Fragment {
             } catch (ParseException e) {
                 Log.i("QUERY", "something went wrong querying posts " + e.toString());
                 e.printStackTrace();
+                //update UI thread
+                mPb.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mPb.setVisibility(View.INVISIBLE);
+                    }
+                });
                 return;
             }
 
@@ -143,19 +155,32 @@ public class TimelineFragment extends Fragment {
                     post.distanceFromUser = mDistanceCalculator.distance(post.getLatitude(), post.getLongiitude());
                 }
 
-                mCachedPosts.addAll(posts);
-                mPostsAdapter.addAll(posts);
+                //update UI thread
+                List<Post> finalPosts = posts;
+                mMainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mCachedPosts.addAll(finalPosts);
+                        mPostsAdapter.addAll(finalPosts);
 
-                //cache posts
-                //if cached posts size is 10, remove them and update with new ones
-                //this prevents user seen the exact same posts every time they login
-                if(mRetrievedCachedPosts.size() >= 10) {
-                    ParseObject.unpinAllInBackground(mCurrentUser.getObjectId() + "cachedPosts");
-                }
-                ParseObject.pinAllInBackground(mCurrentUser.getObjectId() + "cachedPosts", mCachedPosts);
+                        //cache posts
+                        //if cached posts size is 10, remove them and update with new ones
+                        //this prevents user seen the exact same posts every time they login
+                        if(mRetrievedCachedPosts.size() >= 10) {
+                            ParseObject.unpinAllInBackground(mCurrentUser.getObjectId() + "cachedPosts");
+                        }
+                        ParseObject.pinAllInBackground(mCurrentUser.getObjectId() + "cachedPosts", mCachedPosts);
+                    }
+                });
             }
         }
-
+        //update UI thread
+        mPb.post(new Runnable() {
+            @Override
+            public void run() {
+                mPb.setVisibility(View.INVISIBLE);
+            }
+        });
     }
 
     /**
