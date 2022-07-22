@@ -113,7 +113,6 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
             mUserPost.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    Toast.makeText(mContext, "alert box!", Toast.LENGTH_SHORT).show();
                     //get id of Object clicked
                     mOnClickInterface.setClick(post.getObjectId());
                     return false;
