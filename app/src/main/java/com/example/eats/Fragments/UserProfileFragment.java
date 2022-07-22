@@ -205,6 +205,7 @@ public class UserProfileFragment extends Fragment {
         query.include(Post.USER);
         query.whereEqualTo(Post.USER, ParseUser.getCurrentUser());
         query.addDescendingOrder("createdAt");
+        query.whereNotContainedIn("objectId", mAlreadyAdded);
         query.findInBackground(new FindCallback<Post>() {
             @Override
             public void done(List<Post> posts, ParseException e) {
@@ -330,6 +331,7 @@ public class UserProfileFragment extends Fragment {
         parseQuery.include(Post.USER);
         parseQuery.ignoreACLs();
         parseQuery.addDescendingOrder("createdAt");
+        parseQuery.whereNotContainedIn("objectId", mAlreadyAdded);
 
         try {
             retrievedPosts = parseQuery.fromPin(mCurrentUser.getObjectId()).find();
@@ -367,6 +369,7 @@ public class UserProfileFragment extends Fragment {
                 mUserPosts.addAll(posts);
                 mUserProfileAdapter.notifyDataSetChanged();
                 mEndlessRecyclerViewScrollListener.resetState();
+                for(Post post: posts) mAlreadyAdded.add(post.getObjectId());
 
             }
 
