@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.eats.Activities.DetailActivity;
+import com.example.eats.Interface.OnClickInterface;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
 import com.parse.DeleteCallback;
@@ -35,11 +36,13 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
 
     Context mContext;
     List<Post> mPosts;
+    OnClickInterface mOnClickInterface;
 
 
-    public UserProfileAdapter(Context context, List<Post> posts) {
+    public UserProfileAdapter(Context context, List<Post> posts, OnClickInterface onClickInterface) {
         this.mPosts = posts;
         this.mContext = context;
+        this.mOnClickInterface = onClickInterface;
     }
 
     @NonNull
@@ -111,6 +114,8 @@ public class UserProfileAdapter extends RecyclerView.Adapter<UserProfileAdapter.
                 @Override
                 public boolean onLongClick(View v) {
                     Toast.makeText(mContext, "alert box!", Toast.LENGTH_SHORT).show();
+                    //get id of Object clicked
+                    mOnClickInterface.setClick(post.getObjectId());
                     return false;
                 }
             });

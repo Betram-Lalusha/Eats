@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide;
 import com.example.eats.Adapters.UserProfileAdapter;
 import com.example.eats.EndlessRecyclerViewScrollListener;
 import com.example.eats.Helpers.VerticalSpaceItemDecoration;
+import com.example.eats.Interface.OnClickInterface;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
 import com.parse.FindCallback;
@@ -45,6 +46,8 @@ public class OtherUserProfileActivity extends AppCompatActivity {
     UserProfileAdapter mUserProfileAdapter;
     EndlessRecyclerViewScrollListener mEndlessRecyclerViewScrollListener;
 
+    private OnClickInterface mPostClickInterface;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +55,13 @@ public class OtherUserProfileActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         getSupportActionBar().hide();
+
+        mPostClickInterface = new OnClickInterface() {
+            @Override
+            public void setClick(String item) {
+                return;
+            }
+        };
 
         mAlreadyAdded = new HashSet<>();
         mUserPosts = new LinkedList<Post>();
@@ -62,7 +72,7 @@ public class OtherUserProfileActivity extends AppCompatActivity {
         mRecyclerView = findViewById(R.id.rvUserPosts);
         mRvProgressBar = findViewById(R.id.rvProgressBar);
         mUserProfilePic = findViewById(R.id.userProfilePic);
-        mUserProfileAdapter = new UserProfileAdapter(this, mUserPosts);
+        mUserProfileAdapter = new UserProfileAdapter(this, mUserPosts, mPostClickInterface);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         mCurrentUser = Parcels.unwrap(intent.getParcelableExtra("user"));
         VerticalSpaceItemDecoration verticalSpaceItemDecoration = new VerticalSpaceItemDecoration(40);

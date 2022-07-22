@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,6 +31,7 @@ import com.example.eats.Activities.LoginActivity;
 import com.example.eats.Adapters.UserProfileAdapter;
 import com.example.eats.EndlessRecyclerViewScrollListener;
 import com.example.eats.Helpers.VerticalSpaceItemDecoration;
+import com.example.eats.Interface.OnClickInterface;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
 import com.parse.FindCallback;
@@ -53,6 +55,7 @@ public class UserProfileFragment extends Fragment {
 
     TextView mUserBio;
     TextView mUserName;
+    String mPostClicked;
     List<Post> mUserPosts;
     ParseUser mCurrentUser;
     private File mPhotoFile;
@@ -64,11 +67,36 @@ public class UserProfileFragment extends Fragment {
     HashSet<String> mAlreadyAdded;
     List<Post> mRetrievedCachedPosts;
     UserProfileAdapter mUserProfileAdapter;
+    private OnClickInterface mPostClickInterface;
     public String mPhotoFileName = "photo.jpg";
     // PICK_PHOTO_CODE is a constant integer
     public final static int PICK_PHOTO_CODE = 1046;
     public final String APP_TAG = "USER-FRAGMENT";
     EndlessRecyclerViewScrollListener mEndlessRecyclerViewScrollListener;
+
+    ConstraintLayout mAlertBox;
+    Button mDeletePostButton;
+    Button mCancelDeletePostButton;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mPostClicked = "";
+
+
+        mPostClickInterface = new OnClickInterface() {
+            @Override
+            public void setClick(String item) {
+                //set new Id of clicked item
+                mPostClicked = item;
+
+                //show alert box
+                mAlertBox.setVisibility(View.VISIBLE);
+            }
+        };
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -90,7 +118,12 @@ public class UserProfileFragment extends Fragment {
         mProgressBar = view.findViewById(R.id.progressBar);
         mRvProgressBar = view.findViewById(R.id.rvProgressBar);
         mUserProfilePic = view.findViewById(R.id.userProfilePic);
-        mUserProfileAdapter = new UserProfileAdapter(getContext(), mUserPosts);
+
+        mAlertBox = view.findViewById(R.id.alertBox);
+        mDeletePostButton = view.findViewById(R.id.deletePostButton);
+        mCancelDeletePostButton = view.findViewById(R.id.cancelDeleteButton);
+
+        mUserProfileAdapter = new UserProfileAdapter(getContext(), mUserPosts, mPostClickInterface);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         VerticalSpaceItemDecoration verticalSpaceItemDecoration = new VerticalSpaceItemDecoration(40);
 
