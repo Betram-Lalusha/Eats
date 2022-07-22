@@ -32,8 +32,10 @@ import com.example.eats.Adapters.UserProfileAdapter;
 import com.example.eats.EndlessRecyclerViewScrollListener;
 import com.example.eats.Helpers.VerticalSpaceItemDecoration;
 import com.example.eats.Interface.OnClickInterface;
+import com.example.eats.Models.City;
 import com.example.eats.Models.Post;
 import com.example.eats.R;
+import com.parse.DeleteCallback;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -145,6 +147,27 @@ public class UserProfileFragment extends Fragment {
                 startActivity(intent);
                 getActivity().finish();
                 return false;
+            }
+        });
+
+        //cancel delete operation
+        mCancelDeletePostButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //set selected post id to empty
+                mPostClicked = "";
+                //hide alert box
+                mAlertBox.setVisibility(View.GONE);
+            }
+        });
+
+        //delete post
+        mDeletePostButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //delete post
+                mAlertBox.setVisibility(View.GONE);
+                deleteUserPost();
             }
         });
 
@@ -350,5 +373,43 @@ public class UserProfileFragment extends Fragment {
         });
     }
 
+    /**
+     *
+     * deletes a post whose object id is equal to mPostClicked
+     */
+    public void deleteUserPost() {
+        if(mPostClicked.isEmpty()) return;
+        mRvProgressBar.setVisibility(View.VISIBLE);
+        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
+        query.whereEqualTo("objectId", mPostClicked);
+
+        query.findInBackground(new FindCallback<Post>() {
+            @Override
+            public void done(List<Post> posts, ParseException e) {
+                if(e != null) {
+                    Log.i("DELETING USER POST", "something went wrong deleting post " + e.toString());
+                    e.printStackTrace();
+                    mRvProgressBar.setVisibility(View.INVISIBLE);
+                    return;
+                }
+
+                Post post = posts.get(0);
+                post.deleteInBackground(new DeleteCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if(e != null) {
+                            Log.i("DELETING USER POST", "something went wrong deleting post " + e.toString());
+                            e.printStackTrace();
+                            mRvProgressBar.setVisibility(View.INVISIBLE);
+                            return;
+                        }
+                        mUserPosts.remove(post);
+                        mUserProfileAdapter.notifyDataSetChanged();
+                        mRvProgressBar.setVisibility(View.INVISIBLE);
+                    }
+                });
+            }
+        });
+    }
 
 }
