@@ -82,7 +82,7 @@
         android:id="@+id/alertBox"
         android:layout_width="300dp"
         android:layout_height="150dp"
-        android:background="@drawable/edit_text_background"
+        android:background="@drawable/alert_box"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
