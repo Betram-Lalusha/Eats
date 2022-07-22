@@ -64,6 +64,7 @@ public class OnBoardingActivity extends AppCompatActivity {
         PaperOnboardingPage source5 = new PaperOnboardingPage("Options", "Take new picture or select from gallery", Color.parseColor("#fce803"), R.drawable.smaller, R.drawable.chef_311369);
         PaperOnboardingPage source6 = new PaperOnboardingPage("Search", "Filter items by category", Color.parseColor("#03fcfc"), R.drawable.search_frag_3, R.drawable.ic_baseline_explore_24);
         PaperOnboardingPage source7 = new PaperOnboardingPage("Search", "Filter items by city", Color.parseColor("#03fcfc"), R.drawable.filter_by_city, R.drawable.ic_baseline_explore_24);
+        PaperOnboardingPage source8 = new PaperOnboardingPage("Profile", "", Color.parseColor("#cfaff0"), R.drawable.user_prof_frag_2, R.drawable.default_image);
 
         // array list is used to store
         // data of onbaording screen
@@ -78,6 +79,8 @@ public class OnBoardingActivity extends AppCompatActivity {
         elements.add(source4);
         elements.add(source5);
         elements.add(source6);
+        elements.add(source7);
+        elements.add(source8);
         return elements;
     }
 
