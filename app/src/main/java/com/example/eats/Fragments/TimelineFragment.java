@@ -101,13 +101,10 @@ public class TimelineFragment extends Fragment {
         };
 
         mRecyclerView.addOnScrollListener(mEndlessRecyclerViewScrollListener);
-        mRetrievedCachedPosts = getCachedPosts();
 
         //only query for posts if cache is empty
-        if(mRetrievedCachedPosts.isEmpty()) {
-            BackgroundThread backgroundThread = new BackgroundThread();
-            new Thread(backgroundThread).start();
-        } else mPostsAdapter.addAll(mRetrievedCachedPosts);
+        BackgroundThread backgroundThread = new BackgroundThread();
+        new Thread(backgroundThread).start();
     }
 
     /**
@@ -215,7 +212,13 @@ public class TimelineFragment extends Fragment {
     private class BackgroundThread implements Runnable {
         @Override
         public void run() {
-            getPosts(4);
+            if(mRetrievedCachedPosts.isEmpty()) {
+                getPosts(4);
+            } else {
+                mRetrievedCachedPosts = getCachedPosts();
+                mPostsAdapter.addAll(mRetrievedCachedPosts);
+            }
+
         }
     }
 

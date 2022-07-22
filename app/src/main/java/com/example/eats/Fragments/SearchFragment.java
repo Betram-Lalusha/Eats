@@ -219,7 +219,6 @@ public class SearchFragment extends Fragment {
         //get data
         mRetrievedCachedPosts = getCachedPosts();
         mRetrievedCachedCities = getCachedCities();
-        //mRetrievedRecentSearches = getRecentSearches();
 
         mRecentSearchedItems = getRecentSearches();
 
