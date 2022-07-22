@@ -507,10 +507,12 @@ I used it like this: mRecyclerView.addItemDecoration(verticalSpaceItemDecoration
   - used for database storage and querying
 
 # Name of Files containing complex features
-1. Geohasher.java : contains declaration of Geohasher class and algorithm that calculates geohash of user. Usage of this class can be found in TimeLineFragment's queryPosts function
-2. DistanceCalculator.java : responsible for calculating distance between two coordinates. Usage can be found in Search fragment and Timeline fragment
+1. Geohasher.java : contains declaration of Geohasher class and algorithm that calculates geohash of user. Usage of this class can be found in TimeLineFragment's queryPosts function. Link: https://github.com/Betram-Lalusha/Eats/blob/master/app/src/main/java/com/example/eats/Geohashing/Geohasher.java
+2. DistanceCalculator.java : responsible for calculating distance between two coordinates. Usage can be found in Search fragment and Timeline fragment.
+   Link: https://github.com/Betram-Lalusha/Eats/blob/master/app/src/main/java/com/example/eats/Helpers/DistanceCalculator.java
 3. SearchFragment: contains all methods responsible for filtering and resoonding to user queries.
    i. Main methods doing this include: ilterByCategory, filterByCity, and searchDb
+   Link: https://github.com/Betram-Lalusha/Eats/blob/master/app/src/main/java/com/example/eats/Fragments/SearchFragment.java
    
 # Testing
 
