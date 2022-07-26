@@ -1,5 +1,6 @@
 package com.example.eats.Fragments;
 
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;

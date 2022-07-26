@@ -3,6 +3,8 @@ buildscript {
     repositories {
         // Check that you have the following line (if not, add it):
         google()  // Google's Maven repository
+        jcenter()
+        maven { url 'https://maven.ggogle.com' }
 
     }
     dependencies {
@@ -29,5 +31,7 @@ ext {
     appCompatVersion = '1.0.0'
     designSupportVersion = '1.0.0'
 }
+
+
 
 
