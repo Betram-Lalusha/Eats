@@ -7,6 +7,7 @@ import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withParent;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
@@ -20,6 +21,7 @@ import androidx.test.espresso.ViewInteraction;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
+import androidx.test.rule.GrantPermissionRule;
 
 import com.example.eats.R;
 
@@ -32,14 +34,20 @@ import org.junit.runner.RunWith;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class TutorialTest {
+public class UserProfileActivityTest {
 
     @Rule
     public ActivityScenarioRule<LoginActivity> mActivityScenarioRule =
             new ActivityScenarioRule<>(LoginActivity.class);
 
+    @Rule
+    public GrantPermissionRule mGrantPermissionRule =
+            GrantPermissionRule.grant(
+                    "android.permission.ACCESS_FINE_LOCATION",
+                    "android.permission.ACCESS_COARSE_LOCATION");
+
     @Test
-    public void tutorialTest() {
+    public void userProfileActivityTest() {
         ViewInteraction appCompatEditText = onView(
                 allOf(withId(R.id.userName),
                         childAtPosition(
@@ -58,7 +66,7 @@ public class TutorialTest {
                                         0),
                                 2),
                         isDisplayed()));
-        appCompatEditText2.perform(replaceText("123"), closeSoftKeyboard());
+        appCompatEditText2.perform(replaceText("1234"), closeSoftKeyboard());
 
         ViewInteraction appCompatButton = onView(
                 allOf(withId(R.id.signInBtn), withText("sign In"),
@@ -70,42 +78,44 @@ public class TutorialTest {
                         isDisplayed()));
         appCompatButton.perform(click());
 
-        ViewInteraction appCompatEditText3 = onView(
-                allOf(withId(R.id.password), withText("123"),
+        ViewInteraction materialButton = onView(
+                allOf(withId(R.id.doneButton), withText("done"),
+                        childAtPosition(
+                                allOf(withId(R.id.frame_layout),
+                                        childAtPosition(
+                                                withId(android.R.id.content),
+                                                0)),
+                                0),
+                        isDisplayed()));
+        materialButton.perform(click());
+
+        ViewInteraction bottomNavigationItemView = onView(
+                allOf(withId(R.id.userProfile), withContentDescription("Profile"),
                         childAtPosition(
                                 childAtPosition(
-                                        withId(android.R.id.content),
+                                        withId(R.id.bottom_navigation),
                                         0),
-                                2),
+                                4),
                         isDisplayed()));
-        appCompatEditText3.perform(replaceText("1234"));
+        bottomNavigationItemView.perform(click());
 
-        ViewInteraction appCompatEditText4 = onView(
-                allOf(withId(R.id.password), withText("1234"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.content),
-                                        0),
-                                2),
+        ViewInteraction imageView = onView(
+                allOf(withId(R.id.userProfilePic),
+                        withParent(withParent(withId(R.id.fragmentContainer))),
                         isDisplayed()));
-        appCompatEditText4.perform(closeSoftKeyboard());
+        imageView.check(matches(isDisplayed()));
 
-        ViewInteraction appCompatButton2 = onView(
-                allOf(withId(R.id.signInBtn), withText("sign In"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.content),
-                                        0),
-                                3),
+        ViewInteraction textView = onView(
+                allOf(withId(R.id.username), withText("betram"),
+                        withParent(withParent(withId(R.id.fragmentContainer))),
                         isDisplayed()));
-        appCompatButton2.perform(click());
+        textView.check(matches(isDisplayed()));
 
-        ViewInteraction button = onView(
-                allOf(withId(R.id.doneButton), withText("DONE"),
-                        withParent(allOf(withId(R.id.frame_layout),
-                                withParent(withId(android.R.id.content)))),
+        ViewInteraction textView2 = onView(
+                allOf(withId(R.id.bio), withText("Home made food with love"),
+                        withParent(withParent(withId(R.id.fragmentContainer))),
                         isDisplayed()));
-        button.check(matches(isDisplayed()));
+        textView2.check(matches(isDisplayed()));
     }
 
     private static Matcher<View> childAtPosition(
