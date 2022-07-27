@@ -7,16 +7,19 @@
     android:layout_height="match_parent"
     tools:context=".Fragments.TimelineFragment">
 
-    <ProgressBar
-        android:id="@+id/pbLoading"
-        android:layout_width="225dp"
-        android:layout_height="194dp"
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animation"
+        app:lottie_rawRes="@raw/mixing_egg_into_flour"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.472" />
+        app:lottie_autoPlay="false"
+        app:lottie_loop="true" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"

@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.eats.Adapters.PostsAdapter;
 import com.example.eats.EndlessRecyclerViewScrollListener;
 import com.example.eats.Geohashing.Geohasher;
@@ -32,11 +33,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 
 public class TimelineFragment extends Fragment {
 
-    ProgressBar mPb;
     List<Post> mPosts;
     Geohasher mGeohasher;
     Double mUserLatitude;
@@ -48,8 +49,10 @@ public class TimelineFragment extends Fragment {
     StringBuilder mUserGeoHash;
     HashSet<String> mAlreadyAdded;
     List<Post> mRetrievedCachedPosts;
+    LottieAnimationView mLottieAnimationView;
     private DistanceCalculator mDistanceCalculator;
     EndlessRecyclerViewScrollListener mEndlessRecyclerViewScrollListener;
+
 
     private Handler mMainHandler = new Handler();
     public TimelineFragment() {
@@ -74,9 +77,9 @@ public class TimelineFragment extends Fragment {
         mCachedPosts = new ArrayList<>();
         mRetrievedCachedPosts = new ArrayList<>();
         mCurrentUser = ParseUser.getCurrentUser();
-        mPb = (ProgressBar) view.findViewById(R.id.pbLoading);
         mRecyclerView = view.findViewById(R.id.recyclerView);
         mPostsAdapter = new PostsAdapter(getContext(), mPosts);
+        mLottieAnimationView = view.findViewById(R.id.animation);
         mGeohasher = new Geohasher(mUserLatitude, mUserLongitude);
         mUserGeoHash = new StringBuilder(mGeohasher.geoHash(12));
         mDistanceCalculator = new DistanceCalculator("K",mUserLatitude, mUserLongitude);
@@ -102,7 +105,7 @@ public class TimelineFragment extends Fragment {
         };
 
         mRecyclerView.addOnScrollListener(mEndlessRecyclerViewScrollListener);
-
+        //setRandomAnimation();
         //only query for posts if cache is empty
         BackgroundThread backgroundThread = new BackgroundThread();
         new Thread(backgroundThread).start();
@@ -114,7 +117,8 @@ public class TimelineFragment extends Fragment {
      * @param minNumber: the minimum number of posts to return from the databse
      */
     private void getPosts(int minNumber) {
-        mPb.setVisibility(View.VISIBLE);
+        mLottieAnimationView.setVisibility(View.VISIBLE);
+        mLottieAnimationView.playAnimation();
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
         query.include(Post.USER);
         query.setLimit(minNumber);
@@ -131,10 +135,11 @@ public class TimelineFragment extends Fragment {
                 Log.i("QUERY", "something went wrong querying posts " + e.toString());
                 e.printStackTrace();
                 //update UI thread
-                mPb.post(new Runnable() {
+                mLottieAnimationView.post(new Runnable() {
                     @Override
                     public void run() {
-                        mPb.setVisibility(View.INVISIBLE);
+                        mLottieAnimationView.cancelAnimation();
+                        mLottieAnimationView.setVisibility(View.INVISIBLE);
                     }
                 });
                 return;
@@ -173,10 +178,11 @@ public class TimelineFragment extends Fragment {
             }
         }
         //update UI thread
-        mPb.post(new Runnable() {
+        mLottieAnimationView.post(new Runnable() {
             @Override
             public void run() {
-                mPb.setVisibility(View.INVISIBLE);
+                mLottieAnimationView.cancelAnimation();
+                mLottieAnimationView.setVisibility(View.INVISIBLE);
             }
         });
     }
@@ -208,6 +214,20 @@ public class TimelineFragment extends Fragment {
         }
 
         return  retrievedPosts;
+    }
+
+    /**
+     * sets a random lottie animation to use as data loads in the background thread
+     */
+    private void setRandomAnimation() {
+        int min = 1;
+        int max = 2;
+        Random random = new Random();
+        int index =  random.nextInt((max - min) + 1) + min;
+        System.out.println("index " + index);
+        if(index <= 1) {
+            mLottieAnimationView.setAnimation(R.raw.mixing_egg_into_flour);
+        }
     }
 
     private class BackgroundThread implements Runnable {
