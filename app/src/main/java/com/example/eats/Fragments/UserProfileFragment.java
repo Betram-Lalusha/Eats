@@ -21,13 +21,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.eats.Activities.LoginActivity;
+import com.example.eats.Activities.SettingsActivity;
 import com.example.eats.Adapters.UserProfileAdapter;
 import com.example.eats.EndlessRecyclerViewScrollListener;
 import com.example.eats.Helpers.VerticalSpaceItemDecoration;
@@ -66,6 +69,7 @@ public class UserProfileFragment extends Fragment {
     ImageView mUserProfilePic;
     ProgressBar mRvProgressBar;
     RecyclerView mRecyclerView;
+    ImageButton mSettingsButton;
     HashSet<String> mAlreadyAdded;
     List<Post> mRetrievedCachedPosts;
     UserProfileAdapter mUserProfileAdapter;
@@ -120,6 +124,7 @@ public class UserProfileFragment extends Fragment {
         mProgressBar = view.findViewById(R.id.progressBar);
         mRvProgressBar = view.findViewById(R.id.rvProgressBar);
         mUserProfilePic = view.findViewById(R.id.userProfilePic);
+        mSettingsButton = view.findViewById(R.id.settingsButton);
 
         mAlertBox = view.findViewById(R.id.alertBox);
         mDeletePostButton = view.findViewById(R.id.deletePostButton);
@@ -168,6 +173,15 @@ public class UserProfileFragment extends Fragment {
                 //delete post
                 mAlertBox.setVisibility(View.GONE);
                 deleteUserPost();
+            }
+        });
+
+        //go to settings activity
+        mSettingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), SettingsActivity.class);
+                startActivity(intent);
             }
         });
 
