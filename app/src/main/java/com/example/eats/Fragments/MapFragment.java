@@ -28,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
 import com.example.eats.Activities.DetailActivity;
 import com.example.eats.Adapters.PostsAdapter;
@@ -70,6 +71,7 @@ public class MapFragment extends Fragment {
     Double mUserLongitude;
     View mCustomMarkerView;
     IconGenerator mIconGenerator;
+    LottieAnimationView mLottieAnimationView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -82,6 +84,7 @@ public class MapFragment extends Fragment {
     public void onViewCreated(View view, @NonNull Bundle savedInstanceState) {
         mPosts = new LinkedList<Post>();
         mIconGenerator = new IconGenerator(getContext());
+        mLottieAnimationView = view.findViewById(R.id.animationMap);
         mUserLatitude = getArguments().getDouble("userLat", 37.4219862);
         mUserLongitude = getArguments().getDouble("userLong" ,-122.0842771);
         mCustomMarkerView = ((LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.custom_marker, null);
@@ -160,6 +163,8 @@ public class MapFragment extends Fragment {
     //currently bad for scaling because it will load all posts in db
     //method should look for posts closets to where map is centered
     private void queryPosts(GoogleMap googleMap, LatLng userLoc) {
+        mLottieAnimationView.setVisibility(View.VISIBLE);
+        mLottieAnimationView.playAnimation();
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
         query.include(Post.USER);
         query.addDescendingOrder("createdAt");
@@ -167,11 +172,13 @@ public class MapFragment extends Fragment {
             @Override
             public void done(List<Post> posts, ParseException e) {
                 if(e != null) {
+                    mLottieAnimationView.cancelAnimation();
+                    mLottieAnimationView.setVisibility(View.INVISIBLE);
                     Log.i("QUERY", "something went wrong querying posts " + e.toString());
-                    System.out.println("here bug");
                     e.printStackTrace();
                     return;
                 }
+
                 Log.i("QUERY", "success querying posts " + posts.size());
                 mPosts.addAll(posts);
                 addMarkers(googleMap, mPosts, userLoc);
@@ -210,6 +217,9 @@ public class MapFragment extends Fragment {
             //include post object in marker
             marker.setTag(post);
         }
+
+        mLottieAnimationView.cancelAnimation();
+        mLottieAnimationView.setVisibility(View.INVISIBLE);
     }
 
     /**
