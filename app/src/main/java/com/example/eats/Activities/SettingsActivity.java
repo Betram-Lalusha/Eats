@@ -11,14 +11,27 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import com.example.eats.R;
 import com.parse.ParseUser;
 
 public class SettingsActivity extends AppCompatActivity {
-
+    TextView mAboutEats;
     Switch mSwicthMode;
     Button mLogoutButton;
+    TextView mPaymentInfo;
+    TextView mChangeEmail;
+    TextView mBecomeAVendor;
+    TextView mPrivacyPolicy;
+    TextView mDeleteAccount;
+    TextView mChangeUserName;
+    TextView mChangePassword;
+
+    TextView mChangeNotifications;
+
+
+
     SharedPreferences mSharedPreferences = null;
 
     @Override
@@ -28,8 +41,17 @@ public class SettingsActivity extends AppCompatActivity {
 
         getSupportActionBar().hide();
 
+        mAboutEats = findViewById(R.id.aboutEats);
+        mPaymentInfo = findViewById(R.id.paymentInfo);
+        mChangeEmail = findViewById(R.id.changeEmail);
         mLogoutButton = findViewById(R.id.logOutButton);
+        mBecomeAVendor = findViewById(R.id.becomeAVendor);
+        mDeleteAccount = findViewById(R.id.deleteAccount);
         mSwicthMode = findViewById(R.id.switchModeButton);
+        mChangeUserName = findViewById(R.id.changeUserName);
+        mChangePassword = findViewById(R.id.changePassword);
+        mPrivacyPolicy = findViewById(R.id.viewPrivacyPolicy);
+        mChangeNotifications = findViewById(R.id.changeNotifcations);
 
         //log out user
         mLogoutButton.setOnClickListener(new View.OnClickListener() {
