@@ -39,31 +39,31 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".BecomeAVendor"
+            android:name=".Activities.BecomeAVendor"
             android:exported="false" />
         <activity
-            android:name=".AboutEats"
+            android:name=".Activities.AboutEats"
             android:exported="false" />
         <activity
-            android:name=".PaymentInfo"
+            android:name=".Activities.PaymentInfo"
             android:exported="false" />
         <activity
-            android:name=".ViewPrivacyPolicy"
+            android:name=".Activities.ViewPrivacyPolicy"
             android:exported="false" />
         <activity
-            android:name=".ChangeNotifications"
+            android:name=".Activities.ChangeNotifications"
             android:exported="false" />
         <activity
-            android:name=".DeleteAccount"
+            android:name=".Activities.DeleteAccount"
             android:exported="false" />
         <activity
-            android:name=".ChangeUserName"
+            android:name=".Activities.ChangeUserName"
             android:exported="false" />
         <activity
-            android:name=".ChangePassword"
+            android:name=".Activities.ChangePassword"
             android:exported="false" />
         <activity
-            android:name=".ChangeEmail"
+            android:name=".Activities.ChangeEmail"
             android:exported="false" />
         <activity
             android:name=".Activities.SettingsActivity"

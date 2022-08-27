@@ -16,6 +16,8 @@ import android.widget.TextView;
 import com.example.eats.R;
 import com.parse.ParseUser;
 
+import java.util.Set;
+
 public class SettingsActivity extends AppCompatActivity {
     TextView mAboutEats;
     Switch mSwicthMode;
@@ -60,6 +62,79 @@ public class SettingsActivity extends AppCompatActivity {
                 Intent intent = new Intent(SettingsActivity.this, LoginActivity.class);
                 startActivity(intent);
                 finish();
+            }
+        });
+
+        mAboutEats.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SettingsActivity.this, AboutEats.class);
+                startActivity(intent);
+            }
+        });
+
+
+        mPaymentInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SettingsActivity.this, PaymentInfo.class);
+                startActivity(intent);
+            }
+        });
+
+        mChangeEmail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SettingsActivity.this, ChangeEmail.class);
+                startActivity(intent);
+            }
+        });
+
+        mBecomeAVendor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SettingsActivity.this, BecomeAVendor.class);
+                startActivity(intent);
+            }
+        });
+
+        mDeleteAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SettingsActivity.this, DeleteAccount.class);
+                startActivity(intent);
+            }
+        });
+
+        mChangeUserName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SettingsActivity.this, ChangeUserName.class);
+                startActivity(intent);
+            }
+        });
+
+        mChangePassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SettingsActivity.this, ChangePassword.class);
+                startActivity(intent);
+            }
+        });
+
+        mPrivacyPolicy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SettingsActivity.this,ViewPrivacyPolicy.class);
+                startActivity(intent);
+            }
+        });
+
+        mChangeNotifications.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SettingsActivity.this, ChangeNotifications.class);
+                startActivity(intent);
             }
         });
 
