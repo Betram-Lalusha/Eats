@@ -27,7 +27,6 @@ public class SettingsActivity extends AppCompatActivity {
     TextView mDeleteAccount;
     TextView mChangeUserName;
     TextView mChangePassword;
-
     TextView mChangeNotifications;
 
 

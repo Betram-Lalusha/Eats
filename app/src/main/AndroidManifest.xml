@@ -39,6 +39,33 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".BecomeAVendor"
+            android:exported="false" />
+        <activity
+            android:name=".AboutEats"
+            android:exported="false" />
+        <activity
+            android:name=".PaymentInfo"
+            android:exported="false" />
+        <activity
+            android:name=".ViewPrivacyPolicy"
+            android:exported="false" />
+        <activity
+            android:name=".ChangeNotifications"
+            android:exported="false" />
+        <activity
+            android:name=".DeleteAccount"
+            android:exported="false" />
+        <activity
+            android:name=".ChangeUserName"
+            android:exported="false" />
+        <activity
+            android:name=".ChangePassword"
+            android:exported="false" />
+        <activity
+            android:name=".ChangeEmail"
+            android:exported="false" />
+        <activity
             android:name=".Activities.SettingsActivity"
             android:exported="false" />
         <activity
