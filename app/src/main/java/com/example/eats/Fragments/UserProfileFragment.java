@@ -193,7 +193,8 @@ public class UserProfileFragment extends Fragment {
 
         mUserName.setText(mCurrentUser.getUsername());
         mUserBio.setText(mCurrentUser.getString("bio"));
-        Glide.with(getContext()).load(mCurrentUser.getParseFile("userProfilePic").getUrl()).into(mUserProfilePic);
+        //Glide.with(getContext()).load(mCurrentUser.getParseFile("userProfilePic").getUrl()).into(mUserProfilePic);
+        Glide.with(getContext()).load(mCurrentUser.get("userProfilePic")).into(mUserProfilePic);
 
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setAdapter(mUserProfileAdapter);
