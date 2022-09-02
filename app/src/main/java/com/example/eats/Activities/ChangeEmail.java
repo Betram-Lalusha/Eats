@@ -7,6 +7,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.example.eats.R;
 import com.parse.ParseUser;
@@ -17,7 +19,8 @@ public class ChangeEmail extends AppCompatActivity {
     EditText mNewEmail;
     ParseUser mCurrentUser;
     EditText mConfirmNewEmail;
-
+    ProgressBar mCheckingOldEmail;
+    TextView mIncorrectEmailError;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +32,8 @@ public class ChangeEmail extends AppCompatActivity {
         mCurrentUser = ParseUser.getCurrentUser();
         mNewEmail = findViewById(R.id.enterNewEmail);
         mConfirmNewEmail = findViewById(R.id.confirmNewEmail);
+        mCheckingOldEmail = findViewById(R.id.checkingOldEmail);
+        mIncorrectEmailError = findViewById(R.id.inCorrectEmailError);
 
         mOldEmail.addTextChangedListener(new TextWatcher() {
             @Override
@@ -38,12 +43,18 @@ public class ChangeEmail extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                System.out.println("old email " + mCurrentUser.getEmail());
+                mCheckingOldEmail.setVisibility(View.VISIBLE);
+//                if(!mCurrentUser.getEmail().equals(s)) {
+//                    mIncorrectEmailError.setVisibility(View.VISIBLE);
+//                } else {
+//                    mIncorrectEmailError.setVisibility(View.INVISIBLE);
+//                }
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-
+                mCheckingOldEmail.setVisibility(View.INVISIBLE);
             }
         });
 
@@ -67,7 +78,7 @@ public class ChangeEmail extends AppCompatActivity {
         mConfirmNewEmail.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                
+
             }
 
             @Override
