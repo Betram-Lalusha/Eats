@@ -21,6 +21,8 @@ public class ChangeEmail extends AppCompatActivity {
     String mOldUserEmail;
     ParseUser mCurrentUser;
     EditText mConfirmNewEmail;
+    TextView mInvalidEmailError;
+    ProgressBar mCheckingNewEmail;
     ProgressBar mCheckingOldEmail;
     TextView mIncorrectEmailError;
     ValidEmailTester mValidEmailTester = new ValidEmailTester();
@@ -36,7 +38,9 @@ public class ChangeEmail extends AppCompatActivity {
         mOldUserEmail = mCurrentUser.getEmail();
         mNewEmail = findViewById(R.id.enterNewEmail);
         mConfirmNewEmail = findViewById(R.id.confirmNewEmail);
+        mCheckingNewEmail = findViewById(R.id.checkingNewEmail);
         mCheckingOldEmail = findViewById(R.id.checkingOldEmail);
+        mInvalidEmailError = findViewById(R.id.invalidEmailError);
         mIncorrectEmailError = findViewById(R.id.inCorrectEmailError);
 
         mOldEmail.addTextChangedListener(new TextWatcher() {
@@ -48,6 +52,7 @@ public class ChangeEmail extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(s.toString().isEmpty()) {
+                    mNewEmail.setVisibility(View.INVISIBLE);
                     mCheckingOldEmail.setVisibility(View.INVISIBLE);
                     mIncorrectEmailError.setVisibility(View.INVISIBLE);
                     return;
@@ -76,7 +81,23 @@ public class ChangeEmail extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.toString().isEmpty()) {
+                    mConfirmNewEmail.setVisibility(View.INVISIBLE);
+                    mCheckingNewEmail.setVisibility(View.INVISIBLE);
+                    mInvalidEmailError.setVisibility(View.INVISIBLE);
+                    return;
+                }
 
+                mCheckingNewEmail.setVisibility(View.VISIBLE);
+                if(!mValidEmailTester.isValidEmail(s.toString())) {
+                    mCheckingNewEmail.setVisibility(View.VISIBLE);
+                    mInvalidEmailError.setVisibility(View.VISIBLE);
+                    mConfirmNewEmail.setVisibility(View.INVISIBLE);
+                } else {
+                    mConfirmNewEmail.setVisibility(View.VISIBLE);
+                    mInvalidEmailError.setVisibility(View.INVISIBLE);
+                    mCheckingNewEmail.setVisibility(View.INVISIBLE);
+                }
             }
 
             @Override
