@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.eats.Emails.ValidEmailTester;
 import com.example.eats.R;
 import com.parse.ParseUser;
 
@@ -21,6 +22,7 @@ public class ChangeEmail extends AppCompatActivity {
     EditText mConfirmNewEmail;
     ProgressBar mCheckingOldEmail;
     TextView mIncorrectEmailError;
+    ValidEmailTester mValidEmailTester;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
