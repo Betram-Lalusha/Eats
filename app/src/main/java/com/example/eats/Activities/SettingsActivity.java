@@ -31,8 +31,6 @@ public class SettingsActivity extends AppCompatActivity {
     TextView mChangePassword;
     TextView mChangeNotifications;
 
-
-
     SharedPreferences mSharedPreferences = null;
 
     @Override
