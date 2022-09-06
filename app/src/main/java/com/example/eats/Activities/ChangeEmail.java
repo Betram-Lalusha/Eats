@@ -18,11 +18,12 @@ public class ChangeEmail extends AppCompatActivity {
 
     EditText mOldEmail;
     EditText mNewEmail;
+    String mOldUserEmail;
     ParseUser mCurrentUser;
     EditText mConfirmNewEmail;
     ProgressBar mCheckingOldEmail;
     TextView mIncorrectEmailError;
-    ValidEmailTester mValidEmailTester;
+    ValidEmailTester mValidEmailTester = new ValidEmailTester();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +33,7 @@ public class ChangeEmail extends AppCompatActivity {
 
         mOldEmail = findViewById(R.id.oldEmail);
         mCurrentUser = ParseUser.getCurrentUser();
+        mOldUserEmail = mCurrentUser.getEmail();
         mNewEmail = findViewById(R.id.enterNewEmail);
         mConfirmNewEmail = findViewById(R.id.confirmNewEmail);
         mCheckingOldEmail = findViewById(R.id.checkingOldEmail);
@@ -45,18 +47,24 @@ public class ChangeEmail extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                System.out.println("old email " + mCurrentUser.getEmail());
+                if(s.toString().isEmpty()) {
+                    mCheckingOldEmail.setVisibility(View.INVISIBLE);
+                    mIncorrectEmailError.setVisibility(View.INVISIBLE);
+                    return;
+                }
                 mCheckingOldEmail.setVisibility(View.VISIBLE);
-//                if(!mCurrentUser.getEmail().equals(s)) {
-//                    mIncorrectEmailError.setVisibility(View.VISIBLE);
-//                } else {
-//                    mIncorrectEmailError.setVisibility(View.INVISIBLE);
-//                }
+                if(!mOldUserEmail.equals(s.toString())) {
+                    mNewEmail.setVisibility(View.INVISIBLE);
+                    mIncorrectEmailError.setVisibility(View.VISIBLE);
+                } else {
+                    mNewEmail.setVisibility(View.VISIBLE);
+                    mCheckingOldEmail.setVisibility(View.INVISIBLE);
+                    mIncorrectEmailError.setVisibility(View.INVISIBLE);
+                }
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                mCheckingOldEmail.setVisibility(View.INVISIBLE);
             }
         });
 
