@@ -27,6 +27,7 @@
         <entry key="app/src/main/res/drawable/start_following.xml" value="0.685" />
         <entry key="app/src/main/res/drawable/steak_575806_1280.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_change_email.xml" value="0.3098958333333333" />
+        <entry key="app/src/main/res/layout/activity_change_user_name.xml" value="0.335" />
         <entry key="app/src/main/res/layout/activity_detail.xml" value="0.28951367781155013" />
         <entry key="app/src/main/res/layout/activity_home.xml" value="0.67" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.5" />

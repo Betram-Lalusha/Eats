@@ -41,19 +41,19 @@ public class ChangeEmail extends AppCompatActivity {
 
         getSupportActionBar().hide();
 
-        mOldEmail = findViewById(R.id.oldEmail);
+        mOldEmail = findViewById(R.id.oldUserName);
         mCurrentUser = ParseUser.getCurrentUser();
-        mNewEmail = findViewById(R.id.enterNewEmail);
-        mChangingEmail = findViewById(R.id.changingEmail);
-        mSavingNewEmail = findViewById(R.id.savingNewEmail);
+        mNewEmail = findViewById(R.id.enterNewUserName);
+        mChangingEmail = findViewById(R.id.changingUserName);
+        mSavingNewEmail = findViewById(R.id.savingNewUserName);
         mEmailsDontMatch = findViewById(R.id.emailsDontMatch);
         mConfirmingEmail = findViewById(R.id.confirmingEmail);
         mConfirmNewEmail = findViewById(R.id.confirmNewEmail);
-        mCheckingNewEmail = findViewById(R.id.checkingNewEmail);
-        mCheckingOldEmail = findViewById(R.id.checkingOldEmail);
+        mCheckingNewEmail = findViewById(R.id.checkingNewUserName);
+        mCheckingOldEmail = findViewById(R.id.checkingOldUserName);
         mInvalidEmailError = findViewById(R.id.invalidEmailError);
-        mIncorrectEmailError = findViewById(R.id.inCorrectEmailError);
-        mConfirmEmailChangeButton = findViewById(R.id.confirmEmailChangeButton);
+        mIncorrectEmailError = findViewById(R.id.inCorrectUserNameError);
+        mConfirmEmailChangeButton = findViewById(R.id.confirmUserNamelChangeButton);
 
         mOldEmail.addTextChangedListener(new TextWatcher() {
             @Override
