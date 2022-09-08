@@ -64,15 +64,26 @@ public class ChangeEmail extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(s.toString().isEmpty()) {
+                    mNewEmail.setText("");
+                    mConfirmNewEmail.setText("");
                     mNewEmail.setVisibility(View.INVISIBLE);
+                    mConfirmNewEmail.setVisibility(View.INVISIBLE);
+                    mConfirmingEmail.setVisibility(View.INVISIBLE);
                     mCheckingOldEmail.setVisibility(View.INVISIBLE);
+                    mInvalidEmailError.setVisibility(View.INVISIBLE);
                     mIncorrectEmailError.setVisibility(View.INVISIBLE);
                     return;
                 }
                 mCheckingOldEmail.setVisibility(View.VISIBLE);
                 if(!mCurrentUser.getEmail().equals(s.toString())) {
+                    mNewEmail.setText("");
+                    mConfirmNewEmail.setText("");
                     mNewEmail.setVisibility(View.INVISIBLE);
                     mIncorrectEmailError.setVisibility(View.VISIBLE);
+                    mConfirmNewEmail.setVisibility(View.INVISIBLE);
+                    mConfirmingEmail.setVisibility(View.INVISIBLE);
+                    mCheckingOldEmail.setVisibility(View.INVISIBLE);
+                    mInvalidEmailError.setVisibility(View.INVISIBLE);
                 } else {
                     mNewEmail.setVisibility(View.VISIBLE);
                     mCheckingOldEmail.setVisibility(View.INVISIBLE);
@@ -94,6 +105,8 @@ public class ChangeEmail extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(s.toString().isEmpty()) {
+                    mConfirmNewEmail.setText("");
+                    mEmailsDontMatch.setVisibility(View.INVISIBLE);
                     mConfirmNewEmail.setVisibility(View.INVISIBLE);
                     mCheckingNewEmail.setVisibility(View.INVISIBLE);
                     mInvalidEmailError.setVisibility(View.INVISIBLE);
@@ -102,8 +115,11 @@ public class ChangeEmail extends AppCompatActivity {
 
                 mCheckingNewEmail.setVisibility(View.VISIBLE);
                 if(!mValidEmailTester.isValidEmail(s.toString())) {
+                    mConfirmNewEmail.setText("");
                     mCheckingNewEmail.setVisibility(View.VISIBLE);
                     mInvalidEmailError.setVisibility(View.VISIBLE);
+                    mConfirmNewEmail.setVisibility(View.INVISIBLE);
+                    mEmailsDontMatch.setVisibility(View.INVISIBLE);
                     mConfirmNewEmail.setVisibility(View.INVISIBLE);
                 } else {
                     mConfirmNewEmail.setVisibility(View.VISIBLE);
