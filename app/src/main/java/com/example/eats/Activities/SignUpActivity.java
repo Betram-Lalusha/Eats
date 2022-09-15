@@ -47,6 +47,8 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
+        getSupportActionBar().hide();
+
         mSetEmail = findViewById(R.id.setEmail);
         mSetPassword = findViewById(R.id.setPassword);
         mSetUserName = findViewById(R.id.setUserName);
@@ -118,5 +120,25 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onBackPressed() {
+        Intent intent = getIntent();
+        if(intent == null ) {
+            return;
+        }
+
+        Boolean fromDelete = intent.getBooleanExtra("cameFromDelete", false);
+        if(fromDelete) {
+            Intent intent2 = new Intent(SignUpActivity.this, SignUpActivity.class);
+            intent2.putExtra("cameFromDelete", true);
+            startActivity(intent2);
+            finish();
+        } else {
+            Intent intent2 = new Intent(SignUpActivity.this, LoginActivity.class);
+            intent2.putExtra("cameFromDelete", false);
+            startActivity(intent2);
+        }
+
+    }
 
 }

@@ -58,6 +58,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
+                intent.putExtra("cameFromDelete", false);
                 startActivity(intent);
             }
         });

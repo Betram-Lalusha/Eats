@@ -6,4 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".Activities.DeleteAccount">
 
+    <Button
+        android:id="@+id/deleteAccountButton"
+        android:layout_width="190dp"
+        android:layout_height="62dp"
+        android:text="Delete Account"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
