@@ -38,6 +38,7 @@
         <entry key="app/src/main/res/layout/activity_maps.xml" value="0.9661458333333334" />
         <entry key="app/src/main/res/layout/activity_on_boarding.xml" value="0.9661458333333334" />
         <entry key="app/src/main/res/layout/activity_parse_application.xml" value="0.29257246376811596" />
+        <entry key="app/src/main/res/layout/activity_payment_info.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_recent_searches.xml" value="0.9661458333333334" />
         <entry key="app/src/main/res/layout/activity_request_location.xml" value="0.9661458333333334" />
         <entry key="app/src/main/res/layout/activity_settings.xml" value="0.375" />
