@@ -14,6 +14,8 @@ public class ReadTsAndCsWindowActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_read_ts_and_cs_window);
 
+        getSupportActionBar().hide();
+
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
