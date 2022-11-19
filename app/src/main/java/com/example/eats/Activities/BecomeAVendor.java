@@ -6,9 +6,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.eats.Activities.Vendors.ReadTsAndCsWindowActivity;
 import com.example.eats.R;
+import com.parse.ParseUser;
 
 public class BecomeAVendor extends AppCompatActivity {
 
@@ -36,7 +38,10 @@ public class BecomeAVendor extends AppCompatActivity {
         mActivateVendorAccountBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                ParseUser currentUser = ParseUser.getCurrentUser();
+                currentUser.put("isVendor", true);
+                currentUser.saveInBackground();
+                Toast.makeText(BecomeAVendor.this, "Happy vending",Toast.LENGTH_SHORT).show();
             }
         });
 
