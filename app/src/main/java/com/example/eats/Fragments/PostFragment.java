@@ -224,6 +224,7 @@ public class PostFragment extends Fragment {
             public void done(List<City> cities, ParseException e) {
                 if(e != null) {
                     Log.i(APP_TAG, "error fetching city with given name " + e);
+                    Toast.makeText(getContext(), e.getMessage(),Toast.LENGTH_LONG).show();;
                     e.printStackTrace();
                     return;
                 }
